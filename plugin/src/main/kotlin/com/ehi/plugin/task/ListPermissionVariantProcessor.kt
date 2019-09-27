@@ -14,7 +14,6 @@ import com.google.auto.service.AutoService
  */
 @AutoService(VariantProcessor::class)
 class ListPermissionVariantProcessor : VariantProcessor {
-
     override fun process(variant: BaseVariant) {
         val variantData = (variant as ApplicationVariantImpl).variantData
         val tasks = variantData.scope.globalScope.project.tasks
