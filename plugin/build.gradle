@@ -1,0 +1,44 @@
+apply from: '../gradle/plugin.gradle'
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+apply plugin: 'java'
+
+dependencies {
+
+    implementation localGroovy()
+    implementation gradleApi()
+
+    kapt "com.google.auto.service:auto-service:1.0-rc4"
+    implementation "com.google.auto.service:auto-service:1.0-rc4"
+    compileOnly "com.android.tools.build:gradle:3.5.0"
+    testCompileOnly "com.android.tools.build:gradle:3.5.0"
+}
+
+// upload to Local
+
+group "com.ehi"
+version "0.1.0"
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('../repo'))
+        }
+    }
+}
+
+// upload to Bintray
+
+//apply plugin: 'com.novoda.bintray-release'
+//
+//publish {
+//    userOrg = 'omooo2333'
+//    groupId = 'com.ehi'
+//    repoName = 'EHiPlugin'
+//    artifactId = 'plugin'
+//    publishVersion = '0.1.0'
+//    desc = 'EHiPlugin repo'
+//}
+
+// ./gradlew clean build bintrayUpload -PbintrayUser=omooo23333 -PbintrayKey=8b6eac80122c2ecd83fae2df225b9d6e93815010 -PdryRun=false
