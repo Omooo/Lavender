@@ -1,5 +1,7 @@
 package com.ehi.plugin.task
 
+import com.ehi.plugin.util.encode
+import com.ehi.plugin.util.writeToJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 
@@ -23,5 +25,26 @@ internal open class RepeatResDetectorTask : DefaultTask() {
                 *********************************************
             """.trimIndent()
         )
+
+        val map = HashMap<String, List<String>>()
+        project.projectDir.resolve("src/main/res").listFiles()?.filter {
+            it.name.startsWith("drawable-")
+        }?.forEach { dir ->
+            if (dir.isDirectory) {
+                dir.listFiles()?.forEach { file ->
+                    val key = file.readBytes().encode()
+                    val value = arrayListOf<String>()
+                    val list = map[key]
+                    list?.let { it1 -> value.addAll(it1) }
+                    value.add(file.absolutePath)
+                    map[key] = value
+                }
+            }
+        }
+        map.filter {
+            it.value.size > 1
+        }.apply {
+            this.writeToJson("${project.parent?.projectDir}/repeatRes.json")
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.dependency.ArtifactCollectionWithExtraArtifact
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.android.build.gradle.internal.tasks.CheckManifest
+import com.ehi.plugin.util.writeToJson
 import groovy.json.JsonOutput
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
@@ -61,7 +62,7 @@ internal open class ListPermissionTask : DefaultTask() {
             }
         }
 
-        writePermissionToFile(map)
+        map.writeToJson("${project.parent?.projectDir}/permissions.json")
     }
 
     /**
@@ -85,15 +86,5 @@ internal open class ListPermissionTask : DefaultTask() {
             is ArtifactCollectionWithExtraArtifact.ExtraComponentIdentifier -> id.getDisplayName()
             else -> throw RuntimeException("Unsupported type of ComponentIdentifier")
         }
-    }
-
-    private fun writePermissionToFile(map: HashMap<String, List<String>>) {
-        val jsonFile = File("${project.parent?.projectDir}/permissions.json")
-        if (jsonFile.exists()) {
-            jsonFile.delete()
-        }
-        jsonFile.createNewFile()
-        val json = JsonOutput.toJson(map)
-        jsonFile.writeText(JsonOutput.prettyPrint(json), Charsets.UTF_8)
     }
 }
