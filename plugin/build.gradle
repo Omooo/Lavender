@@ -18,7 +18,7 @@ dependencies {
 // upload to Local
 
 group "com.ehi"
-version "0.1.1"
+version "0.1.2"
 
 uploadArchives {
     repositories {
@@ -38,7 +38,7 @@ uploadArchives {
 
             pom.groupId = 'com.ehi'
             pom.artifactId = 'plugin'
-            pom.version = '0.1.1'
+            pom.version = '0.1.2'
 
             pom.project {
                 licenses {

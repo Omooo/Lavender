@@ -4,6 +4,7 @@ import com.ehi.plugin.util.encode
 import com.ehi.plugin.util.writeToJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import java.io.File
 
 /**
  * Author: Omooo
@@ -42,9 +43,15 @@ internal open class RepeatResDetectorTask : DefaultTask() {
                 }
             }
         }
+        var length: Long = 0
         map.filter {
             it.value.size > 1
         }.apply {
+            this.values.forEach {
+                length += File(it[0]).length()
+            }
+            println("Repeat Res size: ${length / 1000}kb ")
+
             this.writeToJson("${project.parent?.projectDir}/repeatRes.json")
         }
     }
