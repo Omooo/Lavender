@@ -27,8 +27,9 @@ internal open class RepeatResDetectorTask : DefaultTask() {
         )
 
         val map = HashMap<String, List<String>>()
+        val prefix = if (project.properties["all"] != "true") "drawable-" else "drawable"
         project.projectDir.resolve("src/main/res").listFiles()?.filter {
-            it.name.startsWith("drawable-")
+            it.name.startsWith(prefix)
         }?.forEach { dir ->
             if (dir.isDirectory) {
                 dir.listFiles()?.forEach { file ->

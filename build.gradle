@@ -16,7 +16,7 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
 
-        classpath "com.ehi:plugin:0.1.0"
+        classpath "com.ehi:plugin:0.1.1"
 
         // 上传 EHiPlugin 到 Bintray 所需的依赖
         classpath 'com.novoda:bintray-release:0.9.1'
