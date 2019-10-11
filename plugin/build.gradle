@@ -29,40 +29,25 @@ uploadArchives {
 }
 
 // upload to Remote
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: "http://192.168.9.230:8081/repository/app-releases/") {
-                authentication(userName: "admin", password: "admin123")
-            }
-
-            pom.groupId = 'com.ehi'
-            pom.artifactId = 'plugin'
-            pom.version = '0.1.2'
-
-            pom.project {
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-            }
-        }
-    }
-}
-
-// upload to Bintray
-
-//apply plugin: 'com.novoda.bintray-release'
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: "http://192.168.9.230:8081/repository/app-releases/") {
+//                authentication(userName: "admin", password: "admin123")
+//            }
 //
-//publish {
-//    userOrg = 'omooo2333'
-//    groupId = 'com.ehi'
-//    repoName = 'EHiPlugin'
-//    artifactId = 'plugin'
-//    publishVersion = '0.1.1'
-//    desc = 'EHiPlugin repo'
+//            pom.groupId = 'com.ehi'
+//            pom.artifactId = 'plugin'
+//            pom.version = '0.1.2'
+//
+//            pom.project {
+//                licenses {
+//                    license {
+//                        name 'The Apache Software License, Version 2.0'
+//                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                    }
+//                }
+//            }
+//        }
+//    }
 //}
-
-// ./gradlew clean build bintrayUpload -PbintrayUser=omooo23333 -PbintrayKey=8b6eac80122c2ecd83fae2df225b9d6e93815010 -PdryRun=false

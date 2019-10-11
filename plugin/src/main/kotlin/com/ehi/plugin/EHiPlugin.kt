@@ -5,6 +5,8 @@ import com.android.build.gradle.LibraryExtension
 import com.ehi.plugin.spi.VariantProcessor
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.repositories.ArtifactRepository
+import java.net.URI
 import java.util.*
 
 /**
@@ -24,6 +26,11 @@ class EHiPlugin : Plugin<Project> {
             /********************************/
         """.trimIndent()
         )
+
+        project.repositories.maven {
+            it.url = URI("http://192.168.9.230:8081/repository/app-releases/")
+        }
+        project.dependencies.add("api", "com.ehi.plugin:annotation:0.1.1")
 
         when {
             project.plugins.hasPlugin("com.android.application") -> project.extensions.getByType(

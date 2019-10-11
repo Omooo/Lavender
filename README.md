@@ -40,3 +40,7 @@ task.manifests = variantScope.getArtifactCollection(RUNTIME_CLASSPATH, ALL, MANI
 实现原理：
 
 扫描指定目录下的文件，生成 MD5 值比对即可。
+
+效果：
+
+v6.3.2 减少包体积 133kb。

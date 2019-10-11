@@ -1,0 +1,27 @@
+apply from: '../gradle/plugin.gradle'
+
+apply plugin: 'maven'
+apply plugin: 'java'
+
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: "http://192.168.9.230:8081/repository/app-releases/") {
+//                authentication(userName: "admin", password: "admin123")
+//            }
+//
+//            pom.groupId = 'com.ehi.plugin'
+//            pom.artifactId = 'annotation'
+//            pom.version = '0.1.1'
+//
+//            pom.project {
+//                licenses {
+//                    license {
+//                        name 'The Apache Software License, Version 2.0'
+//                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
