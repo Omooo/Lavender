@@ -15,10 +15,33 @@ dependencies {
     testCompileOnly "com.android.tools.build:gradle:3.5.0"
 }
 
+sourceCompatibility = "8"
+targetCompatibility = "8"
+
+sourceSets {
+    main {
+        groovy {
+            srcDir '../my_plugin/src/main/groovy'
+        }
+
+        java {
+            srcDir "../my_plugin/src/main/java"
+        }
+
+        kotlin {
+            srcDir '../my_plugin/src/main/kotlin'
+        }
+
+        resources {
+            srcDir '../my_plugin/src/main/resources'
+        }
+    }
+}
+
 // upload to Local
 
 group "com.ehi"
-version "0.1.2"
+version "0.1.3"
 
 uploadArchives {
     repositories {
