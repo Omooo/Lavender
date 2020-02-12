@@ -21,19 +21,19 @@ targetCompatibility = "8"
 sourceSets {
     main {
         groovy {
-            srcDir '../my_plugin/src/main/groovy'
+            srcDir '../plugin/src/main/groovy'
         }
 
         java {
-            srcDir "../my_plugin/src/main/java"
+            srcDir "../plugin/src/main/java"
         }
 
         kotlin {
-            srcDir '../my_plugin/src/main/kotlin'
+            srcDir '../plugin/src/main/kotlin'
         }
 
         resources {
-            srcDir '../my_plugin/src/main/resources'
+            srcDir '../plugin/src/main/resources'
         }
     }
 }

@@ -6,7 +6,6 @@ import com.ehi.plugin.ext.Convert2WebpExtension
 import com.ehi.plugin.spi.VariantProcessor
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import java.net.URI
 import java.util.*
 
 /**
@@ -19,18 +18,12 @@ class EHiPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
 
-        println(
-            """
-            /********************************/
-            /********** EHi Plugin **********/
-            /********************************/
-        """.trimIndent()
-        )
+        println("--- EHiPlugin ---")
 
-        project.repositories.maven {
-            it.url = URI("http://192.168.9.230:8081/repository/app-releases/")
-        }
-        project.dependencies.add("api", "com.ehi.plugin:annotation:0.1.1")
+//        project.repositories.maven {
+//            it.url = URI("http://192.168.9.230:8081/repository/app-releases/")
+//        }
+//        project.dependencies.add("api", "com.ehi.plugin:annotation:0.1.1")
 
         // Extension
         project.extensions.create("convert2WebpConfig", Convert2WebpExtension::class.java)

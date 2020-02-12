@@ -2,7 +2,6 @@ package com.ehi.plugin.task
 
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
-import com.android.build.gradle.internal.api.BaseVariantImpl
 import com.ehi.plugin.spi.VariantProcessor
 import com.google.auto.service.AutoService
 
@@ -17,18 +16,6 @@ import com.google.auto.service.AutoService
 class Convert2WebpVariantProcessor : VariantProcessor {
 
     override fun process(variant: BaseVariant) {
-        val variantImpl = variant as BaseVariantImpl
-        println("/*******************************/")
-        variantImpl.allRawAndroidResources.files.iterator().forEach {parentFile ->
-            if (parentFile.isDirectory){
-                parentFile.listFiles()?.iterator()?.forEach {
-                    println(it.absolutePath)
-                }
-            }else{
-                println(parentFile.absolutePath)
-            }
-        }
-        println("/*******************************/")
 
         val variantData = (variant as ApplicationVariantImpl).variantData
         val tasks = variantData.scope.globalScope.project.tasks
@@ -36,6 +23,7 @@ class Convert2WebpVariantProcessor : VariantProcessor {
             "convert2Webp",
             Convert2WebpTask::class.java
         )
-
+        val mergeResourcesTask = variant.mergeResourcesProvider.get()
+        mergeResourcesTask.dependsOn(convert2WebpTask)
     }
 }

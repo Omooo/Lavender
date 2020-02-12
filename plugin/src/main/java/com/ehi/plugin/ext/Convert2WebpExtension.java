@@ -10,17 +10,19 @@ import java.util.Arrays;
  */
 public class Convert2WebpExtension {
 
-    public boolean enableWhenRelease = false;
+    public boolean enableWhenDebug = false;
     public boolean isCheckSize = true;
     public String[] whiteList = new String[]{};
+    public String[] bigImageWhiteList = new String[]{};
     public String cwebpToolsDir = "";
+    public float maxSize = 1020 * 1024;
 
-    public boolean isEnableWhenRelease() {
-        return enableWhenRelease;
+    public boolean isEnableWhenDebug() {
+        return enableWhenDebug;
     }
 
-    public void setEnableWhenRelease(boolean enableWhenRelease) {
-        this.enableWhenRelease = enableWhenRelease;
+    public void setEnableWhenDebug(boolean enableWhenDebug) {
+        this.enableWhenDebug = enableWhenDebug;
     }
 
     public boolean isCheckSize() {
@@ -39,6 +41,14 @@ public class Convert2WebpExtension {
         this.whiteList = whiteList;
     }
 
+    public String[] getBigImageWhiteList() {
+        return bigImageWhiteList;
+    }
+
+    public void setBigImageWhiteList(String[] bigImageWhiteList) {
+        this.bigImageWhiteList = bigImageWhiteList;
+    }
+
     public String getCwebpToolsDir() {
         return cwebpToolsDir;
     }
@@ -47,13 +57,23 @@ public class Convert2WebpExtension {
         this.cwebpToolsDir = cwebpToolsDir;
     }
 
+    public float getMaxSize() {
+        return maxSize;
+    }
+
+    public void setMaxSize(float maxSize) {
+        this.maxSize = maxSize;
+    }
+
     @Override
     public String toString() {
         return "Convert2WebpExtension{" +
-                "enableWhenRelease=" + enableWhenRelease +
+                "enableWhenDebug=" + enableWhenDebug +
                 ", isCheckSize=" + isCheckSize +
                 ", whiteList=" + Arrays.toString(whiteList) +
+                ", bigImageWhiteList=" + Arrays.toString(bigImageWhiteList) +
                 ", cwebpToolsDir='" + cwebpToolsDir + '\'' +
+                ", maxSize=" + maxSize +
                 '}';
     }
 }
