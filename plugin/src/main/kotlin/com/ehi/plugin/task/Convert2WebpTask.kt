@@ -3,18 +3,25 @@ package com.ehi.plugin.task
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.internal.api.BaseVariantImpl
+import com.ehi.plugin.bean.WebpToolBean
 import com.ehi.plugin.ext.Convert2WebpExtension
 import com.ehi.plugin.util.ImageUtil
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
 
 internal open class Convert2WebpTask : DefaultTask() {
 
     private lateinit var config: Convert2WebpExtension
 
     var bigImageList = ArrayList<String>()
+
+    private var oldSize = 0L
+    private var newSize = 0L
 
     @TaskAction
     fun doAction() {
@@ -38,7 +45,7 @@ internal open class Convert2WebpTask : DefaultTask() {
                 return@all
             }
 
-            println("--- Convert2WebpTask run... ---")
+            println("----- Convert2WebpTask run...  -----")
 
             val dir = variant.allRawAndroidResources.files
             val cacheList = ArrayList<String>()
@@ -53,28 +60,87 @@ internal open class Convert2WebpTask : DefaultTask() {
             }
             checkBigImage()
 
-            println("Convert2WebpTask 需要处理的图片数量：${imageFileList.size}")
-            println("图片列表：")
+            println("Should handle image count: ${imageFileList.size}")
+            var size = 0L
             for (file in imageFileList) {
-                println("--- ${file.absolutePath}")
+//                println("--- ${file.absolutePath}")
+                size += file.length()
             }
-
+            println("Total Image Size: ${size / 1024}kb")
             val startTime = System.currentTimeMillis()
-            dispatchOptimizeTask(imageFileList)
-            println("--- Convert2WebpTask execute end. ---")
-            println("--- CostTotalTime: ${System.currentTimeMillis() - startTime}ms ---")
 
+            dispatchOptimizeTask(imageFileList)
+
+            println("Before optimize Size: ${oldSize / 1024}kb")
+            println("After optimize Size: ${newSize / 1024}kb")
+            println("Optimize Size: ${(oldSize - newSize) / 1024}kb")
+
+            println("CostTotalTime: ${System.currentTimeMillis() - startTime}ms")
+            println("------------------------------------")
         }
     }
 
     private fun dispatchOptimizeTask(imageFileList: java.util.ArrayList<File>) {
+        if (imageFileList.size == 0 || bigImageList.isNotEmpty()) {
+            return
+        }
+        val coreNum = Runtime.getRuntime().availableProcessors()
+        if (imageFileList.size < coreNum) {
+            for (file in imageFileList) {
+                optimizeImage(file)
+            }
+        } else {
+            val results = ArrayList<Future<Unit>>()
+            val pool = Executors.newFixedThreadPool(coreNum)
+            val part = imageFileList.size / coreNum
+            for (i in 0 until coreNum) {
+                val from = i * part
+                val to = if (i == coreNum - 1) imageFileList.size - 1 else (i + 1) * part - 1
+                results.add(pool.submit(Callable<Unit> {
+                    for (index in from..to) {
+                        optimizeImage(imageFileList[index])
+                    }
+                }))
+            }
+            for (f in results) {
+                try {
+                    f.get()
+                } catch (e: Exception) {
+                    println("EHiPlugin Convert2WebpTask#dispatchOptimizeTask() execute wrong.")
+                }
+            }
+        }
+    }
 
+    private fun optimizeImage(file: File) {
+        val path: String = file.path
+        if (File(path).exists()) {
+            oldSize += File(path).length()
+        }
+        ImageUtil.convert2Webp(file)
+        calcNewSize(path)
+    }
+
+    private fun calcNewSize(path: String) {
+        if (File(path).exists()) {
+            newSize += File(path).length()
+        } else {
+            val indexOfDot = path.lastIndexOf(".")
+            val webpPath = path.substring(0, indexOfDot) + ".webp"
+            if (File(webpPath).exists()) {
+                newSize += File(webpPath).length()
+            } else {
+                println("EHiPlugin Convert2Webp Task was wrong.")
+            }
+        }
     }
 
     private fun checkBigImage() {
         if (bigImageList.size != 0) {
-            val stringBuffer = StringBuffer("Big Image Detector!")
-                .append("To fix this exception, you can config them into bigImageWhiteList which in build.gradle file")
+            val stringBuffer = StringBuffer("Big Image Detector! ")
+                .append("ImageSize can't over ${config.maxSize / 1024}kb.\n")
+                .append("To fix this exception, you can increase maxSize or config them in bigImageWhiteList\n")
+                .append("Big Image List: \n")
             for (fileName in bigImageList) {
                 stringBuffer.append(fileName)
                 stringBuffer.append("\n")
@@ -122,7 +188,14 @@ internal open class Convert2WebpTask : DefaultTask() {
     }
 
     private fun checkCwebpTools() {
-
+        if (config.cwebpToolsDir.isBlank()) {
+            WebpToolBean.setRootDir(project.rootDir.path)
+        } else {
+            WebpToolBean.setRootDir(config.cwebpToolsDir)
+        }
+        if (!WebpToolBean.getToolsDir().exists()) {
+            throw GradleException("EHiPlugin 'convert2Webp' task need cwebp tool.")
+        }
     }
 
     interface IBigImage {

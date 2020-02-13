@@ -18,7 +18,7 @@ class EHiPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
 
-        println("--- EHiPlugin ---")
+        println("apply plugin: 'com.ehi.plugin'")
 
 //        project.repositories.maven {
 //            it.url = URI("http://192.168.9.230:8081/repository/app-releases/")

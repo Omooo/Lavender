@@ -26,5 +26,22 @@ class ImageUtil {
             }
             return false
         }
+
+        fun convert2Webp(imgFile: File) {
+            if (isImage(imgFile)) {
+                val webpFile =
+                    File("${imgFile.path.substring(0, imgFile.path.lastIndexOf("."))}.webp")
+                WebpToolUtil.cmd("cwebp", "${imgFile.path} -o ${webpFile.path} -m 6 -quiet")
+                if (webpFile.length() < imgFile.length()) {
+                    if (imgFile.exists()) {
+                        imgFile.delete()
+                    }
+                } else {
+                    if (webpFile.exists()) {
+                        webpFile.delete()
+                    }
+                }
+            }
+        }
     }
 }

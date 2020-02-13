@@ -15,7 +15,7 @@ public class Convert2WebpExtension {
     public String[] whiteList = new String[]{};
     public String[] bigImageWhiteList = new String[]{};
     public String cwebpToolsDir = "";
-    public float maxSize = 1020 * 1024;
+    public float maxSize = 500 * 1024;
 
     public boolean isEnableWhenDebug() {
         return enableWhenDebug;
