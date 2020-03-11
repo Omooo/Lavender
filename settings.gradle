@@ -1,1 +1,1 @@
-include ':app', ':plugin', ':buildSrc', ':annotation'
+include ':app', ':plugin', ':buildSrc', ':annotation', ':fps_detector'
