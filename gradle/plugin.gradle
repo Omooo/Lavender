@@ -1,4 +1,4 @@
-import com.ehi.buildsrc.Config
+import com.omooo.buildsrc.Config
 
 apply plugin: 'kotlin'
 apply plugin: 'kotlin-kapt'
