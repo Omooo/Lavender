@@ -1,9 +1,6 @@
 package com.ehi.plugin
 
 import android.app.Application
-import android.graphics.Color
-import android.view.Gravity
-import com.ehi.plugin.fps_detector.FPSDetector
 
 /**
  * @author Omooo
@@ -14,11 +11,5 @@ import com.ehi.plugin.fps_detector.FPSDetector
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        FPSDetector.prepare(this)
-            .alpha(0.5f)
-            .color(Color.WHITE)
-            .gravity(Gravity.TOP or Gravity.END)
-            .interval(250)
-            .size(12f)
     }
 }
