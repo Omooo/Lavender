@@ -1,6 +1,6 @@
 apply from: '../gradle/plugin.gradle'
 
-apply plugin: 'maven-publish'
+apply plugin: 'maven'
 apply plugin: 'java'
 
 //uploadArchives {
@@ -10,7 +10,7 @@ apply plugin: 'java'
 //                authentication(userName: "admin", password: "admin123")
 //            }
 //
-//            pom.groupId = 'com.ehi.plugin'
+//            pom.groupId = 'com.omooo.plugin'
 //            pom.artifactId = 'annotation'
 //            pom.version = '0.1.1'
 //

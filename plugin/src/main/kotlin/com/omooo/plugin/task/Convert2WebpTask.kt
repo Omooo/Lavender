@@ -106,7 +106,7 @@ internal open class Convert2WebpTask : DefaultTask() {
                 try {
                     f.get()
                 } catch (e: Exception) {
-                    println("EHiPlugin Convert2WebpTask#dispatchOptimizeTask() execute wrong.")
+                    println("Lavender Convert2WebpTask#dispatchOptimizeTask() execute wrong.")
                 }
             }
         }
@@ -130,7 +130,7 @@ internal open class Convert2WebpTask : DefaultTask() {
             if (File(webpPath).exists()) {
                 newSize += File(webpPath).length()
             } else {
-                println("EHiPlugin Convert2Webp Task was wrong.")
+                println("Lavender Convert2Webp Task was wrong.")
             }
         }
     }
@@ -194,7 +194,7 @@ internal open class Convert2WebpTask : DefaultTask() {
             WebpToolBean.setRootDir(config.cwebpToolsDir)
         }
         if (!WebpToolBean.getToolsDir().exists()) {
-            throw GradleException("EHiPlugin 'convert2Webp' task need cwebp tool.")
+            throw GradleException("Lavender 'convert2Webp' task need cwebp tool.")
         }
     }
 
