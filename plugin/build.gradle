@@ -40,13 +40,14 @@ sourceSets {
 
 // upload to Local
 
-group "com.ehi"
+group "com.omooo"
 version "0.1.5"
 
 uploadArchives {
     repositories {
         mavenDeployer {
             repository(url: uri('../repo'))
+            pom.artifactId = 'lavender'
         }
     }
 }

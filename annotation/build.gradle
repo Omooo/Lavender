@@ -10,7 +10,7 @@ apply plugin: 'java'
 //                authentication(userName: "admin", password: "admin123")
 //            }
 //
-//            pom.groupId = 'com.ehi.plugin'
+//            pom.groupId = 'com.omooo.plugin'
 //            pom.artifactId = 'annotation'
 //            pom.version = '0.1.1'
 //
@@ -25,3 +25,7 @@ apply plugin: 'java'
 //        }
 //    }
 //}
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
