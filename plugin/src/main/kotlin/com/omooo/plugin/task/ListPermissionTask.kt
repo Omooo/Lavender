@@ -36,42 +36,42 @@ internal open class ListPermissionTask : DefaultTask() {
                 *********************************************
             """.trimIndent()
         )
-
-        val map = HashMap<String, List<String>>()
-
-        // 获取 app 模块的权限
-        val checkManifestTask = variant.checkManifestProvider.get() as CheckManifest
-        if (checkManifestTask.isManifestRequiredButNotPresent()) {
-            println("App manifest is missing for variant ${variant.name}")
-            getAppModulePermission(map)
-        } else {
-            val manifest = checkManifestTask.fakeOutputDir.asFile.get()
-            if (manifest.exists()) {
-                map["app"] = matchPermission(manifest.readText())
-            } else {
-                println("App manifest is missing for variant ${variant.name}, Expected path: ${manifest.absolutePath}")
-                getAppModulePermission(map)
-            }
-        }
-
-        // 获取 app 依赖的 aar 权限
-        val variantData = (variant as ApplicationVariantImpl).variantData
-        val manifests = variantData.scope.getArtifactCollection(
-            AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
-            AndroidArtifacts.ArtifactScope.ALL,
-            AndroidArtifacts.ArtifactType.MANIFEST
-        )
-
-        val artifacts = manifests.artifacts
-        for (artifact in artifacts) {
-            if (!map.containsKey(getArtifactName(artifact))
-                && matchPermission(artifact.file.readText()).isNotEmpty()
-            ) {
-                map[getArtifactName(artifact)] = matchPermission(artifact.file.readText())
-            }
-        }
-
-        map.writeToJson("${project.parent?.projectDir}/permissions.json")
+//
+//        val map = HashMap<String, List<String>>()
+//
+//        // 获取 app 模块的权限
+//        val checkManifestTask = variant.checkManifestProvider.get() as CheckManifest
+//        if (checkManifestTask.isManifestRequiredButNotPresent()) {
+//            println("App manifest is missing for variant ${variant.name}")
+//            getAppModulePermission(map)
+//        } else {
+//            val manifest = checkManifestTask.fakeOutputDir.asFile.get()
+//            if (manifest.exists()) {
+//                map["app"] = matchPermission(manifest.readText())
+//            } else {
+//                println("App manifest is missing for variant ${variant.name}, Expected path: ${manifest.absolutePath}")
+//                getAppModulePermission(map)
+//            }
+//        }
+//
+//        // 获取 app 依赖的 aar 权限
+//        val variantData = (variant as ApplicationVariantImpl).variantData
+//        val manifests = variantData.scope.getArtifactCollection(
+//            AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
+//            AndroidArtifacts.ArtifactScope.ALL,
+//            AndroidArtifacts.ArtifactType.MANIFEST
+//        )
+//
+//        val artifacts = manifests.artifacts
+//        for (artifact in artifacts) {
+//            if (!map.containsKey(getArtifactName(artifact))
+//                && matchPermission(artifact.file.readText()).isNotEmpty()
+//            ) {
+//                map[getArtifactName(artifact)] = matchPermission(artifact.file.readText())
+//            }
+//        }
+//
+//        map.writeToJson("${project.parent?.projectDir}/permissions.json")
     }
 
     private fun getAppModulePermission(map: HashMap<String, List<String>>){

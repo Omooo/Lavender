@@ -1,9 +1,13 @@
 package com.omooo.plugin
 
+import com.android.build.api.instrumentation.FramesComputationMode
+import com.android.build.api.instrumentation.InstrumentationScope
+import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
 import com.omooo.plugin.ext.Convert2WebpExtension
 import com.omooo.plugin.spi.VariantProcessor
+import com.omooo.plugin.transform.CommonClassVisitorFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.util.*
@@ -14,11 +18,23 @@ import java.util.*
  * Version: v0.1.0
  * Desc: Plugin
  */
-class Lavender : Plugin<Project> {
+open class Lavender : Plugin<Project> {
 
     override fun apply(project: Project) {
 
         println("apply plugin: 'Lavender'")
+
+        val androidExtension = project.extensions.getByType(AndroidComponentsExtension::class.java)
+        androidExtension.onVariants { variant ->
+            variant.instrumentation.transformClassesWith(
+                CommonClassVisitorFactory::class.java,
+                InstrumentationScope.ALL
+            ) {
+
+            }
+            variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
+        }
+
 
 //        project.repositories.maven {
 //            it.url = URI("")
@@ -61,4 +77,5 @@ class Lavender : Plugin<Project> {
             }
         }
     }
+
 }
