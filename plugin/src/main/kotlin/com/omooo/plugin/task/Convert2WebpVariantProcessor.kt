@@ -17,13 +17,13 @@ class Convert2WebpVariantProcessor : VariantProcessor {
 
     override fun process(variant: BaseVariant) {
 
-        val variantData = (variant as ApplicationVariantImpl).variantData
-        val tasks = variantData.scope.globalScope.project.tasks
-        val convert2WebpTask = tasks.findByName("convert2Webp") ?: tasks.create(
-            "convert2Webp",
-            Convert2WebpTask::class.java
-        )
-        val mergeResourcesTask = variant.mergeResourcesProvider.get()
-        mergeResourcesTask.dependsOn(convert2WebpTask)
+//        val variantData = (variant as ApplicationVariantImpl).variantData
+//        val tasks = variantData.scope.globalScope.project.tasks
+//        val convert2WebpTask = tasks.findByName("convert2Webp") ?: tasks.create(
+//            "convert2Webp",
+//            Convert2WebpTask::class.java
+//        )
+//        val mergeResourcesTask = variant.mergeResourcesProvider.get()
+//        mergeResourcesTask.dependsOn(convert2WebpTask)
     }
 }

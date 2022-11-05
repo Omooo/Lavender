@@ -23,11 +23,11 @@ sourceSets {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_11
 }
 
 compileTestKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_11
 }
 
 dependencies {

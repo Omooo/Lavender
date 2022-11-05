@@ -15,11 +15,11 @@ import com.google.auto.service.AutoService
 @AutoService(VariantProcessor::class)
 class RepeatResDetectorVariantProcessor : VariantProcessor {
     override fun process(variant: BaseVariant) {
-        val variantData = (variant as ApplicationVariantImpl).variantData
-        val tasks = variantData.scope.globalScope.project.tasks
-        tasks.findByName("repeatRes") ?: tasks.create(
-            "repeatRes",
-            RepeatResDetectorTask::class.java
-        )
+//        val variantData = (variant as ApplicationVariantImpl).variantData
+//        val tasks = variantData.scope.globalScope.project.tasks
+//        tasks.findByName("repeatRes") ?: tasks.create(
+//            "repeatRes",
+//            RepeatResDetectorTask::class.java
+//        )
     }
 }
