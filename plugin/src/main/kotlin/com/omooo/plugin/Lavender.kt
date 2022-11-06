@@ -5,6 +5,7 @@ import com.android.build.api.instrumentation.InstrumentationScope
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
+import com.omooo.plugin.bean.PrintInvokeExtension
 import com.omooo.plugin.ext.Convert2WebpExtension
 import com.omooo.plugin.spi.VariantProcessor
 import com.omooo.plugin.transform.CommonClassVisitorFactory
@@ -18,11 +19,14 @@ import java.util.*
  * Version: v0.1.0
  * Desc: Plugin
  */
-open class Lavender : Plugin<Project> {
+class Lavender : Plugin<Project> {
 
     override fun apply(project: Project) {
 
         println("apply plugin: 'Lavender'")
+
+        val invokeExtension =
+            project.extensions.create("printInvokeCheckList", PrintInvokeExtension::class.java)
 
         val androidExtension = project.extensions.getByType(AndroidComponentsExtension::class.java)
         androidExtension.onVariants { variant ->
@@ -30,16 +34,11 @@ open class Lavender : Plugin<Project> {
                 CommonClassVisitorFactory::class.java,
                 InstrumentationScope.ALL
             ) {
-
+                it.methodList = invokeExtension.methodList
+                it.packageList = invokeExtension.packageList
             }
             variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
         }
-
-
-//        project.repositories.maven {
-//            it.url = URI("")
-//        }
-//        project.dependencies.add("api", "com.omooo.plugin:annotation:0.1.1")
 
         // Extension
         project.extensions.create("convert2WebpConfig", Convert2WebpExtension::class.java)
