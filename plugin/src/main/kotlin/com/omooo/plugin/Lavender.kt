@@ -26,7 +26,7 @@ class Lavender : Plugin<Project> {
         println("apply plugin: 'Lavender'")
 
         val invokeExtension =
-            project.extensions.create("printInvokeCheckList", PrintInvokeExtension::class.java)
+            project.extensions.create("invokeCheckConfig", PrintInvokeExtension::class.java)
 
         val androidExtension = project.extensions.getByType(AndroidComponentsExtension::class.java)
         androidExtension.onVariants { variant ->

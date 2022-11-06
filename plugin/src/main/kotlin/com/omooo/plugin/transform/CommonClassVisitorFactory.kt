@@ -3,7 +3,6 @@ package com.omooo.plugin.transform
 import com.android.build.api.instrumentation.*
 import com.omooo.plugin.util.isRClass
 import com.omooo.plugin.util.isSystemClass
-import org.gradle.api.provider.Property
 import org.objectweb.asm.ClassVisitor
 
 /**
@@ -11,7 +10,7 @@ import org.objectweb.asm.ClassVisitor
  * Date: 2022/11/5
  * Desc: 通用 ClassVisitorFactory
  */
-abstract class CommonClassVisitorFactory : AsmClassVisitorFactory<CheckParams> {
+abstract class CommonClassVisitorFactory : AsmClassVisitorFactory<CheckInvokeParams> {
 
     override fun createClassVisitor(
         classContext: ClassContext,
@@ -22,7 +21,7 @@ abstract class CommonClassVisitorFactory : AsmClassVisitorFactory<CheckParams> {
         ) {
             return nextClassVisitor
         }
-        return BaseClassNode(nextClassVisitor, parameters.get())
+        return InvokeCheckClassNode(nextClassVisitor, parameters.get())
     }
 
     override fun isInstrumentable(classData: ClassData): Boolean {

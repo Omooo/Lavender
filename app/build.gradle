@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'com.omooo.lavender'
-printInvokeCheckList {
+invokeCheckConfig {
     methodList = [
             "com/omooo/library/LibraryMain#show(Landroid/content/Context;)V",
     ]
