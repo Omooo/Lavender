@@ -12,6 +12,7 @@ dependencies {
 
     implementation "com.android.tools.build:gradle-api:7.2.2"
     implementation "com.google.auto.service:auto-service:1.0.1"
+    implementation 'org.json:json:20220924'
     annotationProcessor "com.google.auto.service:auto-service:1.0.1"
     compileOnly "com.android.tools.build:gradle:7.2.2"
     testCompileOnly "com.android.tools.build:gradle:7.2.2"

@@ -26,7 +26,7 @@ class Lavender : Plugin<Project> {
         println("apply plugin: 'Lavender'")
 
         val invokeExtension =
-            project.extensions.create("printInvokeCheckList", PrintInvokeExtension::class.java)
+            project.extensions.create("invokeCheckConfig", PrintInvokeExtension::class.java)
 
         val androidExtension = project.extensions.getByType(AndroidComponentsExtension::class.java)
         androidExtension.onVariants { variant ->
@@ -39,6 +39,7 @@ class Lavender : Plugin<Project> {
             }
             variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
         }
+
 
         // Extension
         project.extensions.create("convert2WebpConfig", Convert2WebpExtension::class.java)

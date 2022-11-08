@@ -1,15 +1,16 @@
 package com.omooo.plugin.transform
 
-import com.omooo.plugin.util.toPlainText
+import com.omooo.plugin.bean.ASM_VERSION
 import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.ClassNode
-import org.objectweb.asm.tree.MethodInsnNode
 
-internal class BaseClassNode(
-    private val classVisitor: ClassVisitor,
-    private val params: CheckParams
-) : ClassNode(Opcodes.ASM9) {
+/**
+ * Author: Omooo
+ * Date: 2022/11/6
+ * Desc: 使用 [ClassNode] 操作字节码基础类
+ */
+internal abstract class BaseClassNode(private val classVisitor: ClassVisitor) :
+    ClassNode(ASM_VERSION) {
 
     override fun visitEnd() {
         super.visitEnd()
@@ -17,35 +18,5 @@ internal class BaseClassNode(
         transform()
     }
 
-    private fun transform() {
-        methods.forEach { methodNode ->
-            methodNode.instructions.filterIsInstance<MethodInsnNode>().forEach { insnNode ->
-                params.packageList.filter {
-                    insnNode.owner.startsWith(it)
-                }.forEach { _ ->
-                    println(
-                        """
-                            检测到调用:
-                                ----------------------------------------------------
-                                $name#${methodNode.name}${methodNode.desc} 调用了 ${insnNode.toPlainText()}
-                                ----------------------------------------------------
-                        """.trimIndent()
-                    )
-                }
-                params.methodList.filter {
-                    insnNode.toPlainText() == it
-                }.forEach {
-                    println(
-                        """
-                            检测到调用:
-                                ----------------------------------------------------
-                                $name#${methodNode.name}${methodNode.desc} 调用了 $it}
-                                ----------------------------------------------------
-                        """.trimIndent()
-                    )
-                }
-            }
-        }
-    }
-
+    abstract fun transform()
 }

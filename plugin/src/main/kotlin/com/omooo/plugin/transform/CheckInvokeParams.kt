@@ -4,7 +4,12 @@ import com.android.build.api.instrumentation.InstrumentationParameters
 import com.omooo.plugin.bean.PrintInvokeExtension
 import org.gradle.api.tasks.Input
 
-internal interface CheckParams : InstrumentationParameters {
+/**
+ * Author: Omooo
+ * Date: 2022/11/6
+ * Desc: 检测方法调用的参数
+ */
+internal interface CheckInvokeParams : InstrumentationParameters {
 
     @get:Input
     var methodList: Array<String>
