@@ -40,6 +40,7 @@ class Lavender : Plugin<Project> {
             variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
         }
 
+
         // Extension
         project.extensions.create("convert2WebpConfig", Convert2WebpExtension::class.java)
 

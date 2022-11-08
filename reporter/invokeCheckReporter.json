@@ -1,0 +1,9 @@
+{
+    "com/omooo/library/LibraryMain#show(Landroid/content/Context;)V": [
+        "com/omooo/library/LibraryMain#main(Landroid/content/Context;)V",
+        "com/omooo/plugin/MainActivity#onCreate(Landroid/os/Bundle;)V"
+    ],
+    "com/omooo/library/": [
+        "com/omooo/plugin/MainActivity#onCreate(Landroid/os/Bundle;)V"
+    ]
+}

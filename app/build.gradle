@@ -8,7 +8,7 @@ invokeCheckConfig {
             "com/omooo/library/LibraryMain#show(Landroid/content/Context;)V",
     ]
     packageList = [
-            "android/widget/",
+            "com/omooo/library/",
     ]
 }
 //convert2WebpConfig{

@@ -7,4 +7,8 @@ class LibraryMain {
     fun show(context: Context) {
         Toast.makeText(context, "LibraryMain", Toast.LENGTH_SHORT).show()
     }
+
+    fun main(context: Context) {
+        show(context)
+    }
 }
