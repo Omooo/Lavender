@@ -45,6 +45,19 @@ fun <K, V> Map<K, V>.writeToJson(path: String) {
     jsonFile.writeText(JsonOutput.prettyPrint(json), Charsets.UTF_8)
 }
 
+/**
+ * 将 Map 以 Json 文件输出
+ */
+fun <T> List<T>.writeToJson(path: String) {
+    val jsonFile = File(path)
+    if (jsonFile.exists()) {
+        jsonFile.delete()
+    }
+    jsonFile.createNewFile()
+    val json = JsonOutput.toJson(this)
+    jsonFile.writeText(JsonOutput.prettyPrint(json), Charsets.UTF_8)
+}
+
 internal fun writeJson(fileName: String, key: String, value: String) {
     val pathDir = "./reporter"
     runCatching {
