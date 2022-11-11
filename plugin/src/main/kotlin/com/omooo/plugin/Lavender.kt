@@ -8,6 +8,7 @@ import com.android.build.gradle.LibraryExtension
 import com.omooo.plugin.bean.PrintInvokeExtension
 import com.omooo.plugin.ext.Convert2WebpExtension
 import com.omooo.plugin.spi.VariantProcessor
+import com.omooo.plugin.task.ListPermissionTask
 import com.omooo.plugin.transform.CommonClassVisitorFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -38,6 +39,15 @@ class Lavender : Plugin<Project> {
                 it.packageList = invokeExtension.packageList
             }
             variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
+        }
+
+        project.extensions.getByType(AppExtension::class.java).applicationVariants.all { variant ->
+            project.tasks.register(
+                "list${variant.name.capitalize()}Permissions",
+                ListPermissionTask::class.java
+            ) {
+                it.variant = variant
+            }
         }
 
 
