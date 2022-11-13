@@ -10,7 +10,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
-import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.component.local.model.OpaqueComponentArtifactIdentifier
 import java.io.File
@@ -26,7 +26,7 @@ import java.util.regex.Pattern
  */
 internal open class ListPermissionTask : DefaultTask() {
 
-    @Input
+    @get:Internal
     lateinit var variant: BaseVariant
 
     @TaskAction
@@ -52,7 +52,6 @@ internal open class ListPermissionTask : DefaultTask() {
             if (manifest.exists()) {
                 map["app"] = matchPermission(manifest.readText())
             } else {
-                println("App manifest is missing for variant ${variant.name}, Expected path: ${manifest.absolutePath}")
                 getAppModulePermission(map)
             }
         }

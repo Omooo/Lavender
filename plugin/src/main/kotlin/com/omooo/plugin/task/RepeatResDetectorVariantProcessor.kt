@@ -4,6 +4,7 @@ import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.omooo.plugin.spi.VariantProcessor
 import com.google.auto.service.AutoService
+import org.gradle.api.Project
 
 /**
  * Author: Omooo
@@ -14,7 +15,7 @@ import com.google.auto.service.AutoService
  */
 @AutoService(VariantProcessor::class)
 class RepeatResDetectorVariantProcessor : VariantProcessor {
-    override fun process(variant: BaseVariant) {
+    override fun process(project: Project, variant: BaseVariant) {
 //        val variantData = (variant as ApplicationVariantImpl).variantData
 //        val tasks = variantData.scope.globalScope.project.tasks
 //        tasks.findByName("repeatRes") ?: tasks.create(

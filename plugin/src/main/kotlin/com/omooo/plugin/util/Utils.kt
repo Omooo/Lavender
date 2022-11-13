@@ -46,7 +46,7 @@ fun <K, V> Map<K, V>.writeToJson(path: String) {
 }
 
 /**
- * 将 Map 以 Json 文件输出
+ * 将 List 以 Json 文件输出
  */
 fun <T> List<T>.writeToJson(path: String) {
     val jsonFile = File(path)
