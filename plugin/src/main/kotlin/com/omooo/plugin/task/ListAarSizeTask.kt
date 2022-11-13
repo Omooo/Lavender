@@ -14,6 +14,8 @@ import java.io.File
  * Author: Omooo
  * Date: 2022/11/13
  * Desc: 统计依赖的 AAR 大小
+ * Use: ./gradlew listAarSize
+ * Output: projectDir/listAarSize.json
  */
 internal open class ListAarSizeTask : DefaultTask() {
     @get:Internal
