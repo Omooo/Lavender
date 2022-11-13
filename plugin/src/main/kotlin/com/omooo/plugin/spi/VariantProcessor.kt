@@ -1,6 +1,7 @@
 package com.omooo.plugin.spi
 
 import com.android.build.gradle.api.BaseVariant
+import org.gradle.api.Project
 
 /**
  * Author: Omooo
@@ -10,6 +11,6 @@ import com.android.build.gradle.api.BaseVariant
  */
 interface VariantProcessor {
 
-    fun process(variant: BaseVariant)
+    fun process(project: Project, variant: BaseVariant)
 
 }

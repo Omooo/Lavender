@@ -4,12 +4,12 @@ import com.android.build.api.instrumentation.FramesComputationMode
 import com.android.build.api.instrumentation.InstrumentationScope
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.omooo.plugin.bean.PrintInvokeExtension
-import com.omooo.plugin.ext.Convert2WebpExtension
 import com.omooo.plugin.spi.VariantProcessor
-import com.omooo.plugin.task.ListPermissionTask
 import com.omooo.plugin.transform.CommonClassVisitorFactory
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.util.*
@@ -23,8 +23,9 @@ import java.util.*
 class Lavender : Plugin<Project> {
 
     override fun apply(project: Project) {
-
         println("apply plugin: 'Lavender'")
+        project.extensions.findByName("android")
+            ?: throw GradleException("$project is not an Android project.")
 
         val invokeExtension =
             project.extensions.create("invokeCheckConfig", PrintInvokeExtension::class.java)
@@ -41,50 +42,33 @@ class Lavender : Plugin<Project> {
             variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
         }
 
-        project.extensions.getByType(AppExtension::class.java).applicationVariants.all { variant ->
-            project.tasks.register(
-                "list${variant.name.capitalize()}Permissions",
-                ListPermissionTask::class.java
-            ) {
-                it.variant = variant
+        val variantProcessorList =
+            ServiceLoader.load(VariantProcessor::class.java, javaClass.classLoader).toList()
+        if (project.state.executed) {
+            project.registerTask(variantProcessorList)
+        } else {
+            project.afterEvaluate {
+                project.registerTask(variantProcessorList)
             }
         }
+    }
 
-
-        // Extension
-        project.extensions.create("convert2WebpConfig", Convert2WebpExtension::class.java)
-
-        when {
-            project.plugins.hasPlugin("com.android.application") -> project.extensions.getByType(
-                AppExtension::class.java
-            ).let { android ->
-                project.afterEvaluate {
-                    ServiceLoader.load(VariantProcessor::class.java, javaClass.classLoader)
-                        .toList().let { processes ->
-                            android.applicationVariants.forEach { variant ->
-                                processes.forEach {
-                                    it.process(variant)
-                                }
-                            }
-                        }
+    /**
+     * 注册 Task
+     */
+    private fun Project.registerTask(processors: List<VariantProcessor>) {
+        when (val android = project.extensions.getByType(BaseExtension::class.java)) {
+            is AppExtension -> android.applicationVariants.all { variant ->
+                processors.forEach { processor ->
+                    processor.process(project, variant)
                 }
             }
-
-            project.plugins.hasPlugin("com.android.library") -> project.extensions.getByType(
-                LibraryExtension::class.java
-            ).let { android ->
-                project.afterEvaluate {
-                    ServiceLoader.load(VariantProcessor::class.java, javaClass.classLoader)
-                        .toList().let { processes ->
-                            android.libraryVariants.forEach { variant ->
-                                processes.forEach {
-                                    it.process(variant)
-                                }
-                            }
-                        }
-
+            is LibraryExtension -> android.libraryVariants.all { variant ->
+                processors.forEach { processor ->
+                    processor.process(project, variant)
                 }
             }
+            else -> throw GradleException("$project does not have AppExtension or LibraryExtension.")
         }
     }
 
