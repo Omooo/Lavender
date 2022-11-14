@@ -1,10 +1,10 @@
 package com.omooo.plugin.task
 
 import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.omooo.plugin.spi.VariantProcessor
 import com.google.auto.service.AutoService
-import com.omooo.plugin.ext.Convert2WebpExtension
+import com.omooo.plugin.bean.LAVENDER
+import com.omooo.plugin.bean.Convert2WebpExtension
 import org.gradle.api.Project
 
 /**
@@ -18,17 +18,17 @@ import org.gradle.api.Project
 class Convert2WebpVariantProcessor : VariantProcessor {
 
     override fun process(project: Project, variant: BaseVariant) {
-        if (project.extensions.findByType(Convert2WebpExtension::class.java) != null) {
+        if (project.tasks.findByName("convert2Webp") != null) {
             return
         }
-        project.extensions.create("convert2WebpConfig", Convert2WebpExtension::class.java)
-//        val variantData = (variant as ApplicationVariantImpl).variantData
-//        val tasks = variantData.scope.globalScope.project.tasks
-//        val convert2WebpTask = tasks.findByName("convert2Webp") ?: tasks.create(
-//            "convert2Webp",
-//            Convert2WebpTask::class.java
-//        )
-//        val mergeResourcesTask = variant.mergeResourcesProvider.get()
-//        mergeResourcesTask.dependsOn(convert2WebpTask)
+        project.tasks.register("convert2Webp", Convert2WebpTask::class.java) {
+            it.config = project.extensions.create("convert2WebpConfig", Convert2WebpExtension::class.java)
+            it.variant = variant
+            it.group = LAVENDER
+            it.description = "Convert png image to webp"
+        }.also {
+            variant.mergeResourcesProvider.get().dependsOn(it)
+        }
+
     }
 }

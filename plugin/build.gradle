@@ -27,28 +27,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_11
 }
 
-//sourceSets {
-//    main {
-//        groovy {
-//            srcDir '../plugin/src/main/groovy'
-//        }
-//
-//        java {
-//            srcDir "../plugin/src/main/java"
-//        }
-//
-//        kotlin {
-//            srcDir '../plugin/src/main/kotlin'
-//        }
-//
-//        resources {
-//            srcDir '../plugin/src/main/resources'
-//        }
-//    }
-//}
-
-// upload to Local
-
 publishing {
     publications {
         mavenJava(MavenPublication) {

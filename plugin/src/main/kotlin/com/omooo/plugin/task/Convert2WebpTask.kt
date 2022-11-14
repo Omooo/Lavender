@@ -1,83 +1,92 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.AppExtension
-import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.internal.api.BaseVariantImpl
+import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.omooo.plugin.bean.WebpToolBean
-import com.omooo.plugin.ext.Convert2WebpExtension
+import com.omooo.plugin.bean.Convert2WebpExtension
 import com.omooo.plugin.util.ImageUtil
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
 
+/**
+ * Author: Omooo
+ * Date: 2022/11/14
+ * Desc: 转化 png to webp
+ * Use: ./gradlew convert2Webp
+ * Output: projectDir/convert2Webp.json
+ */
 internal open class Convert2WebpTask : DefaultTask() {
 
-    private lateinit var config: Convert2WebpExtension
+    @get:Internal
+    lateinit var config: Convert2WebpExtension
 
+    @get:Internal
+    lateinit var variant: BaseVariant
+
+    @get:Internal
     var bigImageList = ArrayList<String>()
 
+    @get:Internal
     private var oldSize = 0L
+
+    @get:Internal
     private var newSize = 0L
 
     @TaskAction
     fun doAction() {
-        config = project.extensions
-            .findByType(Convert2WebpExtension::class.java) ?: return
-
-        val hasAppPlugin = project.plugins.hasPlugin("com.android.application")
-        val variants = if (hasAppPlugin) {
-            project.extensions.getByType(AppExtension::class.java).applicationVariants
-        } else {
-            project.extensions.getByType(LibraryExtension::class.java).libraryVariants
+        println(
+            """
+                *********************************************
+                ********** -- Convert2WebpTask -- ***********
+                ***** -- projectDir/convert2Webp.json -- ****
+                *********************************************
+            """.trimIndent()
+        )
+        if (variant !is ApplicationVariantImpl) {
+            println("${variant.name} is not an application variant.")
+            return
         }
+//        if (!config.isEnableWhenDebug) {
+//            return
+//        }
+        checkCwebpTools()
+        println("----- Convert2WebpTask run...  -----")
+        val dir = (variant as ApplicationVariantImpl).variantData.allRawAndroidResources.files
+        val cacheList = ArrayList<String>()
+        val imageFileList = ArrayList<File>()
 
-        variants.all { variant ->
+        for (channelDir in dir) {
+            traverseResDir(channelDir, imageFileList, cacheList, object : IBigImage {
+                override fun onBigImage(file: File) {
+                    bigImageList.add(file.absolutePath)
+                }
+            })
+        }
+        checkBigImage()
 
-            variant as BaseVariantImpl
-
-            checkCwebpTools()
-
-            if (!config.enableWhenDebug) {
-                return@all
-            }
-
-            println("----- Convert2WebpTask run...  -----")
-
-            val dir = variant.allRawAndroidResources.files
-            val cacheList = ArrayList<String>()
-            val imageFileList = ArrayList<File>()
-
-            for (channelDir in dir) {
-                traverseResDir(channelDir, imageFileList, cacheList, object : IBigImage {
-                    override fun onBigImage(file: File) {
-                        bigImageList.add(file.absolutePath)
-                    }
-                })
-            }
-            checkBigImage()
-
-            println("Should handle image count: ${imageFileList.size}")
-            var size = 0L
-            for (file in imageFileList) {
+        println("Should handle image count: ${imageFileList.size}")
+        var size = 0L
+        for (file in imageFileList) {
 //                println("--- ${file.absolutePath}")
-                size += file.length()
-            }
-            println("Total Image Size: ${size / 1024}kb")
-            val startTime = System.currentTimeMillis()
-
-            dispatchOptimizeTask(imageFileList)
-
-            println("Before optimize Size: ${oldSize / 1024}kb")
-            println("After optimize Size: ${newSize / 1024}kb")
-            println("Optimize Size: ${(oldSize - newSize) / 1024}kb")
-
-            println("CostTotalTime: ${System.currentTimeMillis() - startTime}ms")
-            println("------------------------------------")
+            size += file.length()
         }
+        println("Total Image Size: ${size / 1024}kb")
+        val startTime = System.currentTimeMillis()
+
+        dispatchOptimizeTask(imageFileList)
+
+        println("Before optimize Size: ${oldSize / 1024}kb")
+        println("After optimize Size: ${newSize / 1024}kb")
+        println("Optimize Size: ${(oldSize - newSize) / 1024}kb")
+
+        println("CostTotalTime: ${System.currentTimeMillis() - startTime}ms")
+        println("------------------------------------")
     }
 
     private fun dispatchOptimizeTask(imageFileList: java.util.ArrayList<File>) {
