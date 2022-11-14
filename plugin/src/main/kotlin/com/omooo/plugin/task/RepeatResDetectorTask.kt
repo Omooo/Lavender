@@ -1,8 +1,13 @@
 package com.omooo.plugin.task
 
+import com.android.build.gradle.api.BaseVariant
+import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.gradle.internal.publishing.AndroidArtifacts.ArtifactType.ANDROID_RES
 import com.omooo.plugin.util.encode
+import com.omooo.plugin.util.getArtifactFiles
 import com.omooo.plugin.util.writeToJson
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
@@ -16,6 +21,9 @@ import java.io.File
  */
 internal open class RepeatResDetectorTask : DefaultTask() {
 
+    @get:Internal
+    lateinit var variant: BaseVariant
+
     @TaskAction
     fun run() {
         println(
@@ -27,32 +35,47 @@ internal open class RepeatResDetectorTask : DefaultTask() {
             """.trimIndent()
         )
 
-        val map = HashMap<String, List<String>>()
+        val resultMap = HashMap<String, ArrayList<String>>()
         val prefix = if (project.properties["all"] != "true") "drawable-" else "drawable"
-        project.projectDir.resolve("src/main/res").listFiles()?.filter {
-            it.name.startsWith(prefix)
-        }?.forEach { dir ->
-            if (dir.isDirectory) {
-                dir.listFiles()?.forEach { file ->
-                    val key = file.readBytes().encode()
-                    val value = arrayListOf<String>()
-                    val list = map[key]
-                    list?.let { it1 -> value.addAll(it1) }
-                    value.add(file.absolutePath)
-                    map[key] = value
+
+        getResAndAssetDirList().plus(project.projectDir.resolve("src/main/res")).forEach { resDir ->
+            resDir.listFiles()?.filter {
+                it.isDirectory && it.name.startsWith(prefix)
+            }?.forEach { drawableDir ->
+                drawableDir.listFiles()?.filter {
+                    !it.isDirectory
+                }?.forEach { file ->
+                    resultMap.getOrDefault(file.readBytes().encode(), arrayListOf()).apply {
+                        add(file.absolutePath)
+                    }.also {
+                        resultMap[file.readBytes().encode()] = it
+                    }
                 }
             }
         }
-        var length: Long = 0
-        map.filterValues { values ->
+
+        var totalSize: Long = 0
+        resultMap.filterValues { values ->
             values.size > 1
         }.apply {
             this.values.forEach {
-                length += File(it[0]).length()
+                totalSize += File(it[0]).length()
             }
-            println("Repeat Res size: ${length / 1000}kb ")
 
+            println("Repeat Res count: ${keys.size}, total size: ${totalSize / 1000}kb")
             this.writeToJson("${project.parent?.projectDir}/repeatRes.json")
         }
+    }
+
+    /**
+     * 获取 res 文件夹列表
+     */
+    private fun getResAndAssetDirList(): List<File> {
+        val v = variant
+        if (v !is ApplicationVariantImpl) {
+            println("${v.name} is not an application variant.")
+            return emptyList()
+        }
+        return v.getArtifactFiles(ANDROID_RES)
     }
 }

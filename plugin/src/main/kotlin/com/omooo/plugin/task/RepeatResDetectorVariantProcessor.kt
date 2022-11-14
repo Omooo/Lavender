@@ -20,6 +20,7 @@ class RepeatResDetectorVariantProcessor : VariantProcessor {
             return
         }
         project.tasks.register("repeatRes", RepeatResDetectorTask::class.java) {
+            it.variant = variant
             it.group = LAVENDER
             it.description = "Check repeat resources in app project"
         }
