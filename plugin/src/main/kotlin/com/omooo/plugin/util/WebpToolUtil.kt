@@ -12,8 +12,7 @@ class WebpToolUtil {
     companion object {
 
         fun cmd(cmd: String, params: String) {
-            val system = System.getProperty("os.name")
-            val cmdStr = when (system) {
+            val cmdStr = when (System.getProperty("os.name")) {
                 "Windows" ->
                     "${WebpToolBean.getToolsDirPath()}/windows/$cmd $params"
                 "Mac OS X" ->

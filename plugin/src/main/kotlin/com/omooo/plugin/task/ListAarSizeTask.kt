@@ -45,7 +45,7 @@ internal open class ListAarSizeTask : DefaultTask() {
             resultMap[artifact.getArtifactName()] = size
         }
 
-        resultMap.toList().sortedBy { (_, value) ->
+        resultMap.toList().sortedByDescending { (_, value) ->
             value
         }.toMap().mapValues {
             "${it.value}kb"
