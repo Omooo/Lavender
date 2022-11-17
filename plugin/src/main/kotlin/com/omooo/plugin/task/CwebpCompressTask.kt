@@ -47,6 +47,10 @@ internal open class CwebpCompressTask : DefaultTask() {
             println("${variant.name} is not an application variant.")
             return
         }
+        if (!config.isEnable) {
+            println("CwebpCompressTask ${variant.name} is not enabled")
+            return
+        }
         if (variant.name.lowercase().contains("debug") && !config.isEnableWhenDebug) {
             println("CwebpCompressTask debug is not enabled")
             return
