@@ -21,10 +21,11 @@ class CwebpCompressVariantProcessor : VariantProcessor {
             "convert${variant.name.capitalize()}Webp",
             CwebpCompressTask::class.java
         ) {
-            it.config = project.extensions.create(
-                "compressWebpConfig",
-                CwebpCompressExtension::class.java
-            )
+            it.config = project.extensions.findByType(CwebpCompressExtension::class.java)
+                ?: project.extensions.create(
+                    "compressWebpConfig",
+                    CwebpCompressExtension::class.java
+                )
             it.variant = variant
             it.group = LAVENDER
             it.description = "Convert png image to webp"

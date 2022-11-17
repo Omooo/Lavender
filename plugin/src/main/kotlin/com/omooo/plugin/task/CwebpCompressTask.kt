@@ -75,8 +75,8 @@ internal open class CwebpCompressTask : DefaultTask() {
                         forEachIndexed { index: Int, triple: Triple<String, Long, Long> ->
                             put(index, JSONObject().apply {
                                 put("file_path", triple.first)
-                                put("uncompress_size", triple.second)
-                                put("compressed_size", triple.third)
+                                put("uncompress_size", "${triple.second}bytes")
+                                put("compressed_size", "${triple.third}bytes")
                             })
                         }
                     }
