@@ -58,6 +58,18 @@ fun <T> List<T>.writeToJson(path: String) {
     jsonFile.writeText(JsonOutput.prettyPrint(json), Charsets.UTF_8)
 }
 
+/**
+ * 将 List 以 Json 文件输出
+ */
+fun JSONObject.writeToJson(path: String) {
+    val jsonFile = File(path)
+    if (jsonFile.exists()) {
+        jsonFile.delete()
+    }
+    jsonFile.createNewFile()
+    jsonFile.writeText(JsonOutput.prettyPrint(this.toString()), Charsets.UTF_8)
+}
+
 internal fun writeJson(fileName: String, key: String, value: String) {
     val pathDir = "./reporter"
     runCatching {

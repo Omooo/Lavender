@@ -3,14 +3,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'com.omooo.lavender'
-invokeCheckConfig {
-    methodList = [
-            "com/omooo/library/LibraryMain#show(Landroid/content/Context;)V",
-    ]
-    packageList = [
-            "com/omooo/library/",
-    ]
-}
+//invokeCheckConfig {
+//    methodList = [
+//            "com/omooo/library/LibraryMain#show(Landroid/content/Context;)V",
+//    ]
+//    packageList = [
+//            "com/omooo/library/",
+//    ]
+//}
 //convert2WebpConfig{
 //    enableWhenDebug false
 //}
