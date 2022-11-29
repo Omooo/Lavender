@@ -8,21 +8,23 @@ import org.gradle.api.Project
 
 /**
  * Author: Omooo
- * Date: 2022/11/13
- * Version: v0.1.0
- * Desc: 注册 [ListAarSizeTask]
+ * Date: 2022/11/17
+ * Version: v0.0.1
+ * Desc: 注册 [ListAssetsTask]
  */
 @AutoService(VariantProcessor::class)
-class ListAarSizeVariantProcessor : VariantProcessor {
+class ListAssetsVariantProcessor : VariantProcessor {
 
     override fun process(project: Project, variant: BaseVariant) {
-        if (project.tasks.findByName("listAarSize") != null) {
+        if (project.tasks.findByName("listAssets") != null) {
             return
         }
-        project.tasks.register("listAarSize", ListAarSizeTask::class.java) {
+        project.tasks.register("listAssets", ListAssetsTask::class.java) {
             it.variant = variant
             it.group = LAVENDER
-            it.description = "List the aar size in app project"
+            it.description = "List all asset files in app project"
+        }.also {
+            variant.mergeAssetsProvider.get().dependsOn(it)
         }
     }
 

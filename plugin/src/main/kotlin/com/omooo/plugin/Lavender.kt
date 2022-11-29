@@ -9,6 +9,7 @@ import com.android.build.gradle.LibraryExtension
 import com.omooo.plugin.bean.PrintInvokeExtension
 import com.omooo.plugin.spi.VariantProcessor
 import com.omooo.plugin.transform.CommonClassVisitorFactory
+import com.omooo.plugin.transform.assets.UnusedAssetsCheckClassVisitorFactory
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -38,6 +39,12 @@ class Lavender : Plugin<Project> {
             ) {
                 it.methodList = invokeExtension.methodList
                 it.packageList = invokeExtension.packageList
+            }
+            variant.instrumentation.transformClassesWith(
+                UnusedAssetsCheckClassVisitorFactory::class.java,
+                InstrumentationScope.ALL
+            ) {
+                it.assetsFilePath = "${project.projectDir.parent}/assets.json"
             }
             variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
         }

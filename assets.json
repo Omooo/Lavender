@@ -1,0 +1,18 @@
+{
+    ":library": [
+        {
+            "fileName": "/Users/omooo.song/AndroidStudioProjects/Lavender/library/build/intermediates/library_assets/debug/out",
+            "size": 0
+        }
+    ],
+    "app": [
+        {
+            "fileName": "unused2.json",
+            "size": 4
+        },
+        {
+            "fileName": "unused.json",
+            "size": 4
+        }
+    ]
+}
