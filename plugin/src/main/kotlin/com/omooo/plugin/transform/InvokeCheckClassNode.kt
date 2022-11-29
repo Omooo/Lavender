@@ -16,6 +16,9 @@ internal class InvokeCheckClassNode(
 ) : BaseClassNode(classVisitor) {
 
     override fun transform() {
+        if (params.methodList.isEmpty() && params.packageList.isEmpty()) {
+            return
+        }
         methods.forEach { methodNode ->
             methodNode.instructions.filterIsInstance<MethodInsnNode>().forEach { insnNode ->
                 params.packageList.filter {

@@ -11,5 +11,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         LibraryMain().show(this)
+
+        assets.open("unused.json").close()
     }
 }
