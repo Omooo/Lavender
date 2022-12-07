@@ -11,8 +11,8 @@ apply plugin: 'com.omooo.lavender'
 //            "com/omooo/library/",
 //    ]
 //}
-//convert2WebpConfig{
-//    enableWhenDebug false
+//compressWebpConfig {
+//    enable true
 //}
 
 android {

@@ -58,7 +58,7 @@ internal open class CwebpCompressTask : DefaultTask() {
         if (config.onlyPrintImages) {
             getTotalImageFiles().map {
                 it.absolutePath
-            }.writeToJson("allImagesList${System.currentTimeMillis()}.json")
+            }.writeToJson("allImagesList-${variant.name.capitalize()}.json")
             return
         }
 
@@ -115,7 +115,7 @@ internal open class CwebpCompressTask : DefaultTask() {
             }
         }
 
-        processResult.writeToJson("${project.parent?.projectDir}/compressWebp-${System.currentTimeMillis()}.json")
+        processResult.writeToJson("${project.parent?.projectDir}/compressWebp-${variant.name.capitalize()}.json")
     }
 
     /**
