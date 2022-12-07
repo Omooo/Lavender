@@ -40,23 +40,26 @@ internal fun File.isImageFile(): Boolean {
 }
 
 /**
- * 图片转化为 webp 格式
+ * 图片压缩
  *
- * @return Triple<文件路径, 原文件大小, 转化后文件大小>
+ * @return Triple<文件路径, 原文件大小, 压缩后文件大小>
  */
-internal fun File.imageConvert2Webp(): Triple<String, Long, Long> {
+internal fun File.compressImage(): Triple<String, Long, Long> {
     val sourceImageSize = length()
+    if (name.endsWith(".webp")) {
+        WebpToolUtil.cmd("cwebp", "$path -o $path -m 6 -quiet")
+        return Triple(absolutePath, sourceImageSize, length())
+    }
     val webpFile = File("${path.substring(0, path.lastIndexOf("."))}.webp")
     WebpToolUtil.cmd("cwebp", "$path -o ${webpFile.path} -m 6 -quiet")
     if (webpFile.length() < length()) {
-        if (exists()) {
-            delete()
+        if (exists() && delete()) {
+            return Triple(webpFile.absolutePath, sourceImageSize, webpFile.length())
         }
-        return Triple(webpFile.absolutePath, sourceImageSize, webpFile.length())
     }
     // 转化后的 webp 文件还比原文件大，则保留原文件
     val webpFileSize = webpFile.length()
-    if (webpFile.exists()) {
+    if (webpFile.exists() && this.exists()) {
         webpFile.delete()
     }
     return Triple(absolutePath, sourceImageSize, webpFileSize)

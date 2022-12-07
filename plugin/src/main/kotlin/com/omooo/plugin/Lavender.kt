@@ -6,6 +6,7 @@ import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
+import com.omooo.plugin.bean.CwebpCompressExtension
 import com.omooo.plugin.bean.PrintInvokeExtension
 import com.omooo.plugin.spi.VariantProcessor
 import com.omooo.plugin.transform.CommonClassVisitorFactory
@@ -30,6 +31,8 @@ class Lavender : Plugin<Project> {
 
         val invokeExtension =
             project.extensions.create("invokeCheckConfig", PrintInvokeExtension::class.java)
+
+        project.extensions.create("compressWebpConfig", CwebpCompressExtension::class.java)
 
         val androidExtension = project.extensions.getByType(AndroidComponentsExtension::class.java)
         androidExtension.onVariants { variant ->

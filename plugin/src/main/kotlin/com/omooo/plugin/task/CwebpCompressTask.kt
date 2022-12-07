@@ -47,12 +47,18 @@ internal open class CwebpCompressTask : DefaultTask() {
             println("${variant.name} is not an application variant.")
             return
         }
-        if (!config.isEnable) {
+        if (!config.enable) {
             println("CwebpCompressTask ${variant.name} is not enabled")
             return
         }
-        if (variant.name.lowercase().contains("debug") && !config.isEnableWhenDebug) {
+        if (variant.name.lowercase().contains("debug") && !config.enableWhenDebug) {
             println("CwebpCompressTask debug is not enabled")
+            return
+        }
+        if (config.onlyPrintImages) {
+            getTotalImageFiles().map {
+                it.absolutePath
+            }.writeToJson("allImagesList${System.currentTimeMillis()}.json")
             return
         }
 
@@ -100,11 +106,16 @@ internal open class CwebpCompressTask : DefaultTask() {
                         put("total_reduce_size", "${reduceSize / 1024}kb")
                         put("spend_time", "${System.currentTimeMillis() - startTime}ms")
                     })
+                    println("""
+                        Total reduce size: ${reduceSize / 1024}kb,
+                        Compressed image count: ${l.size},
+                        Spend time: ${System.currentTimeMillis() - startTime}ms.
+                    """.trimIndent())
                 }
             }
         }
 
-        processResult.writeToJson("${project.parent?.projectDir}/compressWebp.json")
+        processResult.writeToJson("${project.parent?.projectDir}/compressWebp-${System.currentTimeMillis()}.json")
     }
 
     /**
@@ -114,10 +125,23 @@ internal open class CwebpCompressTask : DefaultTask() {
         return (variant as ApplicationVariantImpl).variantData.allRawAndroidResources.files.flatMap {
             it.getAllChildren()
         }.filter {
-            it.isImageFile() && !config.whiteList.contains(it.name)
+            it.filterNeedExecute()
         }.sortedByDescending {
             it.length()
         }
+    }
+
+    /**
+     * 过滤需要处理的文件
+     */
+    private fun File.filterNeedExecute(): Boolean {
+        if (config.whiteList.contains(name)) {
+            return false
+        }
+        if (config.enableFilterWebp && name.endsWith(".webp")) {
+            return false
+        }
+        return isImageFile()
     }
 
     /**
@@ -130,12 +154,11 @@ internal open class CwebpCompressTask : DefaultTask() {
         if (imageFileList.isEmpty()) {
             return emptyList()
         }
-        // TODO: optimize code 
         val resultList = mutableListOf<Triple<String, Long, Long>>()
         val coreNum = Runtime.getRuntime().availableProcessors()
         if (imageFileList.size < coreNum) {
             imageFileList.forEach {
-                resultList.add(it.imageConvert2Webp())
+                resultList.add(it.compressImage())
             }
         } else {
             val results = ArrayList<Future<List<Triple<String, Long, Long>>>>()
@@ -147,7 +170,7 @@ internal open class CwebpCompressTask : DefaultTask() {
                 results.add(pool.submit(Callable {
                     val result = mutableListOf<Triple<String, Long, Long>>()
                     for (index in from..to) {
-                        result.add(imageFileList[index].imageConvert2Webp())
+                        result.add(imageFileList[index].compressImage())
                     }
                     result
                 }))
