@@ -9,13 +9,19 @@ package com.omooo.plugin.bean
 open class CwebpCompressExtension {
 
     /** 开启该任务，默认不开启 */
-    var isEnable = false
+    var enable = false
 
     /** debug 是否开启该任务，默认不开启 */
-    var isEnableWhenDebug = false
+    var enableWhenDebug = false
 
     /** 白名单 */
     var whiteList = arrayOf("ic_launcher.png", "ic_launcher_round.png")
+
+    /** 过滤掉 webp 图片 */
+    var enableFilterWebp = true
+
+    /** 只输出图片 */
+    var onlyPrintImages = true
 
     /** cwebp 工具的目录 */
     var cwebpToolsDir = ""
