@@ -179,7 +179,11 @@ internal open class CwebpCompressTask : DefaultTask() {
                 try {
                     resultList.addAll(f.get())
                 } catch (e: Exception) {
-                    println("Lavender CwebpCompressTask#dispatchOptimizeTask() execute wrong.")
+                    println("""
+                        Lavender CwebpCompressTask#dispatchOptimizeTask() execute wrong:
+                            exception: ${e.message}
+                            stacktrace: ${e.printStackTrace()}
+                    """.trimIndent())
                 }
             }
         }
@@ -197,6 +201,10 @@ internal open class CwebpCompressTask : DefaultTask() {
         }
         if (!WebpToolBean.getToolsDir().exists()) {
             throw GradleException("Lavender 'compressWebp' task need cwebp tool.")
+        }
+        File(WebpToolBean.getToolsDirPath()).getAllChildren().forEach {
+            // 获取文件读写权限
+            Runtime.getRuntime().exec("chmod 755 ${it.absolutePath}").waitFor()
         }
     }
 
