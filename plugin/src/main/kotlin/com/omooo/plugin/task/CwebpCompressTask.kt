@@ -11,8 +11,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -64,58 +62,98 @@ internal open class CwebpCompressTask : DefaultTask() {
 
         checkCwebpTools()
 
-        val processResult = JSONObject()
+        val processResult = LinkedHashMap<String, Any>()
         getTotalImageFiles().apply {
             // 1. 先统计待处理的图片数量以及总计大小
-            processResult.put("before_process", JSONObject().apply {
-                val totalSize = map { it.length() }.reduce { element, sum -> element + sum }
-                put("total_image_count", size)
+            val totalSize = map { it.length() }.reduce { element, sum -> element + sum }
+            val totalImageCount = size
+            processResult["before_process"] = LinkedHashMap<String, Any>().apply {
+                put("total_image_count", totalImageCount)
                 put("total_size", "${totalSize / 1024}kb")
-            })
+            }
 
             // 2. 处理图片
             val startTime = System.currentTimeMillis()
             dispatchOptimizeTask(this).groupBy {
                 it.second > it.third
             }.forEach { (compressed, l) ->
-                l.sortedByDescending {
-                    if (compressed) it.third else it.second
-                }.apply {
-                    val jsonArray = JSONArray().apply {
-                        forEachIndexed { index: Int, triple: Triple<String, Long, Long> ->
-                            put(index, JSONObject().apply {
-                                put("file_path", triple.first)
-                                put("uncompress_size", "${triple.second}bytes")
-                                put("compressed_size", "${triple.third}bytes")
-                            })
-                        }
-                    }
-                    // 3. 写入未被处理和已处理的图片列表
-                    processResult.put(
-                        if (compressed) "compressed_list" else "uncompressed_list",
-                        jsonArray
-                    )
-                }
-                // 4. 写入最终减少大小和耗时
+                // 3. 写入最终减少大小和耗时
                 if (compressed) {
-                    val reduceSize =
-                        l.map { it.second - it.third }.reduce { element, sum -> element + sum }
-                    processResult.put("after_process", JSONObject().apply {
+                    val reduceSize = l.map {
+                        it.second - it.third
+                    }.reduce { element, sum -> element + sum }
+                    processResult["after_process"] = LinkedHashMap<String, Any>().apply {
                         put("compressed_image_count", l.size)
-                        put("uncompressed_image_count", size - l.size)
+                        put("uncompress_image_count", totalImageCount - l.size)
                         put("total_reduce_size", "${reduceSize / 1024}kb")
                         put("spend_time", "${System.currentTimeMillis() - startTime}ms")
-                    })
-                    println("""
+                    }
+                    println(
+                        """
                         Total reduce size: ${reduceSize / 1024}kb,
                         Compressed image count: ${l.size},
                         Spend time: ${System.currentTimeMillis() - startTime}ms.
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 }
+                // 4. 写入未被处理和已处理的图片列表
+                processResult[if (compressed) "compressed_list" else "uncompress_list"] = l.format(compressed)
             }
         }
 
         processResult.writeToJson("${project.parent?.projectDir}/compressWebp-${variant.name.capitalize()}.json")
+    }
+
+    /**
+     * 分类并且格式化输出
+     *
+     * @param compressed 是否是压缩列表，true: 是
+     */
+    private fun List<Triple<String, Long, Long>>.format(compressed: Boolean): LinkedHashMap<String, Any> {
+        val map = LinkedHashMap<String, Any>()
+        groupBy {
+            it.first.getAarNameFromPath()
+        }.forEach { (t, u) ->
+            map[t] = LinkedHashMap<String, Any>().apply {
+                put("image_count", u.size)
+                if (compressed) {
+                    put("reduce_size", u.map {
+                        it.second - it.third
+                    }.reduce { element, sum -> element + sum })
+                }
+                put("image_list", u.toExplainText())
+            }
+        }
+        return map
+    }
+
+    /**
+     * 根据源文件大小排序，输出可读性更好的文本
+     */
+    private fun List<Triple<String, Long, Long>>.toExplainText(): List<LinkedHashMap<String, Any>> {
+        return sortedByDescending {
+            it.second
+        }.map {
+            LinkedHashMap<String, Any>().apply {
+                put("file_name", File(it.first).name)
+                put("source_size", it.second)
+                put("after_compressed_size", it.third)
+                put("file_absolute_path", it.first)
+            }
+        }
+    }
+
+    /**
+     * 从文件路径中获取 AAR 名称
+     *
+     * @return ag: appcompat-1.3.0、core-1.7.0
+     */
+    private fun String.getAarNameFromPath(): String {
+        val prefix = "transformed/"
+        if (!contains(prefix)) {
+            return project.name
+        }
+        return substring(indexOf(prefix) + prefix.length, lastIndexOf("/res/"))
     }
 
     /**
@@ -179,11 +217,13 @@ internal open class CwebpCompressTask : DefaultTask() {
                 try {
                     resultList.addAll(f.get())
                 } catch (e: Exception) {
-                    println("""
+                    println(
+                        """
                         Lavender CwebpCompressTask#dispatchOptimizeTask() execute wrong:
                             exception: ${e.message}
                             stacktrace: ${e.printStackTrace()}
-                    """.trimIndent())
+                    """.trimIndent()
+                    )
                 }
             }
         }
