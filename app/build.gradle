@@ -11,9 +11,9 @@ apply plugin: 'com.omooo.lavender'
 //            "com/omooo/library/",
 //    ]
 //}
-//compressWebpConfig {
-//    enable true
-//}
+compressWebpConfig {
+    enable true
+}
 
 android {
     compileSdkVersion 33

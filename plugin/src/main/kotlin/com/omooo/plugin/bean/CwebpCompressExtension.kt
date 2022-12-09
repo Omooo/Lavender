@@ -21,7 +21,7 @@ open class CwebpCompressExtension {
     var enableFilterWebp = true
 
     /** 只输出图片 */
-    var onlyPrintImages = true
+    var onlyPrintImages = false
 
     /** cwebp 工具的目录 */
     var cwebpToolsDir = ""
