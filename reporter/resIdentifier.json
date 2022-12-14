@@ -1,0 +1,11 @@
+{
+    "com/omooo/plugin/MainActivity#onCreate(Landroid/os/Bundle;)V": [
+        "drawable",
+        "format(format, *args)",
+        "demo",
+        "ic_%s",
+        "",
+        "i",
+        "%so"
+    ]
+}

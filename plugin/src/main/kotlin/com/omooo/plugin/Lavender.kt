@@ -10,7 +10,6 @@ import com.omooo.plugin.bean.CwebpCompressExtension
 import com.omooo.plugin.bean.PrintInvokeExtension
 import com.omooo.plugin.spi.VariantProcessor
 import com.omooo.plugin.transform.CommonClassVisitorFactory
-import com.omooo.plugin.transform.assets.UnusedAssetsCheckClassVisitorFactory
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -36,19 +35,27 @@ class Lavender : Plugin<Project> {
 
         val androidExtension = project.extensions.getByType(AndroidComponentsExtension::class.java)
         androidExtension.onVariants { variant ->
-            variant.instrumentation.transformClassesWith(
-                CommonClassVisitorFactory::class.java,
-                InstrumentationScope.ALL
+            if (invokeExtension.methodList.isNotEmpty()
+                || invokeExtension.packageList.isNotEmpty()
             ) {
-                it.methodList = invokeExtension.methodList
-                it.packageList = invokeExtension.packageList
+                variant.instrumentation.transformClassesWith(
+                    CommonClassVisitorFactory::class.java,
+                    InstrumentationScope.ALL
+                ) {
+                    it.methodList = invokeExtension.methodList
+                    it.packageList = invokeExtension.packageList
+                }
             }
-            variant.instrumentation.transformClassesWith(
-                UnusedAssetsCheckClassVisitorFactory::class.java,
-                InstrumentationScope.ALL
-            ) {
-                it.assetsFilePath = "${project.projectDir.parent}/assets.json"
-            }
+//            variant.instrumentation.transformClassesWith(
+//                UnusedAssetsCheckClassVisitorFactory::class.java,
+//                InstrumentationScope.ALL
+//            ) {
+//                it.assetsFilePath = "${project.projectDir.parent}/assets.json"
+//            }
+//            variant.instrumentation.transformClassesWith(
+//                IdentifierCheckCvFactory::class.java,
+//                InstrumentationScope.ALL
+//            ) {}
             variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
         }
 
