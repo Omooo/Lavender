@@ -5,15 +5,15 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.omooo.lavender'
 //invokeCheckConfig {
 //    methodList = [
-//            "com/omooo/library/LibraryMain#show(Landroid/content/Context;)V",
+//            "android/content/res/Resources#getIdentifier(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
 //    ]
 //    packageList = [
 //            "com/omooo/library/",
 //    ]
 //}
-compressWebpConfig {
-    enable true
-}
+//compressWebpConfig {
+//    enable true
+//}
 
 android {
     compileSdkVersion 33
