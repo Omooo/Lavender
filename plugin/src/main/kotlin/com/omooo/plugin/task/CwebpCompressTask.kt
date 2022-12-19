@@ -112,7 +112,7 @@ internal open class CwebpCompressTask : DefaultTask() {
     private fun List<Triple<String, Long, Long>>.format(compressed: Boolean): LinkedHashMap<String, Any> {
         val map = LinkedHashMap<String, Any>()
         groupBy {
-            it.first.getAarNameFromPath()
+            it.first.getAarNameFromPath(project.name)
         }.forEach { (t, u) ->
             map[t] = LinkedHashMap<String, Any>().apply {
                 put("image_count", u.size)
@@ -141,19 +141,6 @@ internal open class CwebpCompressTask : DefaultTask() {
                 put("file_absolute_path", it.first)
             }
         }
-    }
-
-    /**
-     * 从文件路径中获取 AAR 名称
-     *
-     * @return ag: appcompat-1.3.0、core-1.7.0
-     */
-    private fun String.getAarNameFromPath(): String {
-        val prefix = "transformed/"
-        if (!contains(prefix)) {
-            return project.name
-        }
-        return substring(indexOf(prefix) + prefix.length, lastIndexOf("/res/"))
     }
 
     /**
