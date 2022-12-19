@@ -1,6 +1,9 @@
 package com.omooo.plugin.util
 
 import java.io.File
+import java.nio.file.Files
+import kotlin.io.path.isRegularFile
+import kotlin.streams.toList
 
 /**
  * Author: Omooo
@@ -9,21 +12,18 @@ import java.io.File
  */
 
 /**
- * 获取当前文件夹下所有文件
+ * 获取当前文件夹下所有子文件（不包含文件夹）
  */
 internal fun File.getAllChildren(): List<File> {
-    if (!isDirectory) {
-        return listOf(this)
-    }
-    val list = arrayListOf<File>()
-    listFiles()?.forEach { file ->
-        if (file.isDirectory) {
-            list.addAll(file.getAllChildren())
-        } else {
-            list.add(file)
-        }
-    }
-    return list
+    return takeIf {
+        exists()
+    }?.run {
+        Files.walk(this.toPath()).filter {
+            it.isRegularFile()
+        }.map {
+            it.toFile()
+        }.toList()
+    } ?: emptyList()
 }
 
 /**
@@ -63,4 +63,17 @@ internal fun File.compressImage(): Triple<String, Long, Long> {
         webpFile.delete()
     }
     return Triple(absolutePath, sourceImageSize, webpFileSize)
+}
+
+/**
+ * 从文件绝对路径中获取 AAR 名称
+ *
+ * @return ag: appcompat-1.3.0、core-1.7.0
+ */
+internal fun String.getAarNameFromPath(default: String = "unknown"): String {
+    val prefix = "transformed/"
+    if (!contains(prefix)) {
+        return default
+    }
+    return substring(indexOf(prefix) + prefix.length, lastIndexOf("/res/"))
 }
