@@ -10,6 +10,7 @@ import com.omooo.plugin.bean.CwebpCompressExtension
 import com.omooo.plugin.bean.PrintInvokeExtension
 import com.omooo.plugin.spi.VariantProcessor
 import com.omooo.plugin.transform.CommonClassVisitorFactory
+import com.omooo.plugin.transform.systrace.SystraceCvFactory
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -46,6 +47,10 @@ class Lavender : Plugin<Project> {
                     it.packageList = invokeExtension.packageList
                 }
             }
+            variant.instrumentation.transformClassesWith(
+                SystraceCvFactory::class.java,
+                InstrumentationScope.ALL
+            ) {}
 //            variant.instrumentation.transformClassesWith(
 //                UnusedAssetsCheckClassVisitorFactory::class.java,
 //                InstrumentationScope.ALL
@@ -56,7 +61,7 @@ class Lavender : Plugin<Project> {
 //                IdentifierCheckCvFactory::class.java,
 //                InstrumentationScope.ALL
 //            ) {}
-            variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COPY_FRAMES)
+            variant.instrumentation.setAsmFramesComputationMode(FramesComputationMode.COMPUTE_FRAMES_FOR_ALL_CLASSES)
         }
 
         val variantProcessorList =
