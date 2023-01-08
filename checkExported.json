@@ -1,0 +1,6 @@
+{
+    "app": [
+        "com.omooo.plugin.MainActivity",
+        ".DemoActivity"
+    ]
+}

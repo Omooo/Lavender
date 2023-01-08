@@ -39,17 +39,17 @@ class ListUnusedResVariantProcessor : VariantProcessor {
             it.get().mustRunAfter(project.tasks.named("assembleRelease").get())
         }
 
-        val repackTask = project.tasks.register("repack", RepackTask::class.java) {
-            it.variant = variant
-        }
-        project.tasks.named("process${variant.name.capitalize()}Resources").apply {
-            repackTask.get().mustRunAfter(this.get())
-            this.get().finalizedBy(repackTask)
-        }
-        project.tasks.named("shrink${variant.name.capitalize()}Res").apply {
-            this.get().dependsOn(repackTask)
-            this.get().mustRunAfter(repackTask)
-        }
+//        val repackTask = project.tasks.register("repack", RepackTask::class.java) {
+//            it.variant = variant
+//        }
+//        project.tasks.named("process${variant.name.capitalize()}Resources").apply {
+//            repackTask.get().mustRunAfter(this.get())
+//            this.get().finalizedBy(repackTask)
+//        }
+//        project.tasks.named("shrink${variant.name.capitalize()}Res").apply {
+//            this.get().dependsOn(repackTask)
+//            this.get().mustRunAfter(repackTask)
+//        }
 
     }
 
