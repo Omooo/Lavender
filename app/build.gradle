@@ -5,10 +5,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.omooo.lavender'
 //invokeCheckConfig {
 //    methodList = [
-//            "android/content/res/Resources#getIdentifier(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)I",
+//            "android.widget.Toast#makeText",
+//            "android.widget.Toast",
+//            "android.widget.Toast#show()V",
 //    ]
 //    packageList = [
-//            "com/omooo/library/",
+//            "com.omooo.library",
 //    ]
 //}
 //compressWebpConfig {

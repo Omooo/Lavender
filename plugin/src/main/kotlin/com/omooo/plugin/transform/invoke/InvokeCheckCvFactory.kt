@@ -1,4 +1,4 @@
-package com.omooo.plugin.transform
+package com.omooo.plugin.transform.invoke
 
 import com.android.build.api.instrumentation.*
 import com.omooo.plugin.util.isRClass
@@ -10,7 +10,7 @@ import org.objectweb.asm.ClassVisitor
  * Date: 2022/11/5
  * Desc: 通用 ClassVisitorFactory
  */
-abstract class CommonClassVisitorFactory : AsmClassVisitorFactory<CheckInvokeParams> {
+abstract class InvokeCheckCvFactory : AsmClassVisitorFactory<InvokeCheckParams> {
 
     override fun createClassVisitor(
         classContext: ClassContext,
