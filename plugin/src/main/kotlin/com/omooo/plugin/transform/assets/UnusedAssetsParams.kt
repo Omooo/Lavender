@@ -1,7 +1,6 @@
 package com.omooo.plugin.transform.assets
 
 import com.android.build.api.instrumentation.InstrumentationParameters
-import com.omooo.plugin.bean.PrintInvokeExtension
 import org.gradle.api.tasks.Input
 
 /**

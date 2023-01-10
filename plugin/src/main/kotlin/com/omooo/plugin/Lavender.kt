@@ -7,10 +7,11 @@ import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.omooo.plugin.bean.CwebpCompressExtension
-import com.omooo.plugin.bean.PrintInvokeExtension
+import com.omooo.plugin.bean.InvokeCheckExtension
 import com.omooo.plugin.spi.VariantProcessor
-import com.omooo.plugin.transform.CommonClassVisitorFactory
+import com.omooo.plugin.transform.invoke.InvokeCheckCvFactory
 import com.omooo.plugin.transform.systrace.SystraceCvFactory
+import com.omooo.plugin.util.TransformReporter
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -30,21 +31,20 @@ class Lavender : Plugin<Project> {
             ?: throw GradleException("$project is not an Android project.")
 
         val invokeExtension =
-            project.extensions.create("invokeCheckConfig", PrintInvokeExtension::class.java)
+            project.extensions.create("invokeCheckConfig", InvokeCheckExtension::class.java)
 
         project.extensions.create("compressWebpConfig", CwebpCompressExtension::class.java)
 
+        TransformReporter.deleteTransformReporterDir()
         val androidExtension = project.extensions.getByType(AndroidComponentsExtension::class.java)
         androidExtension.onVariants { variant ->
-            if (invokeExtension.methodList.isNotEmpty()
-                || invokeExtension.packageList.isNotEmpty()
-            ) {
+            if (invokeExtension.enable()) {
                 variant.instrumentation.transformClassesWith(
-                    CommonClassVisitorFactory::class.java,
+                    InvokeCheckCvFactory::class.java,
                     InstrumentationScope.ALL
                 ) {
-                    it.methodList = invokeExtension.methodList
-                    it.packageList = invokeExtension.packageList
+                    it.methodList = invokeExtension.getMethodList()
+                    it.packageList = invokeExtension.getPackageList()
                 }
             }
             variant.instrumentation.transformClassesWith(

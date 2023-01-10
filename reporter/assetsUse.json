@@ -1,5 +1,0 @@
-{
-    "unused.json": [
-        "com/omooo/plugin/MainActivity#onCreate(Landroid/os/Bundle;)V"
-    ]
-}
