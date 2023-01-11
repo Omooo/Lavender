@@ -40,9 +40,6 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
             return
         }
         val referencedStrings = getReferencedStrings()
-        referencedStrings.forEach {
-            println("referencing: $it")
-        }
         if (referencedStrings.isEmpty()) {
             println("Not support shrinkResources shrinkMode is strict.")
             return
