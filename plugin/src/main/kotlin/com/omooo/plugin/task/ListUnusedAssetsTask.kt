@@ -48,7 +48,12 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
         var reduceSize = 0L
         getTotalAssets().forEach { entry ->
             entry.value.filterNot { assetFile ->
-                referencedStrings.contains(assetFile.fileName)
+                // 当引用字符串长度超过 40 时会被截取
+                // from: AGP 7.0 ResourceShrinkerModel#158
+                val name = assetFile.fileName.let {
+                    if (it.length > 40) "${it.substring(0, 37)}..." else it
+                }
+                referencedStrings.contains(name)
             }.takeIf { list ->
                 list.isNotEmpty()
             }?.run {
@@ -60,7 +65,7 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
         result.takeIf {
             it.isNotEmpty()
         }?.apply {
-            println("Total reduce size: $reduceSize")
+            println("Total reduce size: $reduceSize bytes.")
             result.writeToJson("${project.parent?.projectDir}/unusedAssets.json")
         } ?: println("Unused assets is empty.")
     }
@@ -80,7 +85,13 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
                 .sortedByDescending { file ->
                     file.length()
                 }.map {
-                    AssetFile(it.absolutePath.substringAfterLast("out/"), it.length())
+                    AssetFile(
+                        it.absolutePath.substringAfterLast(
+                            "out/",
+                            it.absolutePath.substringAfterLast("assets/")
+                        ),
+                        it.length()
+                    )
                 }
         }.toMutableMap().also { map ->
             project.projectDir.resolve("src/main/assets").takeIf {
