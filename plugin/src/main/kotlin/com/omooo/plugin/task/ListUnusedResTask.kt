@@ -48,9 +48,15 @@ internal open class ListUnusedResTask : DefaultTask() {
             it.isNotEmpty()
         }?.groupBy {
             resNameMap.getOrDefault(it.substringAfterLast("/"), "unknown")
-        }?.also {
-            it.toSortedMap().writeToJson("${project.parent?.projectDir}/unusedRes.json")
-        } ?: println("Unused resource is empty.")
+        }?.also { map ->
+            val totalCount = map.values.map { it.size }.reduce { acc, i -> acc + i }
+            println("Total unused resources count: $totalCount")
+            map.toSortedMap().writeToJson("${project.parent?.projectDir}/unusedRes.json")
+        } ?: println("""
+            Unused resource is empty.
+            May be resource shrinking did not work.
+            Please try use './gradlew listUnusedRes -PstrictMode' instead.
+        """.trimIndent())
     }
 
     /**
