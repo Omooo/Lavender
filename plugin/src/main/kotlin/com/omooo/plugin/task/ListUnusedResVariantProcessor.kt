@@ -7,6 +7,7 @@ import com.google.auto.service.AutoService
 import com.omooo.plugin.bean.LAVENDER
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.UnknownTaskException
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -20,23 +21,29 @@ import java.io.File
 class ListUnusedResVariantProcessor : VariantProcessor {
 
     override fun process(project: Project, variant: BaseVariant) {
-        if (variant.name.lowercase().contains("debug")) {
+        if (variant.name.toLowerCase().contains("debug")) {
             return
         }
-        if (project.tasks.findByName("listUnusedRes") != null) {
-            return
+        val listUnusedResTask = try {
+            project.tasks.named("listUnusedRes")
+        } catch (e: UnknownTaskException) {
+            project.tasks.register("listUnusedRes") {
+                it.group = LAVENDER
+                it.description = "List unused res in app project"
+            }
         }
-        project.tasks.register("listUnusedRes", ListUnusedResTask::class.java) {
+        project.tasks.register("listUnusedResFor${variant.name.capitalize()}", ListUnusedResTask::class.java) {
             it.variant = variant
             it.group = LAVENDER
-            it.description = "List unused res in app project"
+            it.description = "List unused res for ${variant.name} in app project"
         }.also {
+            listUnusedResTask.dependsOn(it)
             it.dependsOn(project.tasks.named("assembleRelease"))
             it.get().mustRunAfter(project.tasks.named("assembleRelease").get())
         }
 
         if (project.properties.containsKey("strictMode")) {
-            project.tasks.register("strictTaskInternal", StrictTask::class.java) {
+            project.tasks.register("strictTaskInternalFor${variant.name.capitalize()}", StrictTask::class.java) {
                 it.variant = variant
             }.also {
                 project.tasks.named("shrink${variant.name.capitalize()}Res").apply {
@@ -60,9 +67,10 @@ internal open class StrictTask : DefaultTask() {
 
     @TaskAction
     fun run() {
-        val resDir = File("${project.buildDir.absolutePath}/intermediates/merged-not-compiled-resources/${variant.name}/")
+        val resDir = File("${project.buildDir.absolutePath}/intermediates/merged-not-compiled-resources/${variant.flavorName}/${variant.buildType.name}")
         if (!resDir.exists() && !resDir.isDirectory) {
-            project.logger.info("merged-not-compiled-resources/${variant.name} dir is not exists.")
+            println("merged-not-compiled-resources/${variant.flavorName}/${variant.buildType.name} dir is not exists.")
+            return
         }
         File("$resDir/xml").apply {
             if (!exists()) {
