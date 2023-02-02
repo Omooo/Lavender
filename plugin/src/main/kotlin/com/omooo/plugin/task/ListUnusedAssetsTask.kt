@@ -3,6 +3,9 @@ package com.omooo.plugin.task
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import com.omooo.plugin.reporter.common.AarFile
+import com.omooo.plugin.reporter.common.AppFile
+import com.omooo.plugin.reporter.common.Ownership
 import com.omooo.plugin.task.ListAssetsTask.AssetFile
 import com.omooo.plugin.util.getAllChildren
 import com.omooo.plugin.util.getArtifactName
@@ -44,7 +47,8 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
             println("Not support shrinkResources shrinkMode is strict.")
             return
         }
-        val result = mutableMapOf<String, List<String>>()
+        val result = mutableListOf<AarFile>()
+        val ownerMap = Ownership().getOwnerMap()
         var reduceSize = 0L
         getTotalAssets().forEach { entry ->
             entry.value.filterNot { assetFile ->
@@ -57,8 +61,12 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
             }.takeIf { list ->
                 list.isNotEmpty()
             }?.run {
-                result[entry.key] = this.map { it.fileName }
-                reduceSize += this.map { it.size }.reduce { acc, l -> acc + l }
+                val s = this.map { it.size }.reduce { acc, l -> acc + l }
+                reduceSize += s
+                val artifactId = entry.key.substringBeforeLast(":").substringAfter(":")
+                result += AarFile(entry.key, s, ownerMap.getOrDefault(artifactId, "unknown"), this.map {
+                    AppFile(it.fileName, it.size)
+                })
             }
         }
         // 写入结果

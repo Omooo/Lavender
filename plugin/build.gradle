@@ -22,6 +22,8 @@ dependencies {
     implementation "org.ow2.asm:asm-tree:9.4"
     implementation "org.ow2.asm:asm-util:9.4"
     implementation "org.ow2.asm:asm-commons:9.4"
+
+    implementation "org.yaml:snakeyaml:1.30"
 }
 
 java {
