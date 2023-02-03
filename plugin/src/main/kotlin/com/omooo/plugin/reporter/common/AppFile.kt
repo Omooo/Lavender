@@ -6,6 +6,7 @@ package com.omooo.plugin.reporter.common
  * Desc:
  */
 
+@kotlinx.serialization.Serializable
 internal data class AppFile(
     val name: String,
     val size: Long,

@@ -3,6 +3,8 @@ package com.omooo.plugin.task
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import com.omooo.plugin.bean.LAVENDER
+import com.omooo.plugin.reporter.AppReporter
 import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.reporter.common.AppFile
 import com.omooo.plugin.reporter.common.Ownership
@@ -10,6 +12,7 @@ import com.omooo.plugin.task.ListAssetsTask.AssetFile
 import com.omooo.plugin.util.getAllChildren
 import com.omooo.plugin.util.getArtifactName
 import com.omooo.plugin.util.writeToJson
+import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -47,7 +50,7 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
             println("Not support shrinkResources shrinkMode is strict.")
             return
         }
-        val result = mutableListOf<AarFile>()
+        val aarFileList = mutableListOf<AarFile>()
         val ownerMap = Ownership().getOwnerMap()
         var reduceSize = 0L
         getTotalAssets().forEach { entry ->
@@ -64,17 +67,26 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
                 val s = this.map { it.size }.reduce { acc, l -> acc + l }
                 reduceSize += s
                 val artifactId = entry.key.substringBeforeLast(":").substringAfter(":")
-                result += AarFile(entry.key, s, ownerMap.getOrDefault(artifactId, "unknown"), this.map {
+                aarFileList += AarFile(entry.key, s, ownerMap.getOrDefault(artifactId, "unknown"), this.map {
                     AppFile(it.fileName, it.size)
                 })
             }
         }
         // 写入结果
-        result.takeIf {
+        aarFileList.takeIf {
             it.isNotEmpty()
         }?.apply {
             println("Total reduce size: $reduceSize bytes.")
-            result.writeToJson("${project.parent?.projectDir}/unusedAssets.json")
+            val appReporter = AppReporter(
+                desc = "${LAVENDER.capitalize()} - List Unused Assets",
+                documentLink = "",
+                versionName = (variant as ApplicationVariantImpl).versionName,
+                variantName = variant.name,
+                aarList = aarFileList,
+            )
+            Json.encodeToString(AppReporter.serializer(), appReporter).writeToJson(
+                "${project.parent?.projectDir}/unusedAssets.json"
+            )
         } ?: println("Unused assets is empty.")
     }
 

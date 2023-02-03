@@ -99,3 +99,14 @@ internal fun writeJson(fileName: String, key: String, value: String) {
     }
 }
 
+/**
+ * 将 Json string text 写入 json 文件
+ */
+internal fun String.writeToJson(filePath: String) {
+    val jsonFile = File(filePath)
+    if (jsonFile.exists()) {
+        jsonFile.delete()
+    }
+    jsonFile.createNewFile()
+    jsonFile.writeText(JsonOutput.prettyPrint(this), Charsets.UTF_8)
+}
