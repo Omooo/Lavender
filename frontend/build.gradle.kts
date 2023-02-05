@@ -1,11 +1,14 @@
 plugins {
-    id("org.jetbrains.kotlin.js")
+    kotlin("js")
+    kotlin("plugin.serialization")
 }
 
 fun kotlinw(target: String): String =
-        "org.jetbrains.kotlin-wrappers:kotlin-$target"
+    "org.jetbrains.kotlin-wrappers:kotlin-$target"
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+
     implementation(enforcedPlatform(kotlinw("wrappers-bom:1.0.0-pre.477")))
 
     implementation(kotlinw("react"))
@@ -28,5 +31,21 @@ kotlin {
             }
         }
         binaries.executable()
+    }
+}
+
+// 注册 browserPackage Task
+tasks.register("browserPackage") {
+    dependsOn("browserDistribution")
+    mustRunAfter("browserDistribution")
+    doLast {
+        val rootDir = buildDir.resolve("distributions")
+        val html = rootDir.resolve("index.html").readText()
+        val javascript = rootDir.resolve("frontend.js").readText()
+        val reportFile = rootDir.resolve("report.html")
+        reportFile.writeText(
+            html.replace("<script src=\"frontend.js\"></script>", "<script>$javascript</script>")
+        )
+        println("Wrote HTML report to ${reportFile.toPath().toUri()}")
     }
 }
