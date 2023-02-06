@@ -14,11 +14,11 @@ import java.io.File
 
 /**
  * Author: Omooo
- * Date: 2022/01/10
- * Desc: 无用资源删除
- * Use: ./gradlew deleteUnusedRes
+ * Date: 2022/02/06
+ * Desc: 无用 Assets 删除
+ * Use: ./gradlew deleteUnusedAssets
  */
-internal open class DeleteUnusedResTask : DefaultTask() {
+internal open class DeleteUnusedAssetsTask : DefaultTask() {
 
     @get:Internal
     lateinit var variant: BaseVariant
@@ -27,7 +27,7 @@ internal open class DeleteUnusedResTask : DefaultTask() {
         println(
             """
                 *********************************************
-                ********* -- DeleteUnusedResTask -- *********
+                ******** -- DeleteUnusedAssetsTask -- *******
                 *********************************************
             """.trimIndent()
         )
@@ -38,7 +38,7 @@ internal open class DeleteUnusedResTask : DefaultTask() {
         }
 
         if (getUnusedResJson().isNullOrEmpty()) {
-            println("File: jar/reporter/unusedRes.json not found.")
+            println("File: jar/reporter/unusedAssets.json not found.")
             return
         }
         val json = getUnusedResJson()
@@ -56,7 +56,7 @@ internal open class DeleteUnusedResTask : DefaultTask() {
         }.mapValues {
             val key = if (unusedResMap.containsKey(it.value)) it.value else "jetified-${it.value}"
             unusedResMap.getOrDefault(key, emptyList()).map { resName ->
-                "${it.key.projectDir.absolutePath}/src/main/$resName"
+                "${it.key.projectDir.absolutePath}/src/main/assets/$resName"
             }
         }.filterValues {
             it.isNotEmpty()
@@ -80,7 +80,7 @@ internal open class DeleteUnusedResTask : DefaultTask() {
      * 从 unusedRes.json 文件中读取无用资源列表
      */
     private fun getUnusedResJson(): String? {
-        return javaClass.classLoader.getResourceAsStream("reporter/unusedRes.json")
+        return javaClass.classLoader.getResourceAsStream("reporter/unusedAssets.json")
             ?.bufferedReader()
             ?.use(BufferedReader::readText)
     }
