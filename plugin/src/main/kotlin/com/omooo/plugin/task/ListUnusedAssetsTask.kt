@@ -9,6 +9,7 @@ import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.reporter.common.AppFile
 import com.omooo.plugin.reporter.common.Ownership
 import com.omooo.plugin.task.ListAssetsTask.AssetFile
+import com.omooo.plugin.util.*
 import com.omooo.plugin.util.getAllChildren
 import com.omooo.plugin.util.getArtifactName
 import com.omooo.plugin.util.writeToJson
@@ -16,7 +17,9 @@ import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import java.io.File
 import java.nio.file.Files
+import javax.xml.parsers.DocumentBuilderFactory
 
 /**
  * Author: Omooo
@@ -45,10 +48,16 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
             println("${variant.name} is not an application variant.")
             return
         }
-        val referencedStrings = getReferencedStrings()
-        if (referencedStrings.isEmpty()) {
-            println("Not support shrinkResources shrinkMode is strict.")
-            return
+        val lottieFileNameList = getAssetFileNameFromLayout()
+        val referencedStrings = getReferencedStrings().toMutableList().apply {
+            if (this.isEmpty()) {
+                println("Not support shrinkResources shrinkMode is strict.")
+                return
+            }
+            addAll(lottieFileNameList)
+        }.toList()
+        if (project.properties["printReferencedStrings"] == "true") {
+            referencedStrings.writeToJson("${project.parent?.projectDir}/referencedStrings.json")
         }
         val aarFileList = mutableListOf<AarFile>()
         val ownerMap = Ownership().getOwnerMap()
@@ -67,9 +76,13 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
                 val s = this.map { it.size }.reduce { acc, l -> acc + l }
                 reduceSize += s
                 val artifactId = entry.key.substringBeforeLast(":").substringAfter(":")
-                aarFileList += AarFile(entry.key, s, ownerMap.getOrDefault(artifactId, "unknown"), this.map {
-                    AppFile(it.fileName, it.size)
-                })
+                aarFileList += AarFile(
+                    entry.key,
+                    s,
+                    ownerMap.getOrDefault(artifactId, "unknown"),
+                    this.map {
+                        AppFile(it.fileName, it.size)
+                    })
             }
         }
         // 写入结果
@@ -148,6 +161,48 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
             }
             result
         } ?: emptyList()
+    }
+
+    /**
+     * 获取 layout 文件里引用的 Assets 资源
+     * （目前主要是 LottieAnimationView 引用的 lottie.json 文件）
+     */
+    private fun getAssetFileNameFromLayout(): List<String> {
+        return (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
+            AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
+            AndroidArtifacts.ArtifactScope.ALL,
+            AndroidArtifacts.ArtifactType.ANDROID_RES
+        ).artifacts.map {
+            it.file
+        }.plus(project.projectDir.resolve("src/main/res")).flatMap {
+            it.walk().filter { resDir ->
+                resDir.isDirectory && resDir.name.startsWith("layout")
+            }.map { layoutDir ->
+                layoutDir.getAllChildren()
+            }.flatten().toList().flatMap { layoutFile ->
+                layoutFile.getLottieName()
+            }
+        }
+    }
+
+    /**
+     * 解析 xml 获取 lottie 文件名
+     */
+    private fun File.getLottieName(): List<String> {
+        val result = mutableListOf<String>()
+        DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this).apply {
+            // LottieAnimationView
+            getElementsByTagName("com.airbnb.lottie.LottieAnimationView").toList().forEach { node ->
+                node.attributeMap()["app:lottie_fileName"].takeIf {
+                    !it.isNullOrEmpty()
+                }?.let {
+                    result.add(it)
+                }
+            }
+            // 下面可以添加内部工程里的自定义 View 引用的 assets 资源
+
+        }
+        return result
     }
 
 }
