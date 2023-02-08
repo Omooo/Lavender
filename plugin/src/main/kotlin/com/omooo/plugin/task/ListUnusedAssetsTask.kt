@@ -69,7 +69,8 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
                 val name = assetFile.fileName.let {
                     if (it.length > 40) "${it.substring(0, 37)}..." else it
                 }
-                referencedStrings.contains(name)
+                // 之所以仍然加上 'assetFile.fileName' 的匹配，是因为从 layout 或白名单配置的字符串，是不会进行截取的
+                referencedStrings.contains(name) || referencedStrings.contains(assetFile.fileName)
             }.takeIf { list ->
                 list.isNotEmpty()
             }?.run {
