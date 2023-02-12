@@ -7,6 +7,7 @@ import com.omooo.plugin.reporter.AppReporter
 import com.omooo.plugin.util.getArtifactIdFromAarName
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.BufferedReader
@@ -37,13 +38,13 @@ internal open class DeleteUnusedResTask : DefaultTask() {
             return
         }
 
-        if (getUnusedResJson().isNullOrEmpty()) {
-            println("File: jar/reporter/unusedRes.json not found.")
+        val json = project.getUnusedResJson()
+        if (json.isNullOrEmpty()) {
+            println("File: {projectDir}/lavender-plugin/reporter/unusedRes.json not found.")
             return
         }
-        val json = getUnusedResJson()
         val unusedResMap: Map<String, List<String>> =
-            Json.decodeFromString(AppReporter.serializer(), json!!).aarList.associate { aarFile ->
+            Json.decodeFromString(AppReporter.serializer(), json).aarList.associate { aarFile ->
                 aarFile.name.getArtifactIdFromAarName() to aarFile.fileList.map { it.name }
             }
         project.rootProject.subprojects.associateWith {
@@ -79,9 +80,11 @@ internal open class DeleteUnusedResTask : DefaultTask() {
     /**
      * 从 unusedRes.json 文件中读取无用资源列表
      */
-    private fun getUnusedResJson(): String? {
-        return javaClass.classLoader.getResourceAsStream("reporter/unusedRes.json")
-            ?.bufferedReader()
-            ?.use(BufferedReader::readText)
+    private fun Project.getUnusedResJson(): String? {
+        val file = parent?.projectDir?.resolve("lavender-plugin/reporter/unusedRes.json")
+        if (file != null && file.exists()) {
+            return file.readText()
+        }
+        return null
     }
 }

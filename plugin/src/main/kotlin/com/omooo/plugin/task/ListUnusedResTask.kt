@@ -7,9 +7,9 @@ import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.reporter.AppReporter
 import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.reporter.common.AppFile
-import com.omooo.plugin.reporter.common.Ownership
 import com.omooo.plugin.util.getAllChildren
 import com.omooo.plugin.util.getArtifactName
+import com.omooo.plugin.util.getOwnerShip
 import com.omooo.plugin.util.writeToJson
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
@@ -46,7 +46,7 @@ internal open class ListUnusedResTask : DefaultTask() {
             return
         }
 
-        val ownerMap = Ownership().getOwnerMap()
+        val ownerMap = project.getOwnerShip()
         val resNameMap = getResMap()
         getUnusedResName().takeIf {
             it.isNotEmpty()

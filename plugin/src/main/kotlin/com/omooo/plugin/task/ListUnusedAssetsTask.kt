@@ -7,7 +7,6 @@ import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.reporter.AppReporter
 import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.reporter.common.AppFile
-import com.omooo.plugin.reporter.common.Ownership
 import com.omooo.plugin.task.ListAssetsTask.AssetFile
 import com.omooo.plugin.util.*
 import com.omooo.plugin.util.getAllChildren
@@ -60,7 +59,7 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
             referencedStrings.writeToJson("${project.parent?.projectDir}/referencedStrings.json")
         }
         val aarFileList = mutableListOf<AarFile>()
-        val ownerMap = Ownership().getOwnerMap()
+        val ownerMap = project.getOwnerShip()
         var reduceSize = 0L
         getTotalAssets().forEach { entry ->
             entry.value.filterNot { assetFile ->
