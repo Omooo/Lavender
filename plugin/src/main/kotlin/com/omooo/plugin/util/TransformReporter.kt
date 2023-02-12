@@ -15,7 +15,7 @@ import java.nio.charset.Charset
  */
 internal object TransformReporter {
 
-    private const val DIR_REPORTER = "lavender-plugin/reporter"
+    private const val DIR_REPORTER = "./reporter"
 
     /**
      * 删除 Transform 报告文件夹
