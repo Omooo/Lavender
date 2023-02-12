@@ -71,7 +71,7 @@ fun JSONObject.writeToJson(path: String) {
 }
 
 internal fun writeJson(fileName: String, key: String, value: String) {
-    val pathDir = "./reporter"
+    val pathDir = "lavender-plugin/reporter"
     runCatching {
         val file = File(File(pathDir).apply {
             takeIf { !it.exists() }?.mkdirs()
