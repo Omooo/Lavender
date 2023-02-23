@@ -6,7 +6,7 @@ import org.gradle.api.tasks.Input
 /**
  * Author: Omooo
  * Date: 2022/11/6
- * Desc: 检测方法调用的参数
+ * Desc: 检测方法、常量等调用的参数
  */
 internal interface InvokeCheckParams : InstrumentationParameters {
 
@@ -15,4 +15,7 @@ internal interface InvokeCheckParams : InstrumentationParameters {
 
     @get:Input
     var packageList: List<String>
+
+    @get:Input
+    var constantsList: List<String>
 }
