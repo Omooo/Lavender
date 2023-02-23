@@ -20,6 +20,13 @@ open class InvokeCheckExtension {
      */
     var packageList = arrayOf<String>()
 
+    /**
+     * 常量列表
+     *
+     * ag: ["android.permission.READ_EXTERNAL_STORAGE", "xxx"]
+     */
+    var constantsList = arrayOf<String>()
+
 
 
     /* -------------------------- internal ----------------------- */
