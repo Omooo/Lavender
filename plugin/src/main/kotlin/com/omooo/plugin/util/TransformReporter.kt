@@ -33,6 +33,7 @@ internal object TransformReporter {
      * @param key Json 的 key；
      * @param value Json 的 value；类型为 JSONArray
      */
+    @Synchronized
     fun writeJsonLineByLine(fileName: String, key: String, value: String) {
         runCatching {
             val file = File(File(DIR_REPORTER).apply {

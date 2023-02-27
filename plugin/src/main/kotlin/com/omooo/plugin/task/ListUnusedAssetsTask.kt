@@ -75,7 +75,7 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
             }?.run {
                 val s = this.map { it.size }.reduce { acc, l -> acc + l }
                 reduceSize += s
-                val artifactId = entry.key.substringBeforeLast(":").substringAfter(":")
+                val artifactId = entry.key.substringAfter(":").substringBeforeLast(":")
                 aarFileList += AarFile(
                     entry.key,
                     s,
