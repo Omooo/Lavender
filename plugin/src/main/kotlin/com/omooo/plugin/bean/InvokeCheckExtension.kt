@@ -36,7 +36,7 @@ open class InvokeCheckExtension {
      * 校验条件: 检测列表有一项不为空
      */
     internal fun enable(): Boolean {
-        return methodList.isNotEmpty() || packageList.isNotEmpty()
+        return methodList.isNotEmpty() || packageList.isNotEmpty() || constantsList.isNotEmpty()
     }
 
     /**
