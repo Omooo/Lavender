@@ -1,7 +1,7 @@
 package com.omooo.plugin.transform.shrinkres
 
 import com.omooo.plugin.transform.BaseClassNode
-import com.omooo.plugin.util.writeJson
+import com.omooo.plugin.util.TransformReporter
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.AbstractInsnNode
@@ -46,7 +46,7 @@ internal class IdentifierCheckClassNode(classVisitor: ClassVisitor) : BaseClassN
      * @param resName assets 文件名
      */
     private fun report(methodNode: MethodNode, resName: String) {
-        writeJson("resIdentifier.json", "$name#${methodNode.name}${methodNode.desc}", resName)
+        TransformReporter.writeJsonLineByLine("resIdentifier.json", "$name#${methodNode.name}${methodNode.desc}", resName)
     }
 
     private fun AbstractInsnNode.isInvokeGetIdentifier(): Boolean {

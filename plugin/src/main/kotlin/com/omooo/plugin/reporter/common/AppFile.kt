@@ -9,6 +9,7 @@ package com.omooo.plugin.reporter.common
 @kotlinx.serialization.Serializable
 internal data class AppFile(
     val name: String,
-    val size: Long,
+    val size: Long = 0,
+    val desc: String = "",
 )
 
