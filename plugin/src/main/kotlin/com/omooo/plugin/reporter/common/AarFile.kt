@@ -10,5 +10,5 @@ internal data class AarFile(
     val name: String,
     val size: Long,
     val owner: String,
-    val fileList: List<AppFile>,
+    val fileList: MutableList<AppFile>,
 )

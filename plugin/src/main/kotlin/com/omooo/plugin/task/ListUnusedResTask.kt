@@ -60,7 +60,7 @@ internal open class ListUnusedResTask : DefaultTask() {
             it.isNotEmpty()
         }?.map { entry ->
             val size = entry.value.map { it.size }.reduce { acc, l -> acc + l }
-            AarFile(entry.key, size, ownerMap.getOrDefault(entry.key, "unknown"), entry.value)
+            AarFile(entry.key, size, ownerMap.getOrDefault(entry.key, "unknown"), entry.value.toMutableList())
         }?.also { aarFileList ->
             val appReporter = AppReporter(
                 desc = "${LAVENDER.capitalize()} - List Unused Res",

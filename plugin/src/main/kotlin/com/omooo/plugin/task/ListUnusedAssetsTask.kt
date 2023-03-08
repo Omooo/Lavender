@@ -82,7 +82,7 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
                     ownerMap.getOrDefault(artifactId, "unknown"),
                     this.map {
                         AppFile(it.fileName, it.size)
-                    })
+                    }.toMutableList())
             }
         }
         // 写入结果

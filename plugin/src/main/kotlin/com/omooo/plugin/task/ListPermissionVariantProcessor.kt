@@ -6,6 +6,7 @@ import com.omooo.plugin.spi.VariantProcessor
 import com.google.auto.service.AutoService
 import com.omooo.plugin.bean.LAVENDER
 import org.gradle.api.Project
+import org.gradle.api.UnknownTaskException
 
 /**
  * Author: Omooo
@@ -18,16 +19,22 @@ import org.gradle.api.Project
 class ListPermissionVariantProcessor : VariantProcessor {
 
     override fun process(project: Project, variant: BaseVariant) {
-        if (project.tasks.findByName("listPermissions") != null) {
-            return
+        val listPermissionsTask = try {
+            project.tasks.named("listPermissions")
+        } catch (e: UnknownTaskException) {
+            project.tasks.register("listPermissions") {
+                it.group = LAVENDER
+                it.description = "List the permission declared in AndroidManifest.xml"
+            }
         }
-        project.tasks.register("listPermissions", ListPermissionTask::class.java) {
+        project.tasks.register("listPermissionsFor${variant.name.capitalize()}", ListPermissionTask::class.java) {
             it.variant = variant
             it.group = LAVENDER
-            it.description = "List the permission declared in AndroidManifest.xml"
+            it.description = "List the permission declared in AndroidManifest.xml for ${variant.name}."
+            it.outputs.upToDateWhen { false }
         }.also {
-            it.dependsOn(project.tasks.named("processDebugManifest"))
-            it.get().mustRunAfter(project.tasks.named("processDebugManifest").get())
+            it.dependsOn(project.tasks.named("process${variant.name.capitalize()}Manifest"))
+            listPermissionsTask.dependsOn(it)
         }
     }
 

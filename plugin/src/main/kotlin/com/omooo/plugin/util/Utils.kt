@@ -43,6 +43,7 @@ fun <K, V> Map<K, V>.writeToJson(path: String) {
     jsonFile.createNewFile()
     val json = JsonOutput.toJson(this)
     jsonFile.writeText(JsonOutput.prettyPrint(json), Charsets.UTF_8)
+    println("Reporter: ${jsonFile.toPath().toUri()}")
 }
 
 /**
@@ -56,6 +57,7 @@ fun <T> List<T>.writeToJson(path: String) {
     jsonFile.createNewFile()
     val json = JsonOutput.toJson(this)
     jsonFile.writeText(JsonOutput.prettyPrint(json), Charsets.UTF_8)
+    println("Reporter: ${jsonFile.toPath().toUri()}")
 }
 
 /**
@@ -68,35 +70,7 @@ fun JSONObject.writeToJson(path: String) {
     }
     jsonFile.createNewFile()
     jsonFile.writeText(JsonOutput.prettyPrint(this.toString()), Charsets.UTF_8)
-}
-
-internal fun writeJson(fileName: String, key: String, value: String) {
-    val pathDir = "./reporter"
-    runCatching {
-        val file = File(File(pathDir).apply {
-            takeIf { !it.exists() }?.mkdirs()
-        }, fileName).apply {
-            takeIf { !exists() }?.createNewFile()
-            if (readText().isEmpty()) {
-                writeText("{}")
-            }
-        }
-        JSONObject(file.readText()).let {
-            if (it.optJSONArray(key) == null) {
-                it.put(key, JSONArray().apply {
-                    put(value)
-                })
-            } else if (!it.getJSONArray(key).contains(value)) {
-                it.getJSONArray(key).put(value)
-            }
-            Pair(file, it.toString())
-        }
-    }.onSuccess { (file, text) ->
-        PrintWriter(FileWriter(file, Charset.defaultCharset()))
-            .use { it.write(JsonOutput.prettyPrint(text)) }
-    }.onFailure {
-        println("Utils#writeJson throw Exception: ${it.message}")
-    }
+    println("Reporter: ${jsonFile.toPath().toUri()}")
 }
 
 /**
@@ -109,4 +83,20 @@ internal fun String.writeToJson(filePath: String) {
     }
     jsonFile.createNewFile()
     jsonFile.writeText(JsonOutput.prettyPrint(this), Charsets.UTF_8)
+    println("Reporter: ${jsonFile.toPath().toUri()}")
+}
+
+/**
+ * 将对象以 Json 文件输出
+ */
+internal fun Any.writeToJson(path: String) {
+    File(path).apply {
+        if (exists()) {
+            delete()
+        }
+        createNewFile()
+        val json = JsonOutput.toJson(this@writeToJson)
+        writeText(JsonOutput.prettyPrint(json), Charsets.UTF_8)
+        println("Reporter: ${toPath().toUri()}")
+    }
 }
