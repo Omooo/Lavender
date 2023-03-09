@@ -44,3 +44,23 @@ internal fun ApplicationVariantImpl.getArtifactFiles(artifactType: AndroidArtifa
         artifact.file
     }
 }
+
+/**
+ * 类全限定名到 (AAR 名, 该类文件大小) 的映射
+ * 例如: "androidx.core.graphics.PaintKt" to Pair("androidx.core:core-ktx:1.7.0", 2333)
+ */
+internal fun ApplicationVariantImpl.getClassMap(): Map<String, Pair<String, Long>> {
+    return variantData.variantDependencies.getArtifactCollection(
+        AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
+        AndroidArtifacts.ArtifactScope.ALL,
+        AndroidArtifacts.ArtifactType.CLASSES
+    ).artifacts.associate { artifact ->
+        artifact.getArtifactName() to artifact.file.parseJar()
+    }.flatMap { (key, valueList) ->
+        valueList.map { valuePair ->
+            // kotlin/io/path/ExperimentalPathApi.class to kotlin.io.path.ExperimentalPathApi
+            val className = valuePair.first.substringBeforeLast(".").replace("/", ".")
+            Pair(className, Pair(key, valuePair.second))
+        }
+    }.groupBy({ it.first }, { it.second }).mapValues { (_, valueList) -> valueList.first() }
+}

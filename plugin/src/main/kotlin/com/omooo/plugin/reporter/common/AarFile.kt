@@ -8,7 +8,7 @@ package com.omooo.plugin.reporter.common
 @kotlinx.serialization.Serializable
 internal data class AarFile(
     val name: String,
-    val size: Long,
+    var size: Long,
     val owner: String,
     val fileList: MutableList<AppFile>,
 )

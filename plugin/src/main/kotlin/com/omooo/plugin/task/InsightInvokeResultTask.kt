@@ -2,13 +2,11 @@ package com.omooo.plugin.task
 
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
-import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.reporter.AppReporter
 import com.omooo.plugin.reporter.Insight
 import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.reporter.common.AppFile
-import com.omooo.plugin.util.getArtifactIdFromAarName
-import com.omooo.plugin.util.getArtifactName
+import com.omooo.plugin.util.*
 import com.omooo.plugin.util.getOwnerShip
 import com.omooo.plugin.util.writeToJson
 import kotlinx.serialization.decodeFromString
@@ -17,9 +15,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import java.io.File
-import java.util.jar.JarEntry
-import java.util.jar.JarFile
 
 /**
  * Author: Omooo
@@ -57,7 +52,9 @@ internal open class InsightInvokeResultTask : DefaultTask() {
 
         val invokeResultMap = Json.decodeFromString<Map<String, List<String>>>(json)
         val ownerShip = project.getOwnerShip()
-        val classMap = getClassMap()
+        val classMap = (variant as ApplicationVariantImpl).getClassMap().mapValues {
+            it.value.first
+        }
 
         val aarMap = mutableMapOf<String, AarFile>()
         invokeResultMap.forEach { entry ->
@@ -79,34 +76,6 @@ internal open class InsightInvokeResultTask : DefaultTask() {
             variantName = variant.name,
             aarList = aarMap.values.toList(),
         ).writeToJson("${project.parent?.projectDir}/invokeResultInsight.json")
-    }
-
-    /**
-     * 类全限定名到 AAR 名的映射
-     * 例如: androidx.core.graphics.PaintKt to androidx.core:core-ktx:1.7.0
-     */
-    private fun getClassMap(): Map<String, String> {
-        return (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
-            AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
-            AndroidArtifacts.ArtifactScope.ALL,
-            AndroidArtifacts.ArtifactType.CLASSES
-        ).artifacts.associate { artifact ->
-            artifact.getArtifactName() to artifact.file.parseJar()
-        }.entries.flatMap { entry ->
-            entry.value.map {
-                it.substringBeforeLast(".").replace("/", ".") to entry.key
-            }
-        }.toMap()
-    }
-
-
-    /**
-     * 解析 Jar 生成文件列表
-     */
-    private fun File.parseJar(): List<String> {
-        return JarFile(this).entries().toList().filterNot(JarEntry::isDirectory).map {
-            it.name
-        }
     }
 
     /**

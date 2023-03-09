@@ -2,6 +2,8 @@ package com.omooo.plugin.util
 
 import java.io.File
 import java.nio.file.Files
+import java.util.jar.JarEntry
+import java.util.jar.JarFile
 import kotlin.io.path.isRegularFile
 import kotlin.streams.toList
 
@@ -76,4 +78,16 @@ internal fun String.getAarNameFromPath(default: String = "unknown"): String {
         return default
     }
     return substring(indexOf(prefix) + prefix.length, lastIndexOf("/res/"))
+}
+
+
+/**
+ * 解析 Jar 生成文件列表（文件名 -> 文件大小，单位字节）
+ *
+ * @return ag: { "kotlin.io.path.ExperimentalPathApi" to 233, }
+ */
+internal fun File.parseJar(): List<Pair<String, Long>> {
+    return JarFile(this).entries().toList().filterNot(JarEntry::isDirectory).map {
+        it.name to it.compressedSize
+    }
 }
