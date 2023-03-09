@@ -1,11 +1,10 @@
-package com.nio.android.lego.lavender.task
+package com.omooo.plugin.task
 
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.google.auto.service.AutoService
 import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.spi.VariantProcessor
-import com.omooo.plugin.task.InsightInvokeResultTask
 import org.gradle.api.Project
 
 /**
