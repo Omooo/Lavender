@@ -2,17 +2,17 @@ package com.omooo.plugin.task
 
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
-import com.omooo.plugin.reporter.AppReporter
-import com.omooo.plugin.reporter.Insight
-import com.omooo.plugin.reporter.common.AarFile
-import com.omooo.plugin.reporter.common.AppFile
+import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import com.omooo.plugin.internal.cha.ComponentHandler
+import com.omooo.plugin.internal.cha.LayoutHandler
 import com.omooo.plugin.util.*
 import com.omooo.plugin.util.getOwnerShip
-import com.omooo.plugin.util.writeToJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
+import org.objectweb.asm.tree.FieldInsnNode
+import org.objectweb.asm.tree.MethodInsnNode
 
 /**
  * Author: Omooo
@@ -41,6 +41,7 @@ internal open class ListUnusedClassTask : DefaultTask() {
             println("${variant.name} is not an application variant.")
             return
         }
+        val v = variant as ApplicationVariantImpl
 
         val unusedClassList = project.getUnusedClass()
         if (unusedClassList.isEmpty()) {
@@ -53,33 +54,41 @@ internal open class ListUnusedClassTask : DefaultTask() {
             return
         }
 
+        val printUnusedClass = project.hasProperty("printUnusedClass")
         val ownerShip = project.getOwnerShip()
-        val classMap = (variant as ApplicationVariantImpl).getClassMap()
-        classMap.keys
+        val classMap = v.getArtifactClassMap()
 
-        val aarMap = mutableMapOf<String, AarFile>()
-        unusedClassList.forEach { className ->
-            val filePair = classMap.getOrDefault(className, Pair("unknown", 0))
-            val owner = ownerShip.getOrDefault(filePair.first.getArtifactIdFromAarName(), "unknown")
-            if (!aarMap.containsKey(filePair.first)) {
-                aarMap[filePair.first] = AarFile(filePair.first, 0, owner, mutableListOf())
+        val classNodeCache = v.getAllClasses()
+        val entryPoint = v.getEntryPoint()
+        val tempAllClasses = if (printUnusedClass) mutableListOf(classMap.keys) else mutableListOf()
+
+    }
+
+    /**
+     * 获取入口类
+     */
+    private fun ApplicationVariantImpl.getEntryPoint(): Set<String> {
+        // 自定义 View 入口
+        val viewEntryPoint = getArtifactFiles(AndroidArtifacts.ArtifactType.ANDROID_RES)
+            .plus(project.projectDir.resolve("src/main/res"))
+            .flatMap {
+                it.walk().filter { resDir ->
+                    resDir.isDirectory && resDir.name.startsWith("layout")
+                }.map { layoutDir ->
+                    layoutDir.getAllChildren()
+                }
+            }.asSequence().flatten().map {
+                LayoutHandler(it).getViews()
+            }.flatten().filter {
+                it.startsWith("com.omooo")
             }
-            aarMap[filePair.first]!!.fileList.add(
-                AppFile(name = className.replace("$", "/"), size = filePair.second)
-            )
-            aarMap[filePair.first]!!.size += filePair.second
-        }
-
-        AppReporter(
-            desc = Insight.Title.LIST_UNUSED_CLASS,
-            documentLink = Insight.DocumentLink.LIST_UNUSED_CLASS,
-            versionName = (variant as ApplicationVariantImpl).versionName,
-            variantName = variant.name,
-            aarList = aarMap.values.toList(),
-        ).apply {
-            writeToJson("${project.parent?.projectDir}/listUnusedClass.json")
-            println("Unused class count: ${aarList.sumOf { it.fileList.size }}, total size: ${aarList.sumOf { it.size } / 1024}kb ")
-        }
+        // Manifest 里四大组件入口
+        val componentEntryPoint = getArtifactFiles(AndroidArtifacts.ArtifactType.MANIFEST)
+            .plus(project.projectDir.resolve("src/main/AndroidManifest.xml"))
+            .map {
+                ComponentHandler(it).getComponentSet()
+            }.flatten()
+        return viewEntryPoint.plus(componentEntryPoint).toSet()
     }
 
     /**

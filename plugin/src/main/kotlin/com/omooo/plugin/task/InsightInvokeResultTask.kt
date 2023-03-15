@@ -52,7 +52,7 @@ internal open class InsightInvokeResultTask : DefaultTask() {
 
         val invokeResultMap = Json.decodeFromString<Map<String, List<String>>>(json)
         val ownerShip = project.getOwnerShip()
-        val classMap = (variant as ApplicationVariantImpl).getClassMap().mapValues {
+        val classMap = (variant as ApplicationVariantImpl).getArtifactClassMap().mapValues {
             it.value.first
         }
 

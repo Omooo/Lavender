@@ -12,3 +12,19 @@ package com.omooo.plugin.util
 internal fun String.getArtifactIdFromAarName(): String {
     return substringAfter(":").substringBeforeLast(":")
 }
+
+/**
+ * The following classes exclude from lint
+ *
+ * - `android.**`
+ * - `androidx.**`
+ * - `com.android.**`
+ * - `com.google.android.**`
+ * - `com.google.gson.**`
+ * - `**.R`
+ * - `**.R$*`
+ * - `BuildConfig`
+ */
+private const val DOLLAR = '$'
+
+internal val EXCLUDES = Regex("^(((android[x]?)|(com/(((google/)?android)|(google/gson))))/.+)|(.+/((R[2]?(${DOLLAR}[a-z]+)?)|(BuildConfig)))$")
