@@ -91,3 +91,10 @@ internal fun File.parseJar(): List<Pair<String, Long>> {
         it.name to it.compressedSize
     }
 }
+
+/**
+ * 返回该目录下的子文件
+ *
+ * @usage: parentFile.file("data", "widgets.txt") -> "${parentFile.path}/data/widgets.txt"
+ */
+internal fun File.file(vararg path: String) = File(this, path.joinToString(File.separator))
