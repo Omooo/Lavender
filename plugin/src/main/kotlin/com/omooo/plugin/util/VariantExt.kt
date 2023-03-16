@@ -35,6 +35,14 @@ internal fun BaseVariant.getAndroidPlatformWidgets(): Set<String> {
     }?.toSet() ?: emptySet()
 }
 
+internal val BaseVariant.processManifestTaskProvider: TaskProvider<out Task>?
+    get() = try {
+        project.tasks.named(getTaskName("process", "Manifest"))
+    } catch (_: UnknownTaskException) {
+        println(red("processManifestTaskProvider not found."))
+        null
+    }
+
 internal val BaseVariant.bundleClassesTaskProvider: TaskProvider<out Task>?
     get() = try {
         // for AGP < 7.2.0
