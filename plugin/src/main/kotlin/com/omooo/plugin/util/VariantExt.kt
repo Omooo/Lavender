@@ -35,6 +35,32 @@ internal fun BaseVariant.getAndroidPlatformWidgets(): Set<String> {
     }?.toSet() ?: emptySet()
 }
 
+/**
+ * 处理资源任务
+ *
+ * @from LinkApplicationAndroidResourcesTask
+ */
+internal val BaseVariant.processResTaskProvider: TaskProvider<out Task>?
+    get() = try {
+        project.tasks.named(getTaskName("process", "Resources"))
+    } catch (_: UnknownTaskException) {
+        println(red("processResourcesTaskProvider not found."))
+        null
+    }
+
+/**
+ * 优化资源任务
+ *
+ * @from OptimizeResourcesTask
+ */
+internal val BaseVariant.optimizeResourcesTaskProvider: TaskProvider<out Task>?
+    get() = try {
+        project.tasks.named(getTaskName("optimize", "Resources"))
+    } catch (_: UnknownTaskException) {
+        println(red("optimizeResourcesTaskProvider not found."))
+        null
+    }
+
 internal val BaseVariant.processManifestTaskProvider: TaskProvider<out Task>?
     get() = try {
         project.tasks.named(getTaskName("process", "Manifest"))
