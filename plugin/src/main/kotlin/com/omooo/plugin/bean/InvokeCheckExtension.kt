@@ -27,6 +27,13 @@ open class InvokeCheckExtension {
      */
     var constantsList = arrayOf<String>()
 
+    /**
+     * 字段调用列表（字段的全限定名）
+     *
+     * ag: ["android.os.Build$VERSION.SDK_INT:I", "xxx"]
+     */
+    var fieldList = arrayOf<String>()
+
 
 
     /* -------------------------- internal ----------------------- */
@@ -36,7 +43,8 @@ open class InvokeCheckExtension {
      * 校验条件: 检测列表有一项不为空
      */
     internal fun enable(): Boolean {
-        return methodList.isNotEmpty() || packageList.isNotEmpty() || constantsList.isNotEmpty()
+        return methodList.isNotEmpty() || packageList.isNotEmpty()
+                || constantsList.isNotEmpty() || fieldList.isNotEmpty()
     }
 
     /**
@@ -63,6 +71,22 @@ open class InvokeCheckExtension {
             it.isNotEmpty()
         }.map {
             it.replace(".", "/")
+        }
+    }
+
+    /**
+     * 获取字段列表
+     *
+     * @return Tripe<className, fieldName, fieldDesc>
+     */
+    internal fun getFieldList(): List<Triple<String, String, String>> {
+        return fieldList.filter {
+            it.isNotEmpty()
+        }.map {
+            val owner = it.substringBeforeLast(".").replace(".", "/")
+            val name = it.substringBefore(":").substringAfterLast(".")
+            val desc = it.substringAfter(":")
+            Triple(owner, name, desc)
         }
     }
 }

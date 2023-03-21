@@ -18,4 +18,7 @@ internal interface InvokeCheckParams : InstrumentationParameters {
 
     @get:Input
     var constantsList: List<String>
+
+    @get:Input
+    var fieldList: List<Triple<String, String, String>>
 }
