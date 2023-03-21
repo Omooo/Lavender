@@ -3,6 +3,7 @@ package com.omooo.plugin.transform.invoke
 import com.omooo.plugin.transform.BaseClassNode
 import com.omooo.plugin.util.TransformReporter
 import org.objectweb.asm.ClassVisitor
+import org.objectweb.asm.tree.FieldInsnNode
 import org.objectweb.asm.tree.LdcInsnNode
 import org.objectweb.asm.tree.MethodInsnNode
 import org.objectweb.asm.tree.MethodNode
@@ -44,6 +45,19 @@ internal class InvokeCheckClassNode(
                     params.constantsList.contains(it.cst)
                 }.forEach {
                     report(it.cst.toString(), methodNode.getMethodPlainText())
+                }
+            }
+
+            // 字段检测
+            if (params.fieldList.isNotEmpty()) {
+                methodNode.instructions.filterIsInstance<FieldInsnNode>().forEach { fieldNode ->
+                    params.fieldList.filter {
+                        it.first == fieldNode.owner && it.second == fieldNode.name && it.third == fieldNode.desc
+                    }.map {
+                        "${it.first.replace("/", ".")}.${it.second}:${it.third}"
+                    }.forEach {
+                        report(it, methodNode.getMethodPlainText())
+                    }
                 }
             }
         }

@@ -46,6 +46,7 @@ class Lavender : Plugin<Project> {
                     it.methodList = invokeExtension.getMethodList()
                     it.packageList = invokeExtension.getPackageList()
                     it.constantsList = invokeExtension.constantsList.toList()
+                    it.fieldList = invokeExtension.getFieldList()
                 }
             }
             variant.instrumentation.transformClassesWith(
