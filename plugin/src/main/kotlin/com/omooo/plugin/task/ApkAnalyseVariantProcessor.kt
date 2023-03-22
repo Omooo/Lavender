@@ -36,7 +36,7 @@ class ApkAnalyseVariantProcessor : VariantProcessor {
             it.description = "Analyse the apk output from app project for ${variant.name}."
             it.outputs.upToDateWhen { false }
         }.also {
-            it.dependsOn(variant.assembleProvider)
+            it.dependsOn(project.tasks.named("assembleRelease"))
             analyseTask.dependsOn(it)
         }
     }

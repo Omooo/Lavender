@@ -15,6 +15,7 @@ internal object Insight {
         const val LIST_UNUSED_RES = ""
         const val INVOKE_CHECK = ""
         const val LIST_UNUSED_CLASS = ""
+        const val APK_ANALYSE = ""
     }
 
     /**
@@ -25,5 +26,6 @@ internal object Insight {
         const val LIST_UNUSED_RES = "Lavender - List Unused Res"
         const val INVOKE_CHECK = "Lavender - Invoke Check"
         const val LIST_UNUSED_CLASS = "Lavender - List Unused Class"
+        const val APK_ANALYSE = "Lavender - Apk Analyse"
     }
 }
