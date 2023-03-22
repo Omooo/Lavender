@@ -4,6 +4,8 @@ import com.android.SdkConstants
 import com.omooo.plugin.reporter.common.AppFile
 import com.omooo.plugin.reporter.common.FileType
 import com.omooo.plugin.util.encode
+import com.omooo.plugin.util.red
+import com.omooo.plugin.util.writeToJson
 import java.io.File
 import java.nio.file.Files
 import java.util.zip.ZipFile
@@ -27,8 +29,16 @@ internal class ResourceCleaner(
         // 所以可以对比俩文件的 md5 值来生成混淆后的文件名和源文件名的映射
         val originMap = getApFile("processed_res").createFileMd5Map()
         val optimizedMap = getApFile("optimized_processed_res").createFileMd5Map()
-        resourceNameMap = originMap.mapKeys {
-            optimizedMap.getOrDefault(it.key, "unknown")
+        resourceNameMap = originMap.filterKeys {
+            optimizedMap.containsKey(it)
+        }.mapKeys {
+            optimizedMap.getOrDefault(it.key, "unknown-resource").apply {
+                if (this == "unknown-resource") {
+                    println(red("Unknown-resource: ${it.key}"))
+                }
+            }
+        }.apply {
+            writeToJson("resourceNameMap.json")
         }
     }
 
@@ -38,7 +48,11 @@ internal class ResourceCleaner(
 
     override fun clean(appFile: AppFile): AppFile {
         return appFile.apply {
-            name = resourceNameMap.getOrDefault(appFile.name, "unknown")
+            name = resourceNameMap.getOrDefault(appFile.name, "unknown-resource-name").apply {
+                if (this == "unknown-resource-name") {
+                    println(red("Unknown resource name: ${appFile.name}"))
+                }
+            }
             fileType = FileType.RESOURCE
         }
     }
@@ -58,7 +72,7 @@ internal class ResourceCleaner(
     private fun File.createFileMd5Map(): Map<String, String> {
         val result = mutableMapOf<String, String>()
         ZipFile(this).use { zipFile ->
-            zipFile.entries().iterator().asSequence().forEach { entry ->
+            zipFile.entries().toList().filterNot { it.isDirectory }.forEach { entry ->
                 val md5 = zipFile.getInputStream(entry).readBytes().encode()
                 result[md5] = entry.name
             }

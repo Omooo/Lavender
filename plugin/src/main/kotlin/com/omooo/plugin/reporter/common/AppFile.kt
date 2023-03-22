@@ -14,3 +14,7 @@ internal data class AppFile(
     var fileType: FileType = FileType.OTHER,
 )
 
+internal fun List<AppFile>.totalSize(): Long {
+    return map { it.size }.reduce { acc, l -> acc + l }
+}
+

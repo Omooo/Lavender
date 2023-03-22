@@ -1,9 +1,12 @@
 package com.omooo.plugin.util
 
 import java.io.File
+import java.io.FileOutputStream
 import java.nio.file.Files
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 import kotlin.io.path.isRegularFile
 import kotlin.streams.toList
 
@@ -84,12 +87,34 @@ internal fun String.getAarNameFromPath(default: String = "unknown"): String {
 /**
  * 解析 Jar 生成文件列表（文件名 -> 文件大小，单位字节）
  *
- * @return ag: { "kotlin.io.path.ExperimentalPathApi" to 233, }
+ * @return ag: { "kotlin/collections/jdk8/CollectionsJDK8Kt.class" to 937, }
  */
 internal fun File.parseJar(): List<Pair<String, Long>> {
     return JarFile(this).entries().toList().filterNot(JarEntry::isDirectory).map {
         it.name to it.compressedSize
     }
+}
+
+/**
+ * 解析 AAR 生成文件列表（文件名 -> 文件大小，单位字节）
+ *
+ * @return ag: { "kotlin/collections/jdk8/CollectionsJDK8Kt.class" to 937, }
+ */
+internal fun File.parseAar(): List<Pair<String, Long>> {
+    val result: MutableList<Pair<String, Long>> = mutableListOf()
+    ZipFile(this).use { zipFile ->
+        zipFile.entries().toList().filterNot(ZipEntry::isDirectory).forEach { entry ->
+            if (entry.name.endsWith(".jar")) {
+                val tempFile = File.createTempFile("temp", ".jar")
+                FileOutputStream(tempFile).write(zipFile.getInputStream(entry).readBytes())
+                result.addAll(tempFile.parseJar())
+                tempFile.delete()
+            } else {
+                result.add(entry.name to entry.compressedSize)
+            }
+        }
+    }
+    return result
 }
 
 /**
