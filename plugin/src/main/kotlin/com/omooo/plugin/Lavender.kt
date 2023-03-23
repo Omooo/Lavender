@@ -49,10 +49,10 @@ class Lavender : Plugin<Project> {
                     it.fieldList = invokeExtension.getFieldList()
                 }
             }
-            variant.instrumentation.transformClassesWith(
-                SystraceCvFactory::class.java,
-                InstrumentationScope.ALL
-            ) {}
+//            variant.instrumentation.transformClassesWith(
+//                SystraceCvFactory::class.java,
+//                InstrumentationScope.ALL
+//            ) {}
 //            variant.instrumentation.transformClassesWith(
 //                UnusedAssetsCheckClassVisitorFactory::class.java,
 //                InstrumentationScope.ALL
