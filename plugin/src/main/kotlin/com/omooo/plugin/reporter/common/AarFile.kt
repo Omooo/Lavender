@@ -12,3 +12,7 @@ internal data class AarFile(
     val owner: String,
     val fileList: MutableList<AppFile>,
 )
+
+internal fun List<AarFile>.totalSize(): Long {
+    return map { it.size }.reduce { acc, l -> acc + l }
+}

@@ -8,6 +8,7 @@ import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.internal.apk.ApkParser
 import com.omooo.plugin.internal.apk.clear
 import com.omooo.plugin.reporter.AppReporter
+import com.omooo.plugin.reporter.HtmlReporter
 import com.omooo.plugin.reporter.Insight
 import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.reporter.common.AppFile
@@ -51,20 +52,38 @@ internal open class ApkAnalyseTask : DefaultTask() {
             println(red("${variant.name} is not an application variant."))
             return
         }
+        // 获取 APK 文件
         val apkFile =
             Files.walk(variant.component.artifacts.get(SingleArtifact.APK).get().asFile.toPath())
                 .filter {
                     it.extension == SdkConstants.EXT_ANDROID_PACKAGE
                 }.findFirst().get().toFile()
-        val appFileList = ApkParser().parse(apkFile).clear(variant)
-        appFileList.writeToJson("${project.parent?.projectDir}/app-clean.json")
 
-        analyze(appFileList, getDependencies().filterNot {
-            it.key == "AndroidManifest.xml"
-        })
+        val appFileList = ApkParser().parse(apkFile).clear(variant)
+        println(green("Apk file size: ${apkFile.length()} bytes"))
+        val reporter = analyze(appFileList, getDependencies().filterNot {
+            it.key == SdkConstants.ANDROID_MANIFEST_XML
+        }).apply {
+            writeToJson("${project.parent?.projectDir}/apkAnalyse.json")
+            println(green("Total item size: ${this.aarList.totalSize()} bytes"))
+        }
+
+        HtmlReporter().generateReport(reporter, "${project.parent?.projectDir}/apkAnalyse.html")
+
+//        val buildTool = variant.variantData.scope.globalScope.androidBuilder.buildToolInfoProvider.get();
+//        val aapt2 = buildTool.getPath(BuildToolInfo.PathId.AAPT2);
     }
 
-    private fun analyze(appFileList: List<AppFile>, dependencies: Map<String, String>) {
+    /**
+     * 产物分析
+     *
+     * @param appFileList 从 APK 里解析出的所有文件
+     * @param dependencies 构建 APK 过程的所有依赖
+     */
+    private fun analyze(
+        appFileList: List<AppFile>,
+        dependencies: Map<String, String>
+    ): AppReporter {
         val aarFileList = appFileList.groupBy {
             val name = if (it.fileType == FileType.CLASS) {
                 "${it.name.replace(".", "/")}.class"
@@ -81,13 +100,13 @@ internal open class ApkAnalyseTask : DefaultTask() {
                 it.value.sortedByDescending { it.size }.toMutableList()
             )
         }
-        AppReporter(
+        return AppReporter(
             desc = Insight.Title.APK_ANALYSE,
             documentLink = Insight.DocumentLink.APK_ANALYSE,
             versionName = (variant as ApplicationVariantImpl).versionName,
             variantName = variant.name,
             aarList = aarFileList.sortedByDescending { it.size },
-        ).writeToJson("${project.parent?.projectDir}/apkAnalyse.json")
+        )
     }
 
     /**
@@ -105,8 +124,6 @@ internal open class ApkAnalyseTask : DefaultTask() {
             artifact.getArtifactName() to artifact.file.parseAar().map { it.first }
         }.flatMap { pair ->
             pair.second.map { it to pair.first }
-        }.associateBy({ it.first }, { it.second }).apply {
-            writeToJson("${project.parent?.projectDir}/app-getDependencies.json")
-        }
+        }.associateBy({ it.first }, { it.second })
     }
 }

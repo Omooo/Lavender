@@ -17,6 +17,7 @@ dependencies {
     kapt "com.google.auto.service:auto-service:1.0.1"
     compileOnly "com.android.tools.build:gradle:7.2.2"
     compileOnly 'com.android.tools:common:30.4.1'
+    compileOnly 'com.android.tools:sdklib:30.4.1'
     testCompileOnly "com.android.tools.build:gradle:7.2.2"
 
     implementation "org.ow2.asm:asm:9.4"
@@ -30,6 +31,10 @@ dependencies {
     implementation("com.android.tools.apkparser:apkanalyzer:30.1.2") {
         exclude group: 'com.android.tools.lint'
     }
+}
+
+sourceSets.main {
+    resources.srcDir(project(":frontend").tasks.named("browserDistribution"))
 }
 
 java {
