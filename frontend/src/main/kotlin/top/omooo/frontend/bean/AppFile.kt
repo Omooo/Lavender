@@ -11,5 +11,7 @@ import kotlinx.serialization.Serializable
 data class AppFile(
     val name: String,
     val size: Long,
+    val desc: String,
+    var fileType: FileType = FileType.OTHER,
 )
 

@@ -43,13 +43,15 @@ val AarAccordion = FC<AarAccordionProps> { props ->
                     label = ReactNode(aarData.owner)
                     variant = ChipVariant.outlined
                 }
-                Typography {
-                    sx {
-                        flexGrow = number(1.0)
-                        marginRight = 5.px
-                        textAlign = TextAlign.right
+                if (aarData.size != 0L) {
+                    Typography {
+                        sx {
+                            flexGrow = number(1.0)
+                            marginRight = 5.px
+                            textAlign = TextAlign.right
+                        }
+                        +aarData.size.formatSize()
                     }
-                    +aarData.size.formatSize()
                 }
             }
             AccordionDetails {
@@ -77,11 +79,13 @@ private val AppFileList = FC<AppFileListProps> { props ->
                 ListItemText {
                     +appFile.name
                 }
-                ListItemText {
-                    sx {
-                        textAlign = TextAlign.right
+                if (appFile.size != 0L || appFile.desc.isNotEmpty()) {
+                    ListItemText {
+                        sx {
+                            textAlign = TextAlign.right
+                        }
+                        +if (appFile.size != 0L) appFile.size.formatSize() else appFile.desc
                     }
-                    +appFile.size.formatSize()
                 }
             }
         }
