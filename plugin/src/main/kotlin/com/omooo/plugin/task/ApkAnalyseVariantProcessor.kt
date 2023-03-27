@@ -6,7 +6,6 @@ import com.google.auto.service.AutoService
 import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.spi.VariantProcessor
 import com.omooo.plugin.util.nameCapitalize
-import com.omooo.plugin.util.processManifestTaskProvider
 import org.gradle.api.Project
 import org.gradle.api.UnknownTaskException
 
@@ -19,6 +18,9 @@ import org.gradle.api.UnknownTaskException
 class ApkAnalyseVariantProcessor : VariantProcessor {
 
     override fun process(project: Project, variant: BaseVariant) {
+        if (variant.name.contains("debug", true)) {
+            return
+        }
         val analyseTask = try {
             project.tasks.named("apkAnalyse")
         } catch (e: UnknownTaskException) {
@@ -36,7 +38,7 @@ class ApkAnalyseVariantProcessor : VariantProcessor {
             it.description = "Analyse the apk output from app project for ${variant.name}."
             it.outputs.upToDateWhen { false }
         }.also {
-            it.dependsOn(project.tasks.named("assembleRelease"))
+            it.dependsOn(project.tasks.named("assemble${variant.nameCapitalize()}"))
             analyseTask.dependsOn(it)
         }
     }

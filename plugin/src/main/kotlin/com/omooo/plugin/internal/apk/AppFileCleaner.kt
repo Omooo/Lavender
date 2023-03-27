@@ -14,7 +14,7 @@ internal fun List<AppFile>.clear(variant: BaseVariant): List<AppFile> {
 
     val clearList: List<ICleaner> = listOf(
         ClassCleaner(variant.mappingFileProvider.get().singleFile),
-        ResourceCleaner(variant.project.buildDir, variant.name),
+        ResourceCleaner(variant.project.buildDir, variant),
         TypeAssigningCleaner()
     )
     return clearList.flatMap { cleaner ->

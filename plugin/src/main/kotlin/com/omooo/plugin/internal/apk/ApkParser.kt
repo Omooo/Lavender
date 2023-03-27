@@ -1,5 +1,6 @@
 package com.omooo.plugin.internal.apk
 
+import com.android.SdkConstants
 import com.android.tools.apk.analyzer.dex.DexFiles
 import com.omooo.plugin.reporter.common.AppFile
 import com.omooo.plugin.reporter.common.FileType
@@ -20,7 +21,7 @@ internal class ApkParser {
         val result = mutableListOf<AppFile>()
         ZipFile(apkFile).use { zipFile ->
             zipFile.entries().iterator().forEach { entry ->
-                if (entry.name.endsWith(".dex", true)) {
+                if (entry.name.endsWith(SdkConstants.DOT_DEX, true)) {
                     result.addAll(parseDex(zipFile.getInputStream(entry).readBytes()))
                 } else {
                     result.add(AppFile(entry.name, entry.compressedSize))
