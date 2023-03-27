@@ -8,6 +8,7 @@ fun kotlinw(target: String): String =
 
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
+    implementation("org.jetbrains.kotlin-wrappers:kotlin-extensions:1.0.1-pre.343")
 
     implementation(enforcedPlatform(kotlinw("wrappers-bom:1.0.0-pre.477")))
 
