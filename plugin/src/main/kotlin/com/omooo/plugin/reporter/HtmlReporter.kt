@@ -28,6 +28,7 @@ internal class HtmlReporter {
         html = html.replaceFirst("{key:\"REPLACE_ME\"}", "`${JsonOutput.toJson(data)}`")
         return file.apply {
             writeText(html)
+            println("Reporter: ${toPath().toUri()}")
         }
     }
 

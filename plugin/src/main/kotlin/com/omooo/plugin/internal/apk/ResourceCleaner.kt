@@ -61,6 +61,7 @@ internal class ResourceCleaner(
         }
         when (rc.exitValue) {
             0 -> {
+                // "res/eU.xml" -> "res/anim/abc_popup_exit.xml"
                 resMapping = resMappingFile.readLines().associate {
                     it.substringAfter("-> ") to it.substringBefore(" ->")
                 }
