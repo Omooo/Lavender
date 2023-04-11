@@ -3,6 +3,7 @@ package com.omooo.plugin.internal.apk
 import com.android.tools.proguard.ProguardMap
 import com.omooo.plugin.reporter.common.AppFile
 import com.omooo.plugin.reporter.common.FileType
+import com.omooo.plugin.util.formatDollar
 import java.io.File
 
 /**
@@ -26,7 +27,7 @@ internal class ClassCleaner(mappingFile: File) : ICleaner {
             .removeSuffix(".class")
             .replace("/", ".")
         return appFile.apply {
-            name = proguardMap.getClassName(className)
+            name = proguardMap.getClassName(className).formatDollar()
             fileType = FileType.CLASS
         }
     }

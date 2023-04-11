@@ -5,6 +5,7 @@ import com.android.build.api.artifact.SingleArtifact
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import com.omooo.plugin.internal.apk.ApkIncrementAnalyse
 import com.omooo.plugin.internal.apk.ApkParser
 import com.omooo.plugin.internal.apk.clear
 import com.omooo.plugin.reporter.AppReporter
@@ -52,6 +53,7 @@ internal open class ApkAnalyseTask : DefaultTask() {
             println(red("${variant.name} is not an application variant."))
             return
         }
+        val startTime = System.currentTimeMillis()
         // 获取 APK 文件
         val apkFile =
             Files.walk(variant.component.artifacts.get(SingleArtifact.APK).get().asFile.toPath())
@@ -60,18 +62,20 @@ internal open class ApkAnalyseTask : DefaultTask() {
                 }.findFirst().get().toFile()
 
         val appFileList = ApkParser().parse(apkFile).clear(variant)
-        println(green("Apk file size: ${apkFile.length()} bytes"))
-        val reporter = analyze(appFileList, getDependencies().filterNot {
+        val currentAarList = getCurrentAarListFromApk(appFileList, getDependencies().filterNot {
             it.key == SdkConstants.ANDROID_MANIFEST_XML
-        }).apply {
+        })
+        val reporter = AppReporter(
+            desc = Insight.Title.APK_ANALYSE,
+            documentLink = Insight.DocumentLink.APK_ANALYSE,
+            versionName = (variant as ApplicationVariantImpl).versionName,
+            variantName = variant.name,
+            aarList = ApkIncrementAnalyse(project).analyse(currentAarList),
+        ).apply {
             writeToJson("${project.parent?.projectDir}/apkAnalyse.json")
-            println(green("Total item size: ${this.aarList.totalSize()} bytes"))
         }
-
         HtmlReporter().generateReport(reporter, "${project.parent?.projectDir}/apkAnalyse.html")
-
-//        val buildTool = variant.variantData.scope.globalScope.androidBuilder.buildToolInfoProvider.get();
-//        val aapt2 = buildTool.getPath(BuildToolInfo.PathId.AAPT2);
+        println(green("Spend time: ${System.currentTimeMillis() - startTime}ms"))
     }
 
     /**
@@ -80,10 +84,10 @@ internal open class ApkAnalyseTask : DefaultTask() {
      * @param appFileList 从 APK 里解析出的所有文件
      * @param dependencies 构建 APK 过程的所有依赖
      */
-    private fun analyze(
+    private fun getCurrentAarListFromApk(
         appFileList: List<AppFile>,
         dependencies: Map<String, String>
-    ): AppReporter {
+    ): List<AarFile> {
         val aarFileList = appFileList.groupBy {
             val name = if (it.fileType == FileType.CLASS) {
                 "${it.name.replace(".", "/")}.class"
@@ -100,13 +104,7 @@ internal open class ApkAnalyseTask : DefaultTask() {
                 it.value.sortedByDescending { it.size }.toMutableList()
             )
         }
-        return AppReporter(
-            desc = Insight.Title.APK_ANALYSE,
-            documentLink = Insight.DocumentLink.APK_ANALYSE,
-            versionName = (variant as ApplicationVariantImpl).versionName,
-            variantName = variant.name,
-            aarList = aarFileList.sortedByDescending { it.size },
-        )
+        return aarFileList.sortedByDescending { it.size }
     }
 
     /**

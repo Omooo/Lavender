@@ -9,12 +9,15 @@ package com.omooo.plugin.reporter.common
 @kotlinx.serialization.Serializable
 internal data class AppFile(
     var name: String,
-    val size: Long = 0,
-    val desc: String = "",
+    var size: Long = 0,
+    var desc: String = "",
     var fileType: FileType = FileType.OTHER,
 )
 
 internal fun List<AppFile>.totalSize(): Long {
+    if (isEmpty()) {
+        return 0
+    }
     return map { it.size }.reduce { acc, l -> acc + l }
 }
 

@@ -14,5 +14,8 @@ internal data class AarFile(
 )
 
 internal fun List<AarFile>.totalSize(): Long {
+    if (isEmpty()) {
+        return 0
+    }
     return map { it.size }.reduce { acc, l -> acc + l }
 }

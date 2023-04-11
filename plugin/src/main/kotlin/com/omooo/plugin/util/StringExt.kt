@@ -28,3 +28,7 @@ internal fun String.getArtifactIdFromAarName(): String {
 private const val DOLLAR = '$'
 
 internal val EXCLUDES = Regex("^(((android[x]?)|(com/(((google/)?android)|(google/gson))))/.+)|(.+/((R[2]?(${DOLLAR}[a-z]+)?)|(BuildConfig)))$")
+
+internal fun String.formatDollar(): String {
+    return replace("$", "${'$'}")
+}
