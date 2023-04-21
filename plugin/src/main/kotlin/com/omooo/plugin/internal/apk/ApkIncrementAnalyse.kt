@@ -3,6 +3,7 @@ package com.omooo.plugin.internal.apk
 import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.reporter.common.AppFile
 import com.omooo.plugin.reporter.common.totalSize
+import com.omooo.plugin.util.writeToJson
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import org.gradle.api.Project
@@ -32,7 +33,9 @@ internal class ApkIncrementAnalyse(private val project: Project) {
                 f.delete()
             }
             f.mkdirs()
-            return currentList
+            return currentList.apply {
+                writeToJson(previousDataPath)
+            }
         }
         val map = previousList.associateBy { it.name.substringBeforeLast(":") }
         val result = mutableListOf<AarFile>()
