@@ -27,7 +27,7 @@ internal class ApkIncrementAnalyse(private val project: Project) {
      */
     fun analyse(currentList: List<AarFile>): List<AarFile> {
         val previousList = getPreviousAarFileList()
-        if (previousList.isEmpty()) {
+        if (previousList.isEmpty() || project.hasProperty("forceRefresh")) {
             val f = File(previousDataPath)
             if (f.exists()) {
                 f.delete()
@@ -55,7 +55,7 @@ internal class ApkIncrementAnalyse(private val project: Project) {
                 result.add(aarFile)
             }
         }
-        return result
+        return result.sortedByDescending { it.size }
     }
 
     /**
