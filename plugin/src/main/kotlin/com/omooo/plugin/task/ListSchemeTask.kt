@@ -55,7 +55,7 @@ internal open class ListSchemeTask : DefaultTask() {
     /**
      * 解析 Manifest 文件
      *
-     * @return { "com.xxx.SampleActivity": "nio://home/mall, nio://home/mine" }
+     * @return { "com.xxx.SampleActivity": "scheme1://xxx/xx, scheme2://xxx/xx" }
      */
     private fun File.parseManifest(): Map<String, String> {
         val result = mutableMapOf<String, String>()
