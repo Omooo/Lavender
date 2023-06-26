@@ -1,0 +1,11 @@
+Omooo:
+  - app-startup
+
+Android:
+  - appcompat
+  - material
+  - recyclerview
+  - fragment
+  - constraintlayout-solver
+  - constraintlayout
+
