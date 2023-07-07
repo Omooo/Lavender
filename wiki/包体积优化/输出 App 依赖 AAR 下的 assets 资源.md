@@ -10,13 +10,13 @@
 
 在接入 Lavender 的 Application 工程中，直接运行：
 
-```JSON
+```
 ./gradlew listAssets
 ```
 
 该任务会在终端输出：
 
-```JSON
+```
 > Task :app-startup:listAssets
 *********************************************
 ********** -- ListAssetsTask -- *************
@@ -27,7 +27,7 @@ Total assets size: 15839513 bytes.
 
 同时会在项目的根目录输出 assets.json 报告，示例如下：
 
-```JSON
+```
 {
     "xxx:xxx:5.13.1-SNAPSHOT": [    // AAR 名称
         {
