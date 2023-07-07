@@ -1,0 +1,38 @@
+{
+    "desc": "Lavender - List Unused Assets",
+    "documentLink": "",
+    "versionName": "1.0",
+    "variantName": "release",
+    "aarList": [
+        {
+            "name": ":library",
+            "size": 235,
+            "owner": "unknown",
+            "fileList": [
+                {
+                    "name": "library.json",
+                    "size": 231
+                },
+                {
+                    "name": "lottie/lottie.json",
+                    "size": 4
+                }
+            ]
+        },
+        {
+            "name": "app",
+            "size": 24,
+            "owner": "unknown",
+            "fileList": [
+                {
+                    "name": "unused3.json",
+                    "size": 20
+                },
+                {
+                    "name": "unused2.json",
+                    "size": 4
+                }
+            ]
+        }
+    ]
+}
