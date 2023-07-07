@@ -30,9 +30,9 @@ Reporter: file:///xxx/nio/rootProjectDir/unusedAssets.json
 
 并且会在项目的根目录输出 unusedAssets.json 报告，示例如下：
 
-```tex
+```
 {
-    "xxx:xx:5.12.1": [    // AAR 名称
+    "xxx:xx:5.12.1": [                        // AAR 名称
         "mockhome.json"                       // 该 AAR 下的无用 assets 资源
     ],
     "xxx:xx:2.6.5": [
@@ -46,7 +46,7 @@ Reporter: file:///xxx/nio/rootProjectDir/unusedAssets.json
 
    如果想配置白名单，则可以在项目的根目录下新增 {projectDir}/lavender-plugin/whitelist/assets.json，例如：
 
-   ```tex
+   ```
    [
      "lottie/xxx.json",    // assets 资源名称
      "rule_action_layout.json",
