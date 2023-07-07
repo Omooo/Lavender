@@ -12,13 +12,13 @@
 
 在接入 Lavender 的 Application 工程中，直接运行：
 
-```JSON
+```tex
 ./gradlew listUnusedAssets
 ```
 
 该任务会输出：
 
-```JSON
+```tex
 > Task :app-startup:listUnusedAssetsForNioRelease
 *********************************************
 ********* -- ListUnusedAssetsTask -- ********
@@ -30,7 +30,7 @@ Reporter: file:///xxx/nio/rootProjectDir/unusedAssets.json
 
 并且会在项目的根目录输出 unusedAssets.json 报告，示例如下：
 
-```JSON
+```tex
 {
     "xxx:xx:5.12.1": [    // AAR 名称
         "mockhome.json"                       // 该 AAR 下的无用 assets 资源
@@ -46,7 +46,7 @@ Reporter: file:///xxx/nio/rootProjectDir/unusedAssets.json
 
    如果想配置白名单，则可以在项目的根目录下新增 {projectDir}/lavender-plugin/whitelist/assets.json，例如：
 
-   ```JSON
+   ```tex
    [
      "lottie/xxx.json",    // assets 资源名称
      "rule_action_layout.json",
