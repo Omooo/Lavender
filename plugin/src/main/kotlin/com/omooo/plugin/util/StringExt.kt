@@ -7,6 +7,13 @@ package com.omooo.plugin.util
  */
 
 /**
+ * 从 AAR 全限定名中获取 group id
+ */
+internal fun String.getGroupIdFromAarName(): String {
+    return substringBefore(":")
+}
+
+/**
  * 从 AAR 全限定名中获取 artifact id
  */
 internal fun String.getArtifactIdFromAarName(): String {
