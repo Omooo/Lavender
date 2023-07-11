@@ -4,6 +4,7 @@ import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.util.getArtifactName
+import com.omooo.plugin.util.getGroupIdFromAarName
 import com.omooo.plugin.util.writeToJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
@@ -45,7 +46,13 @@ internal open class ListAarSizeTask : DefaultTask() {
             resultMap[artifact.getArtifactName()] = size
         }
 
-        resultMap.toList().sortedByDescending { (_, value) ->
+        resultMap.toList().asSequence().filter {
+            if (project.hasProperty("groupIdPrefix")) {
+                it.first.getGroupIdFromAarName().startsWith(project.properties["groupIdPrefix"].toString())
+            } else {
+                true
+            }
+        }.sortedByDescending { (_, value) ->
             value
         }.toMap().mapValues {
             "${it.value}kb"
