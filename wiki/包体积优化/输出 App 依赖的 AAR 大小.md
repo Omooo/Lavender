@@ -11,7 +11,11 @@
 在接入 Lavender 的 Application 工程中，直接运行：
 
 ```
+// 这样会输出所有的 AAR
 ./gradlew listAarSize
+
+// 当然你也可以过滤指定 groupId 前缀的 AAR，即：
+./gradlew listAarSize -PgroupIdPrefix="com.androidx.core"
 ```
 
 该任务会在项目的 根目录输出一个 aarSize.json 文件（默认按照 AAR 大小倒序排序），类似如下：
