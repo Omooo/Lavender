@@ -19,6 +19,7 @@ dependencies {
     implementation(kotlinw("emotion"))
     implementation(kotlinw("mui"))
     implementation(kotlinw("mui-icons"))
+    implementation(npm("apexcharts", "3.35.3"))
 
     implementation(npm("date-fns", "2.29.3"))
     implementation(npm("@date-io/date-fns", "2.16.0"))
