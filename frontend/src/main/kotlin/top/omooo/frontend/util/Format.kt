@@ -21,4 +21,11 @@ fun Number.formatSize(): String {
     return "${remainder.asDynamic().toFixed(1)} ${units.first()}"
 }
 
+fun formatPercentage(fraction: Number, total: Number): String {
+    val percentage = PERCENT_FACTOR * fraction.toDouble() / total.toDouble()
+    return "${percentage.asDynamic().toFixed(2)} %"
+}
+
 private const val BYTE_FACTOR = 1024
+
+private const val PERCENT_FACTOR = 100

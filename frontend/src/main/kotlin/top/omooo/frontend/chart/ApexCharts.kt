@@ -27,7 +27,8 @@ external interface ApexChartOptions {
     var xaxis: AxisOptions
     var yaxis: AxisOptions
     var title: TitleOptions
-    var annotations: AnnotationsOptions
+//    var annotations: AnnotationsOptions
+    var colors: Array<String>
 }
 
 external interface AnnotationsOptions {

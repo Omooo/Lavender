@@ -34,13 +34,14 @@ class LineChartConfig(
         stroke.apply {
             show = true
             curve = "straight"
-            colors = arrayOf("#4095E5")
+            colors = arrayOf("#4095E5", "#BD3124")
         }
         title.apply {
-            text = ""
-            align = "left"
+            text = "阈值为最初版本的 120% 大小"
+            align = "middle"
         }
-        annotations.yaxis = arrayOf(annotationYaxisOptionsOf(5, "基线"))
+        colors = arrayOf("#4095E5", "#BD3124")
+//        annotations.yaxis = arrayOf(annotationYaxisOptionsOf(5, "阈值"))
     }
 
 }

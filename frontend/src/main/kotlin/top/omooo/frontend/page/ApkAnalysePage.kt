@@ -8,32 +8,26 @@ import react.Props
 import react.create
 import react.dom.client.createRoot
 import react.useState
-import top.omooo.frontend.bean.AarAnalyseReporter
+import top.omooo.frontend.bean.AppReporter
 import top.omooo.frontend.common.Header
 import top.omooo.frontend.common.ThemeModule
 import top.omooo.frontend.component.AarAccordion
 import top.omooo.frontend.component.Summary
-import top.omooo.frontend.util.formatSize
+import top.omooo.frontend.util.*
 import web.dom.document
 
-/**
- * Author: Omooo
- * Date: 2023/7/14
- * Desc: AAR 分析页面
- */
-
 fun main() {
-    val text = require("./aarAnalyse.json").toString()
-    val data = Json.decodeFromString(AarAnalyseReporter.serializer(), text)
+    val text = require("./report.json").toString()
+    val data = Json.decodeFromString(AppReporter.serializer(), text)
     createRoot(document.getElementById("root")!!).render(
         App.create {
-            aarReporter = data
+            appReporter = data
         }
     )
 }
 
-external interface AppProps : Props {
-    var aarReporter: AarAnalyseReporter
+private external interface AppProps : Props {
+    var appReporter: AppReporter
 }
 
 private val App = FC<AppProps> { props ->
@@ -41,12 +35,12 @@ private val App = FC<AppProps> { props ->
     ThemeModule {
         Box {
             Header {
-                title = props.aarReporter.desc
-                documentLink = props.aarReporter.documentLink
+                title = props.appReporter.desc
+                documentLink = props.appReporter.documentLink
             }
 
             Summary {
-                title = props.aarReporter.currentList.filter {
+                title = props.appReporter.aarList.filter {
                     if (owner == "none") true else it.owner == owner
                 }.let { list ->
                     if ((list.firstOrNull()?.size ?: 0) > 0) {
@@ -59,11 +53,11 @@ private val App = FC<AppProps> { props ->
                         } classes need to check."
                     }
                 }
-                subtitle = props.aarReporter.let {
-                    "Version: ${it.versionName} (previous: ${it.versionName})"
+                subtitle = props.appReporter.let {
+                    "Version: ${it.versionName} (${it.variantName})"
                 }
                 ownerList = mutableListOf("none").apply {
-                    addAll(props.aarReporter.currentList.map { it.owner }.toSet())
+                    addAll(props.appReporter.aarList.map { it.owner }.toSet())
                 }
                 defaultSelect = "none"
                 onSelect = {
@@ -72,7 +66,7 @@ private val App = FC<AppProps> { props ->
             }
 
             AarAccordion {
-                aarList = props.aarReporter.currentList.filter {
+                aarList = props.appReporter.aarList.filter {
                     if (owner == "none") true else it.owner == owner
                 }
             }

@@ -75,25 +75,26 @@ abstract class ChartConfig {
             text = jso()
             align = jso()
         }
-        annotations = jso {
-            yaxis = arrayOf(
-                jso {
-                    y = jso()
-                    y2 = jso()
-                    borderColor = jso()
-                    fillColor = jso()
-                    label = jso {
-                        borderColor = jso()
-                        text = jso()
-                        style = jso {
-                            color = jso()
-                            background = jso()
-                        }
-                    }
-                    strokeDashArray = jso()
-                }
-            )
-        }
+//        annotations = jso {
+//            yaxis = arrayOf(
+//                jso {
+//                    y = jso()
+//                    y2 = jso()
+//                    borderColor = jso()
+//                    fillColor = jso()
+//                    label = jso {
+//                        borderColor = jso()
+//                        text = jso()
+//                        style = jso {
+//                            color = jso()
+//                            background = jso()
+//                        }
+//                    }
+//                    strokeDashArray = jso()
+//                }
+//            )
+//        }
+        colors = jso()
     }.apply(builder)
 
     private companion object {

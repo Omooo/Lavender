@@ -24,18 +24,19 @@ fun main() {
         "Lavender",
         "",
         "com.android",
-        "5.18.0",
         listOf(
-            AarFile("name-1", 100, "Owner - 1", emptyList()),
-            AarFile("name-2", 200, "Owner - 1", emptyList()),
-            AarFile("name-3", 300, "Owner - 2", emptyList()),
-            AarFile("name-4", 400, "Owner - 4", emptyList()),
-            AarFile("name-5", 500, "unknown", emptyList()),
-            AarFile("name-6", 600, "Owner - 2", emptyList()),
-            AarFile("name-7", 700, "Owner - 3", emptyList()),
-            AarFile("name-8", 800, "Owner - 4", emptyList()),
-        ),
-        listOf(
+            Pair(
+                "5.18.0", listOf(
+                    AarFile("name-1", 100, "Owner - 1", emptyList()),
+                    AarFile("name-2", 200, "Owner - 1", emptyList()),
+                    AarFile("name-3", 300, "Owner - 2", emptyList()),
+                    AarFile("name-4", 400, "Owner - 4", emptyList()),
+                    AarFile("name-5", 500, "unknown", emptyList()),
+                    AarFile("name-6", 600, "Owner - 2", emptyList()),
+                    AarFile("name-7", 700, "Owner - 3", emptyList()),
+                    AarFile("name-8", 800, "Owner - 4", emptyList()),
+                )
+            ),
             Pair(
                 "5.17.5", listOf(
                     AarFile("name-1", 100, "Owner - 1", emptyList()),
@@ -48,7 +49,7 @@ fun main() {
                     AarFile("name-8", 200, "Owner - 4", emptyList()),
                 )
             ),
-            Pair("5.17.0", listOf(AarFile("name-1", 100, "", emptyList()))),
+            Pair("5.17.0", listOf(AarFile("name-1", 100, "Owner - 1", emptyList()))),
         ),
         ownerMap = mapOf(
             Pair("Owner - 1", listOf("name-1", "name-2")),
@@ -70,6 +71,7 @@ private external interface AppProps : Props {
 
 private val App = FC<AppProps> { props ->
     var owner by useState("All")
+    var aarName by useState("")
     ThemeModule {
         Box {
             Header {
@@ -83,11 +85,11 @@ private val App = FC<AppProps> { props ->
 
             TabComponent {
                 aarReporter = props.aarReporter
-                onSelect = { ownerName, aarName ->
+                onSelect = { ownerName, aar ->
                     owner = ownerName
+                    aarName = aar
                 }
             }
-
 
         }
     }
@@ -97,6 +99,7 @@ private val App = FC<AppProps> { props ->
 private val TabComponent = FC<TabComponentProps> { props ->
     var activeTab by useState("one")
     var owner by useState("All")
+    var aarName by useState("All")
 
     Box {
         Grid {
@@ -106,7 +109,7 @@ private val TabComponent = FC<TabComponentProps> { props ->
             }
             Grid {
                 item = true
-                xs = 9
+                xs = 8
                 Box {
                     Tabs {
                         value = activeTab
@@ -130,7 +133,7 @@ private val TabComponent = FC<TabComponentProps> { props ->
 
             Grid {
                 item = true
-                xs = 3
+                xs = 2
                 Box {
                     css {
                         marginTop = 20.px
@@ -140,13 +143,13 @@ private val TabComponent = FC<TabComponentProps> { props ->
                         fullWidth = true
                         InputLabel {
                             id = "select-label"
-                            +"Owner & AAR"
+                            +"Owner"
                         }
                         Select {
                             labelId = "select-label"
                             id = ""
                             value = owner
-                            label = ReactNode("Owner & AAR")
+                            label = ReactNode("Owner")
                             onChange = { event, _ ->
                                 owner = event.target.value
                                 props.onSelect(event.target.value, "")
@@ -161,22 +164,65 @@ private val TabComponent = FC<TabComponentProps> { props ->
                     }
                 }
             }
+
+            Grid {
+                item = true
+                xs = 2
+                Box {
+                    css {
+                        marginTop = 20.px
+                        marginRight = 20.px
+                    }
+                    FormControl {
+                        fullWidth = true
+                        disabled = activeTab != "three"
+                        InputLabel {
+                            id = "select-label"
+                            +"AAR"
+                        }
+                        Select {
+                            labelId = "select-label"
+                            id = ""
+                            label = ReactNode("AAR")
+                            onChange = { event, _ ->
+                                aarName = event.target.value
+                            }
+                            val selectList = mutableListOf("All")
+                            val aarList = props.aarReporter.aarList.getOrNull(0)?.second.orEmpty()
+                            if (owner == "All") {
+                                selectList.addAll(aarList.map { it.name })
+                            } else {
+                                selectList.addAll(aarList.filter { it.owner == owner }.map { it.name })
+                            }
+                            value = if (aarName in selectList) aarName else "All"
+                            selectList.forEach {
+                                MenuItem {
+                                    value = it
+                                    +it
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        when(activeTab) {
+        when (activeTab) {
             "one" -> AarList {
-                aarList = props.aarReporter.currentList.filter {
+                aarList = props.aarReporter.aarList.getOrNull(0)?.second.orEmpty().filter {
                     if (owner == "All") true else it.owner == owner
                 }
             }
             "two" -> AarList {
                 showDiff = true
-                val ownerList = if (owner == "All") props.aarReporter.ownerMap.keys else listOf(owner)
+                val ownerList =
+                    if (owner == "All") props.aarReporter.ownerMap.keys else listOf(owner)
                 val diffList =
-                    props.aarReporter.previousList[0].second.filter { it.owner in ownerList }
+                    props.aarReporter.aarList.getOrNull(1)?.second.orEmpty()
+                        .filter { it.owner in ownerList }
                         .map { previousAar ->
                             val currentAar =
-                                props.aarReporter.currentList.find {
+                                props.aarReporter.aarList.getOrNull(0)?.second.orEmpty().find {
                                     it.name == previousAar.name && it.owner in ownerList
                                 }
                             AarFile(
@@ -189,7 +235,10 @@ private val TabComponent = FC<TabComponentProps> { props ->
                         }
                 aarList = diffList
             }
-            "three" -> ChartsComponent()
+            "three" -> ChartsComponent {
+                this.chartLabels = props.aarReporter.getChartLabels()
+                this.chartSeries = props.aarReporter.getChartSeries(owner, aarName)
+            }
         }
     }
 }

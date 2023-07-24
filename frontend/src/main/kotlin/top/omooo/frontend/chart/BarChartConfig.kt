@@ -1,5 +1,7 @@
 package top.omooo.frontend.chart
 
+import top.omooo.frontend.util.formatPercentage
+
 /** Chart config for bar charts. */
 @Suppress("LongParameterList")
 class BarChartConfig(

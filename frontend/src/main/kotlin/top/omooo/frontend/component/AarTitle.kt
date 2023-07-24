@@ -10,6 +10,7 @@ import mui.material.*
 import react.FC
 import react.Props
 import top.omooo.frontend.bean.AarAnalyseReporter
+import top.omooo.frontend.bean.totalSize
 import top.omooo.frontend.common.color
 import top.omooo.frontend.common.xs
 import top.omooo.frontend.util.formatSize
@@ -42,8 +43,8 @@ val AarTitle = FC<AarTitleProps> { props ->
                     }
                     Typography {
                         color = "text.secondary"
-                        +"Version: v${props.data.versionName} (previous: v${
-                            props.data.previousList.getOrNull(0)?.first
+                        +"Version: ${props.data.aarList.getOrNull(0)?.first} (previous: ${
+                            props.data.aarList.getOrNull(1)?.first
                         })"
                     }
                 }
@@ -60,7 +61,7 @@ val AarTitle = FC<AarTitleProps> { props ->
                     }
                     Typography {
                         color = "text.secondary"
-                        +props.data.currentList.size.toString()
+                        +props.data.aarList.getOrNull(0)?.second.orEmpty().size.toString()
                     }
                 }
             }
@@ -76,10 +77,7 @@ val AarTitle = FC<AarTitleProps> { props ->
                     }
                     Typography {
                         color = "text.secondary"
-                        +props.data.currentList
-                            .map { it.size }
-                            .reduce { a, b -> a + b }
-                            .formatSize()
+                        +props.data.aarList.getOrNull(0)?.second.orEmpty().totalSize().formatSize()
                     }
                 }
             }

@@ -3,29 +3,28 @@ package top.omooo.frontend.chart
 import kotlinx.browser.document
 import react.FC
 import react.Props
-import react.dom.html.ReactHTML
 import react.dom.html.ReactHTML.div
 import react.useEffect
+import top.omooo.frontend.util.formatSize
+import kotlin.math.roundToLong
 
-val ChartsComponent = FC<Props> {
+val ChartsComponent = FC<ChartsComponentProps> { props->
     div {
         id = "id-charts"
-        val s1 = LongArray(3)
-        s1[0] = 6
-        s1[1] = 6
-        s1[2] = 6
-        val s2 = LongArray(3)
-        s2[0] = 4
-        s2[1] = 1
-        s2[2] = 10
+        val thresholdSize = props.chartSeries.second.find {
+            it != 0L
+        }?.times(1.2f)?.roundToLong() ?: 0L
+        val thresholdSeries = props.chartSeries.second.map {
+            if (it != 0L) thresholdSize else it
+        }.toLongArray()
         val config = LineChartConfig(
-            chartLabels = arrayOf("v5.17.0", "v5.18.0", "v5.18.0"),
+            chartLabels = props.chartLabels,
             chartSeries = arrayOf(
-                seriesOf("name1", s2),
-                seriesOf("基线", s1),
+                seriesOf(props.chartSeries.first, props.chartSeries.second),
+                seriesOf("阈值", thresholdSeries),
             ),
             chartHeight = 350,
-            yAxisFormatter = ::formatSize,
+            yAxisFormatter = Number::formatSize,
         )
         useEffect {
             val chart = ApexCharts(document.getElementById("id-charts"), config.getOptions())
@@ -36,4 +35,9 @@ val ChartsComponent = FC<Props> {
         }
 
     }
+}
+
+external interface ChartsComponentProps : Props {
+    var chartSeries: Pair<String, LongArray>
+    var chartLabels: Array<String>
 }
