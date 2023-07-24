@@ -14,3 +14,10 @@ data class AarFile(
     val owner: String,
     val fileList: List<AppFile> = emptyList(),
 )
+
+internal fun List<AarFile>.totalSize(): Long {
+    if (isEmpty()) {
+        return 0
+    }
+    return map { it.size }.reduce { acc, l -> acc + l }
+}

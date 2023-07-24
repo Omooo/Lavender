@@ -2,8 +2,7 @@ package top.omooo.frontend.chart
 
 import js.core.jso
 
-fun seriesOf(name: String, data: LongArray, type: String = ""): Series = jso {
-    this.type = "line"
+fun seriesOf(name: String, data: LongArray): Series = jso {
     this.name = name
     this.data = data.map(Long::toInt).toTypedArray()
 }
@@ -11,7 +10,6 @@ fun seriesOf(name: String, data: LongArray, type: String = ""): Series = jso {
 fun annotationYaxisOptionsOf(y: Long, desc: String): AnnotationYaxisOptions = jso {
     this.y = y
     this.borderColor = "#00E396"
-    this.fillColor = "#00E396"
     this.label = jso {
         this.text = desc
         this.borderColor = "#00E396"
