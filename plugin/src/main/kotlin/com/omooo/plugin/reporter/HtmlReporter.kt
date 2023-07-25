@@ -32,6 +32,23 @@ internal class HtmlReporter {
         }
     }
 
+    /**
+     * 生成 AAR 分析报告
+     */
+    fun generateAarAnalyseReport(data: AarAnalyseReporter, filePath: String): File {
+        val file = File(filePath)
+        if (file.exists()) {
+            file.delete()
+        }
+        file.createNewFile()
+        var html = readResourceFile("aarAnalyse-Template.html")
+        html = html.replaceFirst("{key:\"REPLACE_ME\"}", "`${JsonOutput.toJson(data)}`")
+        return file.apply {
+            writeText(html)
+            println("Reporter: ${toPath().toUri()}")
+        }
+    }
+
     private fun readResourceFile(fileName: String): String {
         val url = requireNotNull(javaClass.getResource("/$fileName"))
         return url.readText()

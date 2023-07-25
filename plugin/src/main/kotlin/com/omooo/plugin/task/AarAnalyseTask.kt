@@ -4,6 +4,7 @@ import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.internal.aar.AarAnalyse
+import com.omooo.plugin.reporter.HtmlReporter
 import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.util.getArtifactIdFromAarName
 import com.omooo.plugin.util.getArtifactName
@@ -57,8 +58,9 @@ internal open class AarAnalyseTask : DefaultTask() {
             }
         val reporter = AarAnalyse(project).analyse(
             variant.applicationId,
-            Pair((variant as ApplicationVariantImpl).versionName, aarList)
+            Pair((variant as ApplicationVariantImpl).versionName, aarList.sortedByDescending { it.size })
         )
+        HtmlReporter().generateAarAnalyseReport(reporter, "${project.parent?.projectDir}/aarAnalyse.html")
 
         println(green("Spend time: ${System.currentTimeMillis() - startTime}ms"))
     }

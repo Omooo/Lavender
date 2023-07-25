@@ -2,6 +2,8 @@ package top.omooo.frontend
 
 import csstype.*
 import emotion.react.css
+import kotlinx.serialization.json.Json
+import kotlinext.js.require
 import mui.material.*
 import mui.system.Box
 import react.*
@@ -17,47 +19,8 @@ import top.omooo.frontend.component.AarTitle
 import web.dom.document
 
 fun main() {
-//    val text = require("./aarAnalyse.json").toString()
-//    val data = Json.decodeFromString(AarAnalyseReporter.serializer(), text)
-
-    val data = AarAnalyseReporter(
-        "Lavender",
-        "",
-        "com.android",
-        listOf(
-            Pair(
-                "5.18.0", listOf(
-                    AarFile("name-1", 100, "Owner - 1", emptyList()),
-                    AarFile("name-2", 200, "Owner - 1", emptyList()),
-                    AarFile("name-3", 300, "Owner - 2", emptyList()),
-                    AarFile("name-4", 400, "Owner - 4", emptyList()),
-                    AarFile("name-5", 500, "unknown", emptyList()),
-                    AarFile("name-6", 600, "Owner - 2", emptyList()),
-                    AarFile("name-7", 700, "Owner - 3", emptyList()),
-                    AarFile("name-8", 800, "Owner - 4", emptyList()),
-                )
-            ),
-            Pair(
-                "5.17.5", listOf(
-                    AarFile("name-1", 100, "Owner - 1", emptyList()),
-                    AarFile("name-2", 500, "Owner - 1", emptyList()),
-                    AarFile("name-3", 300, "Owner - 2", emptyList()),
-                    AarFile("name-4", 100, "Owner - 4", emptyList()),
-                    AarFile("name-5", 500, "unknown", emptyList()),
-                    AarFile("name-6", 600, "Owner - 2", emptyList()),
-                    AarFile("name-7", 300, "Owner - 3", emptyList()),
-                    AarFile("name-8", 200, "Owner - 4", emptyList()),
-                )
-            ),
-            Pair("5.17.0", listOf(AarFile("name-1", 100, "Owner - 1", emptyList()))),
-        ),
-        ownerMap = mapOf(
-            Pair("Owner - 1", listOf("name-1", "name-2")),
-            Pair("Owner - 2", listOf("name-3", "name-6")),
-            Pair("Owner - 3", listOf("name-7")),
-            Pair("Owner - 4", listOf("name-4", "name-8")),
-        )
-    )
+    val text = require("./report.json").toString()
+    val data = Json.decodeFromString(AarAnalyseReporter.serializer(), text)
     createRoot(document.getElementById("root")!!).render(
         App.create {
             aarReporter = data
