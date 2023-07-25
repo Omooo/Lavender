@@ -13,12 +13,10 @@ internal data class AarAnalyseReporter(
     val desc: String,
     /** 文档链接 */
     val documentLink: String,
-    /** 当前版本号 */
-    val currentVersionName: String,
-    /** 上个版本号 */
-    val previousVersionName: String,
-    /** 当前版本 AAR 列表 */
-    val currentList: List<AarFile>,
-    /** 上个版本 AAR 列表 */
-    val previousList: List<AarFile>,
+    /** 包名 */
+    var packageName: String,
+    /** AAR 列表 */
+    var aarList: ArrayList<Pair<String, List<AarFile>>>,
+    /** 所属人映射 */
+    var ownerMap: Map<String, List<String>> = emptyMap(),
 )

@@ -18,6 +18,7 @@ internal object Insight {
         const val APK_ANALYSE = ""
         const val DETECT_TRANSLUCENT_ACTIVITY = ""
         const val LIST_IMAGE = ""
+        const val AAR_ANALYSE = ""
     }
 
     /**
@@ -31,5 +32,6 @@ internal object Insight {
         const val APK_ANALYSE = "Lavender - Apk Analyse"
         const val DETECT_TRANSLUCENT_ACTIVITY = "Lavender - Detect Translucent Activity"
         const val LIST_IMAGE = "Lavender - List Image"
+        const val AAR_ANALYSE = "Lavender - Aar Analyse"
     }
 }

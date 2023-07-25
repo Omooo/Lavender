@@ -33,6 +33,19 @@ internal fun Project.getOwnerShip(): Map<String, String> {
     return emptyMap()
 }
 
+/**
+ * 获取归属人映射关系
+ *
+ * @return Map<Owner Name, List<AAR Name>>x
+ */
+internal fun Project.getOwnerMap(): Map<String, List<String>> {
+    val ownershipFile = parent?.projectDir?.resolve("$DIR_PLUGIN_FILES/$FILE_OWNERSHIP")
+    if (ownershipFile?.exists() == true) {
+        return Yaml().load(ownershipFile.readText())
+    }
+    return emptyMap()
+}
+
 internal fun Project.getJarTaskProviders(variant: BaseVariant? = null): Collection<TaskProvider<out Task>> = when {
     isAndroid -> when (getAndroid<BaseExtension>()) {
         is LibraryExtension -> filterByVariant(variant).mapNotNull(BaseVariant::createFullJarTaskProvider)
