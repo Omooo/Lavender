@@ -9,8 +9,8 @@ package com.omooo.plugin.reporter.common
 internal data class AarFile(
     val name: String,
     var size: Long,
-    val owner: String,
-    val fileList: MutableList<AppFile>,
+    var owner: String,
+    var fileList: MutableList<AppFile> = ArrayList(),
 )
 
 internal fun List<AarFile>.totalSize(): Long {
