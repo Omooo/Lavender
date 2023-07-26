@@ -87,6 +87,7 @@ external interface ChartZoomOptions {
 
 external interface DataLabelOptions {
     var enabled: Boolean
+    var formatter: NumberFormatter
 }
 
 external interface FillOptions {

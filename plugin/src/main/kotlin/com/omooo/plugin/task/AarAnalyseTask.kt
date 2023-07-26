@@ -6,6 +6,7 @@ import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.internal.aar.AarAnalyse
 import com.omooo.plugin.reporter.HtmlReporter
 import com.omooo.plugin.reporter.common.AarFile
+import com.omooo.plugin.util.*
 import com.omooo.plugin.util.getArtifactIdFromAarName
 import com.omooo.plugin.util.getArtifactName
 import com.omooo.plugin.util.getOwnerShip
@@ -49,8 +50,8 @@ internal open class AarAnalyseTask : DefaultTask() {
                 AndroidArtifacts.ArtifactType.AAR
             ).artifacts.map { artifact ->
                 AarFile(
-                    name = artifact.getArtifactName(),
-                    size = File(artifact.file.absolutePath).length() / 1024,
+                    name = artifact.getArtifactName().removeVersionFromAarName(),
+                    size = File(artifact.file.absolutePath).length(),
                     owner = ownerShip.getOrDefault(
                         artifact.getArtifactName().getArtifactIdFromAarName(), "unknown"
                     ),

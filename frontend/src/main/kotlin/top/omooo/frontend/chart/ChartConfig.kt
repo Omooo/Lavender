@@ -21,6 +21,7 @@ abstract class ChartConfig {
         }
         dataLabels = jso {
             enabled = false
+            formatter = jso()
         }
         fill = jso {
             opacity = 1.0

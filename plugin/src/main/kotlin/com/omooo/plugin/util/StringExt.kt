@@ -14,6 +14,13 @@ internal fun String.getGroupIdFromAarName(): String {
 }
 
 /**
+ * 从 AAR 全限定名中获取 group id
+ */
+internal fun String.removeVersionFromAarName(): String {
+    return substringBeforeLast(":")
+}
+
+/**
  * 从 AAR 全限定名中获取 artifact id
  */
 internal fun String.getArtifactIdFromAarName(): String {
