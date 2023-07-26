@@ -16,11 +16,13 @@ import top.omooo.frontend.common.ThemeModule
 import top.omooo.frontend.common.xs
 import top.omooo.frontend.component.AarList
 import top.omooo.frontend.component.AarTitle
+import top.omooo.frontend.util.aarAnalyseMockData
 import web.dom.document
 
 fun main() {
     val text = require("./report.json").toString()
     val data = Json.decodeFromString(AarAnalyseReporter.serializer(), text)
+//    val data = Json.decodeFromString(AarAnalyseReporter.serializer(), aarAnalyseMockData)
     createRoot(document.getElementById("root")!!).render(
         App.create {
             aarReporter = data

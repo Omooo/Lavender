@@ -28,6 +28,7 @@ class LineChartConfig(
         }
 
         dataLabels.enabled = true
+        dataLabels.formatter = yAxisFormatter
 
         yaxis.labels.formatter = yAxisFormatter
 

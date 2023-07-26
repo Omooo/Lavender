@@ -8,320 +8,645 @@
                     "fileList": [
                         
                     ],
-                    "size": 1573,
-                    "name": "com.google.android.material:material:1.4.0"
+                    "size": 1611643,
+                    "name": "com.google.android.material:material"
                 },
                 {
                     "owner": "Android",
                     "fileList": [
                         
                     ],
-                    "size": 373,
-                    "name": "androidx.constraintlayout:constraintlayout:2.0.1"
+                    "size": 1084065,
+                    "name": "androidx.appcompat:appcompat"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 980200,
+                    "name": "androidx.core:core"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 980200,
+                    "name": "androidx.core:core"
                 },
                 {
                     "owner": "Android",
                     "fileList": [
                         
                     ],
-                    "size": 1058,
-                    "name": "androidx.appcompat:appcompat:1.3.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 158,
-                    "name": "androidx.core:core-ktx:1.7.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 60,
-                    "name": "androidx.viewpager2:viewpager2:1.0.0"
+                    "size": 381992,
+                    "name": "androidx.constraintlayout:constraintlayout"
                 },
                 {
                     "owner": "Android",
                     "fileList": [
                         
                     ],
-                    "size": 291,
-                    "name": "androidx.fragment:fragment:1.3.4"
+                    "size": 358254,
+                    "name": "androidx.recyclerview:recyclerview"
                 },
                 {
                     "owner": "Android",
                     "fileList": [
                         
                     ],
-                    "size": 291,
-                    "name": "androidx.fragment:fragment:1.3.4"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 65,
-                    "name": "androidx.activity:activity:1.2.3"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 63,
-                    "name": "androidx.appcompat:appcompat-resources:1.3.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 31,
-                    "name": "androidx.drawerlayout:drawerlayout:1.0.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 43,
-                    "name": "androidx.coordinatorlayout:coordinatorlayout:1.1.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 31,
-                    "name": "androidx.dynamicanimation:dynamicanimation:1.0.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 166,
-                    "name": "androidx.transition:transition:1.2.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 33,
-                    "name": "androidx.vectordrawable:vectordrawable-animated:1.1.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 32,
-                    "name": "androidx.vectordrawable:vectordrawable:1.1.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 52,
-                    "name": "androidx.viewpager:viewpager:1.0.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 4,
-                    "name": "androidx.legacy:legacy-support-core-utils:1.0.0"
-                },
-                {
-                    "owner": "unknown",
-                    "fileList": [
-                        
-                    ],
-                    "size": 32,
-                    "name": "androidx.loader:loader:1.0.0"
+                    "size": 298149,
+                    "name": "androidx.fragment:fragment"
                 },
                 {
                     "owner": "Android",
                     "fileList": [
                         
                     ],
-                    "size": 349,
-                    "name": "androidx.recyclerview:recyclerview:1.1.0"
+                    "size": 298149,
+                    "name": "androidx.fragment:fragment"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 32,
-                    "name": "androidx.customview:customview:1.0.0"
+                    "size": 170826,
+                    "name": "androidx.transition:transition"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 957,
-                    "name": "androidx.core:core:1.7.0"
+                    "size": 162502,
+                    "name": "androidx.core:core-ktx"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 957,
-                    "name": "androidx.core:core:1.7.0"
+                    "size": 67451,
+                    "name": "androidx.activity:activity"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 10,
-                    "name": "androidx.cursoradapter:cursoradapter:1.0.0"
+                    "size": 65247,
+                    "name": "androidx.appcompat:appcompat-resources"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 15,
-                    "name": "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.1"
+                    "size": 61552,
+                    "name": "androidx.viewpager2:viewpager2"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 10,
-                    "name": "androidx.savedstate:savedstate:1.1.0"
+                    "size": 53513,
+                    "name": "androidx.viewpager:viewpager"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 10,
-                    "name": "androidx.lifecycle:lifecycle-runtime:2.3.1"
+                    "size": 45020,
+                    "name": "androidx.coordinatorlayout:coordinatorlayout"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 10,
-                    "name": "androidx.lifecycle:lifecycle-viewmodel:2.3.1"
+                    "size": 34496,
+                    "name": "androidx.vectordrawable:vectordrawable-animated"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 10,
-                    "name": "androidx.lifecycle:lifecycle-viewmodel:2.3.1"
+                    "size": 33445,
+                    "name": "androidx.loader:loader"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 21,
-                    "name": "androidx.cardview:cardview:1.0.0"
+                    "size": 33238,
+                    "name": "androidx.customview:customview"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 30,
-                    "name": "androidx.versionedparcelable:versionedparcelable:1.1.1"
+                    "size": 33236,
+                    "name": "androidx.vectordrawable:vectordrawable"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 4,
-                    "name": "androidx.tracing:tracing:1.0.0"
+                    "size": 32597,
+                    "name": "androidx.dynamicanimation:dynamicanimation"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 9,
-                    "name": "androidx.lifecycle:lifecycle-livedata:2.0.0"
+                    "size": 32470,
+                    "name": "androidx.drawerlayout:drawerlayout"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 8,
-                    "name": "androidx.lifecycle:lifecycle-livedata-core:2.3.1"
+                    "size": 31061,
+                    "name": "androidx.versionedparcelable:versionedparcelable"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 8,
-                    "name": "androidx.lifecycle:lifecycle-livedata-core:2.3.1"
+                    "size": 22527,
+                    "name": "androidx.cardview:cardview"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 5,
-                    "name": "androidx.arch.core:core-runtime:2.1.0"
+                    "size": 17209,
+                    "name": "androidx.annotation:annotation-experimental"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 7,
-                    "name": "androidx.interpolator:interpolator:1.0.0"
+                    "size": 15782,
+                    "name": "androidx.print:print"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 10,
-                    "name": "androidx.documentfile:documentfile:1.0.0"
+                    "size": 15480,
+                    "name": "androidx.lifecycle:lifecycle-viewmodel-savedstate"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 6,
-                    "name": "androidx.localbroadcastmanager:localbroadcastmanager:1.0.0"
+                    "size": 11230,
+                    "name": "androidx.lifecycle:lifecycle-runtime"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 15,
-                    "name": "androidx.print:print:1.0.0"
+                    "size": 11221,
+                    "name": "androidx.documentfile:documentfile"
                 },
                 {
                     "owner": "unknown",
                     "fileList": [
                         
                     ],
-                    "size": 16,
-                    "name": "androidx.annotation:annotation-experimental:1.1.0"
+                    "size": 11201,
+                    "name": "androidx.savedstate:savedstate"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 11144,
+                    "name": "androidx.lifecycle:lifecycle-viewmodel"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 11144,
+                    "name": "androidx.lifecycle:lifecycle-viewmodel"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 10591,
+                    "name": "androidx.cursoradapter:cursoradapter"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 9431,
+                    "name": "androidx.lifecycle:lifecycle-livedata"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 8868,
+                    "name": "androidx.lifecycle:lifecycle-livedata-core"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 8868,
+                    "name": "androidx.lifecycle:lifecycle-livedata-core"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 7669,
+                    "name": "androidx.interpolator:interpolator"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 6808,
+                    "name": "androidx.localbroadcastmanager:localbroadcastmanager"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 6059,
+                    "name": "androidx.arch.core:core-runtime"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 4444,
+                    "name": "androidx.tracing:tracing"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 4104,
+                    "name": "androidx.legacy:legacy-support-core-utils"
+                }
+            ]
+        },
+        {
+            "first": "0.1",
+            "second": [
+                {
+                    "owner": "Android",
+                    "fileList": [
+                        
+                    ],
+                    "size": 1811643,
+                    "name": "com.google.android.material:material"
+                },
+                {
+                    "owner": "Android",
+                    "fileList": [
+                        
+                    ],
+                    "size": 1000000,
+                    "name": "androidx.appcompat:appcompat"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 900200,
+                    "name": "androidx.core:core"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 990200,
+                    "name": "androidx.core:core"
+                },
+                {
+                    "owner": "Android",
+                    "fileList": [
+                        
+                    ],
+                    "size": 301992,
+                    "name": "androidx.constraintlayout:constraintlayout"
+                },
+                {
+                    "owner": "Android",
+                    "fileList": [
+                        
+                    ],
+                    "size": 358254,
+                    "name": "androidx.recyclerview:recyclerview"
+                },
+                {
+                    "owner": "Android",
+                    "fileList": [
+                        
+                    ],
+                    "size": 298149,
+                    "name": "androidx.fragment:fragment"
+                },
+                {
+                    "owner": "Android",
+                    "fileList": [
+                        
+                    ],
+                    "size": 298149,
+                    "name": "androidx.fragment:fragment"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 170826,
+                    "name": "androidx.transition:transition"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 162502,
+                    "name": "androidx.core:core-ktx"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 67451,
+                    "name": "androidx.activity:activity"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 65247,
+                    "name": "androidx.appcompat:appcompat-resources"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 61552,
+                    "name": "androidx.viewpager2:viewpager2"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 53513,
+                    "name": "androidx.viewpager:viewpager"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 45020,
+                    "name": "androidx.coordinatorlayout:coordinatorlayout"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 34496,
+                    "name": "androidx.vectordrawable:vectordrawable-animated"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 33445,
+                    "name": "androidx.loader:loader"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 33238,
+                    "name": "androidx.customview:customview"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 33236,
+                    "name": "androidx.vectordrawable:vectordrawable"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 32597,
+                    "name": "androidx.dynamicanimation:dynamicanimation"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 32470,
+                    "name": "androidx.drawerlayout:drawerlayout"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 31061,
+                    "name": "androidx.versionedparcelable:versionedparcelable"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 22527,
+                    "name": "androidx.cardview:cardview"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 17209,
+                    "name": "androidx.annotation:annotation-experimental"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 15782,
+                    "name": "androidx.print:print"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 15480,
+                    "name": "androidx.lifecycle:lifecycle-viewmodel-savedstate"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 11230,
+                    "name": "androidx.lifecycle:lifecycle-runtime"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 11221,
+                    "name": "androidx.documentfile:documentfile"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 11201,
+                    "name": "androidx.savedstate:savedstate"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 11144,
+                    "name": "androidx.lifecycle:lifecycle-viewmodel"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 11144,
+                    "name": "androidx.lifecycle:lifecycle-viewmodel"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 10591,
+                    "name": "androidx.cursoradapter:cursoradapter"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 9431,
+                    "name": "androidx.lifecycle:lifecycle-livedata"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 8868,
+                    "name": "androidx.lifecycle:lifecycle-livedata-core"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 8868,
+                    "name": "androidx.lifecycle:lifecycle-livedata-core"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 7669,
+                    "name": "androidx.interpolator:interpolator"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 6808,
+                    "name": "androidx.localbroadcastmanager:localbroadcastmanager"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 6059,
+                    "name": "androidx.arch.core:core-runtime"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 4444,
+                    "name": "androidx.tracing:tracing"
+                },
+                {
+                    "owner": "unknown",
+                    "fileList": [
+                        
+                    ],
+                    "size": 4104,
+                    "name": "androidx.legacy:legacy-support-core-utils"
                 }
             ]
         }
