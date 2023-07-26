@@ -14,7 +14,9 @@ internal fun String.getGroupIdFromAarName(): String {
 }
 
 /**
- * 从 AAR 全限定名中获取 group id
+ * 从 AAR 全限定名中移除版本信息
+ *
+ * ag: com.google.android.material:material:1.0.0 -> com.google.android.material:material
  */
 internal fun String.removeVersionFromAarName(): String {
     return substringBeforeLast(":")
