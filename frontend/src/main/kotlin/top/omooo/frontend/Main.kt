@@ -198,7 +198,9 @@ private val TabComponent = FC<TabComponentProps> { props ->
                         }.filter {
                             it.size != 0L
                         }
-                aarList = diffList
+                aarList = diffList.sortedBy {
+                    it.size
+                }
             }
             "three" -> ChartsComponent {
                 this.chartLabels = props.aarReporter.getChartLabels()
