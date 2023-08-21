@@ -198,7 +198,7 @@ private val TabComponent = FC<TabComponentProps> { props ->
                         }.filter {
                             it.size != 0L
                         }
-                aarList = diffList.sortedBy {
+                aarList = diffList.sortedByDescending {
                     it.size
                 }
             }
