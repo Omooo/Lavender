@@ -19,6 +19,7 @@ internal object Insight {
         const val DETECT_TRANSLUCENT_ACTIVITY = ""
         const val LIST_IMAGE = ""
         const val AAR_ANALYSE = ""
+        const val CHECK_SCHEME_MODIFIED = ""
     }
 
     /**
@@ -33,5 +34,6 @@ internal object Insight {
         const val DETECT_TRANSLUCENT_ACTIVITY = "Lavender - Detect Translucent Activity"
         const val LIST_IMAGE = "Lavender - List Image"
         const val AAR_ANALYSE = "Lavender - Aar Analyse"
+        const val CHECK_SCHEME_MODIFIED = "Lavender - Check Scheme Modified"
     }
 }

@@ -47,7 +47,7 @@ internal open class AarAnalyseTask : DefaultTask() {
             (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
                 AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
                 AndroidArtifacts.ArtifactScope.ALL,
-                AndroidArtifacts.ArtifactType.AAR
+                AndroidArtifacts.ArtifactType.AAR_OR_JAR
             ).artifacts.map { artifact ->
                 AarFile(
                     name = artifact.getArtifactName().removeVersionFromAarName(),

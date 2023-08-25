@@ -36,14 +36,23 @@ internal open class ListAarSizeTask : DefaultTask() {
             println("${variant.name} is not an application variant.")
             return
         }
-        val resultMap = mutableMapOf<String, Long>()
+        var resultMap = mutableMapOf<String, Long>()
         (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
             AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
             AndroidArtifacts.ArtifactScope.ALL,
-            AndroidArtifacts.ArtifactType.AAR
+            AndroidArtifacts.ArtifactType.AAR_OR_JAR
         ).artifacts.forEach { artifact ->
             val size = File(artifact.file.absolutePath).length() / 1024
             resultMap[artifact.getArtifactName()] = size
+        }
+
+        // 配置了 group-by 参数
+        if (project.hasProperty("sortByGroupId")) {
+            resultMap = resultMap
+                .toList()
+                .groupBy({ it.first.getGroupIdFromAarName() }) { it.second }
+                .mapValues { (_, values) -> values.sum() }
+                .toMutableMap()
         }
 
         resultMap.toList().asSequence().filter {

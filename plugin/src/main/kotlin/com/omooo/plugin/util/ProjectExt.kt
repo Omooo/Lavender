@@ -46,6 +46,15 @@ internal fun Project.getOwnerMap(): Map<String, List<String>> {
     return emptyMap()
 }
 
+/**
+ * 根据 AAR 的 groupId 前缀匹配出 owner
+ */
+internal fun Map<String, String>.getOwner(aarName: String): String {
+    return this.entries.find {
+        aarName.startsWith(it.key)
+    }?.value ?: "unknown"
+}
+
 internal fun Project.getJarTaskProviders(variant: BaseVariant? = null): Collection<TaskProvider<out Task>> = when {
     isAndroid -> when (getAndroid<BaseExtension>()) {
         is LibraryExtension -> filterByVariant(variant).mapNotNull(BaseVariant::createFullJarTaskProvider)
