@@ -3,7 +3,13 @@ package com.omooo.plugin.task
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
-import com.omooo.plugin.util.*
+import com.omooo.plugin.reporter.AppReporter
+import com.omooo.plugin.reporter.HtmlReporter
+import com.omooo.plugin.reporter.Insight
+import com.omooo.plugin.reporter.common.AarFile
+import com.omooo.plugin.reporter.common.AppFile
+import com.omooo.plugin.util.getOwner
+import com.omooo.plugin.util.getOwnerShip
 import com.omooo.plugin.util.attributeMap
 import com.omooo.plugin.util.getArtifactName
 import com.omooo.plugin.util.toList
@@ -40,6 +46,7 @@ internal open class CheckServiceTypeTask : DefaultTask() {
             println("${variant.name} is not an application variant.")
             return
         }
+        val ownerShipMap = project.getOwnerShip()
         val appProjectResult =
             project.name to project.projectDir.resolve("src/main/AndroidManifest.xml")
                 .getComponentList()
@@ -52,7 +59,21 @@ internal open class CheckServiceTypeTask : DefaultTask() {
         }.plus(appProjectResult).filter {
             it.value.isNotEmpty()
         }.also {
-            it.writeToJson("${project.parent?.projectDir}/checkServiceType.json")
+            val reporter = AppReporter(
+                desc = Insight.Title.CHECK_SERVICE_TYPE,
+                documentLink = Insight.DocumentLink.CHECK_SERVICE_TYPE,
+                versionName = (variant as ApplicationVariantImpl).versionName,
+                variantName = variant.name,
+                aarList = it.toList().map {(aarName, serviceNameList)->
+                    AarFile(
+                        name = aarName,
+                        size = 0,
+                        owner = ownerShipMap.getOwner(aarName),
+                        fileList = serviceNameList.map { s -> AppFile(s) }.toMutableList()
+                    )
+                }
+            )
+            HtmlReporter().generateReport(reporter, "${project.parent?.projectDir}/checkServiceType.html")
         }
     }
 
