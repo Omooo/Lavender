@@ -8,9 +8,6 @@ import com.omooo.plugin.util.writeToJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.w3c.dom.Element
-import java.io.File
-import javax.xml.parsers.DocumentBuilderFactory
 
 /**
  * Author: Omooo
@@ -40,48 +37,22 @@ internal open class ListSchemeTask : DefaultTask() {
             return
         }
 
+        val ownerShip = project.getOwnerShip()
+        val classOwnerMap = (variant as ApplicationVariantImpl).getArtifactClassMap().mapValues {
+            ownerShip.getOwner(it.value.first)
+        }
         (variant as ApplicationVariantImpl).getArtifactFiles(AndroidArtifacts.ArtifactType.MANIFEST)
             .map {
-                it.parseManifest()
+                it.parseSchemesFromManifest()
             }.filter {
                 it.isNotEmpty()
             }.flatMap {
                 it.entries
             }.associate {
                 it.toPair()
+            }.mapValues {
+                Pair(classOwnerMap.getOrDefault(it.key, "unknown"), it.value)
             }.writeToJson("${project.parent?.projectDir}/schemes.json")
-    }
-
-    /**
-     * 解析 Manifest 文件
-     *
-     * @return { "com.xxx.SampleActivity": "scheme1://xxx/xx, scheme2://xxx/xx" }
-     */
-    private fun File.parseManifest(): Map<String, String> {
-        val result = mutableMapOf<String, String>()
-        DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(this).apply {
-            val manifestNode = getElementsByTagName("manifest").item(0) as Element
-            val packageName = manifestNode.getAttribute("package")
-
-            val activityNodes = getElementsByTagName("activity")
-            for (i in 0 until activityNodes.length) {
-                val activityNode = activityNodes.item(i) as Element
-                val activityName = "${packageName}${activityNode.getAttribute("android:name")}"
-
-                val dataNodes = activityNode.getElementsByTagName("data")
-                if (dataNodes.length > 0) {
-                    var scheme = ""
-                    for (j in 0 until dataNodes.length) {
-                        val dataNode = dataNodes.item(j) as Element
-                        val dataValue = dataNode.getAttribute("android:scheme") + "://" +
-                                dataNode.getAttribute("android:host") + dataNode.getAttribute("android:path")
-                        scheme = if (scheme.isEmpty()) dataValue else "$scheme, $dataValue"
-                    }
-                    result[activityName] = scheme
-                }
-            }
-        }
-        return result
     }
 
 }

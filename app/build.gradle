@@ -17,6 +17,11 @@ apply plugin: 'com.omooo.lavender'
 //    enable true
 //}
 
+//checkSchemeModifiedConfig {
+//    enable = true
+//    baselineSchemeFile = file("runtime/devRelease/runtimeSchemes.json")
+//}
+
 android {
     compileSdkVersion 33
     buildToolsVersion "29.0.2"

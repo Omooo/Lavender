@@ -6,6 +6,7 @@ import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
+import com.omooo.plugin.bean.CheckSchemeModifiedExtension
 import com.omooo.plugin.bean.CwebpCompressExtension
 import com.omooo.plugin.bean.InvokeCheckExtension
 import com.omooo.plugin.spi.VariantProcessor
@@ -34,6 +35,7 @@ class Lavender : Plugin<Project> {
             project.extensions.create("invokeCheckConfig", InvokeCheckExtension::class.java)
 
         project.extensions.create("compressWebpConfig", CwebpCompressExtension::class.java)
+        project.extensions.create("checkSchemeModifiedConfig", CheckSchemeModifiedExtension::class.java)
 
         TransformReporter.deleteTransformReporterDir()
         val androidExtension = project.extensions.getByType(AndroidComponentsExtension::class.java)

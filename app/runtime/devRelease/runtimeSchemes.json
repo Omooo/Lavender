@@ -1,0 +1,6 @@
+{
+  "app.ui.activity.DemoActivity": {
+    "first": "owner@demo.com",
+    "second": "scheme://host/path"
+  }
+}
