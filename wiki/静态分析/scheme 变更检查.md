@@ -1,6 +1,5 @@
 ---
 exported 属性检测
-
 ---
 
 | 功能            | 使用                          | 输出                    | 主要实现类              |
@@ -57,7 +56,7 @@ exported 属性检测
 
 2. 对比基线文件，如果发现发生变更则会输出以下提示信息，并且触发 Task 执行失败
 
-   ```tex
+   ```
    > Task :app:checkSchemeModifiedForDebug FAILED
    *********************************************
    ****** -- CheckSchemeModifiedTask -- ********
