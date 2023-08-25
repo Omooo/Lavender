@@ -20,6 +20,7 @@ internal object Insight {
         const val LIST_IMAGE = ""
         const val AAR_ANALYSE = ""
         const val CHECK_SCHEME_MODIFIED = ""
+        const val CHECK_SERVICE_TYPE = ""
     }
 
     /**
@@ -35,5 +36,6 @@ internal object Insight {
         const val LIST_IMAGE = "Lavender - List Image"
         const val AAR_ANALYSE = "Lavender - Aar Analyse"
         const val CHECK_SCHEME_MODIFIED = "Lavender - Check Scheme Modified"
+        const val CHECK_SERVICE_TYPE = "Lavender - Check Service Type"
     }
 }
