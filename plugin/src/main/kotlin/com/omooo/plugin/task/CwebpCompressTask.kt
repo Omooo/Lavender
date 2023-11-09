@@ -2,6 +2,7 @@ package com.omooo.plugin.task
 
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.gradle.internal.publishing.AndroidArtifacts.ArtifactType.ANDROID_RES
 import com.omooo.plugin.bean.WebpToolBean
 import com.omooo.plugin.bean.CwebpCompressExtension
 import com.omooo.plugin.util.*
@@ -101,7 +102,9 @@ internal open class CwebpCompressTask : DefaultTask() {
             }
         }
 
-        processResult.writeToJson("${project.parent?.projectDir}/compressWebp-${variant.name.capitalize()}.json")
+        if (project.needPrintReporter) {
+            processResult.writeToJson("${project.parent?.projectDir}/compressWebp-${variant.name.capitalize()}.json")
+        }
     }
 
     /**
@@ -147,7 +150,7 @@ internal open class CwebpCompressTask : DefaultTask() {
      * 获取所有的待处理图片文件列表
      */
     private fun getTotalImageFiles(): List<File> {
-        return (variant as ApplicationVariantImpl).variantData.allRawAndroidResources.files.flatMap {
+        return (variant as ApplicationVariantImpl).getArtifactFiles(ANDROID_RES).flatMap {
             it.getAllChildren()
         }.filter {
             it.filterNeedExecute()
