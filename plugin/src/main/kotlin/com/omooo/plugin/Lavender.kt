@@ -11,8 +11,8 @@ import com.omooo.plugin.bean.CwebpCompressExtension
 import com.omooo.plugin.bean.InvokeCheckExtension
 import com.omooo.plugin.spi.VariantProcessor
 import com.omooo.plugin.transform.invoke.InvokeCheckCvFactory
-import com.omooo.plugin.transform.systrace.SystraceCvFactory
 import com.omooo.plugin.util.TransformReporter
+import com.omooo.plugin.util.green
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -27,7 +27,7 @@ import java.util.*
 class Lavender : Plugin<Project> {
 
     override fun apply(project: Project) {
-        println("apply plugin: 'Lavender'")
+        println(green("apply plugin: 'Lavender'"))
         project.extensions.findByName("android")
             ?: throw GradleException("$project is not an Android project.")
 
