@@ -101,7 +101,9 @@ internal open class CwebpCompressTask : DefaultTask() {
             }
         }
 
-        processResult.writeToJson("${project.parent?.projectDir}/compressWebp-${variant.name.capitalize()}.json")
+        if (project.needPrintReporter) {
+            processResult.writeToJson("${project.parent?.projectDir}/compressWebp-${variant.name.capitalize()}.json")
+        }
     }
 
     /**

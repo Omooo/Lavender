@@ -54,7 +54,11 @@ internal open class ListPermissionTask : DefaultTask() {
         }.also {
             resultMap.writeToJson("${project.parent?.projectDir}/permissions.json")
         }
-
+        if (project.hasProperty("simpleStyle")) {
+            resultMap.values.flatten().toSet().sorted().apply {
+                writeToJson("${project.parent?.projectDir}/permissionSet.json")
+            }
+        }
     }
 
     /**

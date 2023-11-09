@@ -103,5 +103,10 @@ internal val Project.isJava: Boolean
 internal val Project.isJavaLibrary: Boolean
     get() = plugins.hasPlugin("java-library")
 
+/** 是否需要输出报告 */
+internal val Project.needPrintReporter: Boolean
+    get() = hasProperty("printReporter")
+
+
 private const val DIR_PLUGIN_FILES = "lavender-plugin"
 private const val FILE_OWNERSHIP = "ownership.yaml"
