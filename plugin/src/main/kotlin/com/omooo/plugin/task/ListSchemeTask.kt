@@ -37,6 +37,7 @@ internal open class ListSchemeTask : DefaultTask() {
             return
         }
 
+        val startTime = System.currentTimeMillis()
         val ownerShip = project.getOwnerShip()
         val classOwnerMap = (variant as ApplicationVariantImpl).getArtifactClassMap().mapValues {
             ownerShip.getOwner(it.value.first)
@@ -52,7 +53,10 @@ internal open class ListSchemeTask : DefaultTask() {
                 it.toPair()
             }.mapValues {
                 Pair(classOwnerMap.getOrDefault(it.key, "unknown"), it.value)
-            }.writeToJson("${project.parent?.projectDir}/schemes.json")
+            }.toSortedMap().writeToJson("${project.parent?.projectDir}/schemes.json")
+        println(
+            green("ListSchemeTask execute success in ${System.currentTimeMillis() - startTime}ms")
+        )
     }
 
 }

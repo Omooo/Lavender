@@ -71,9 +71,7 @@ internal open class ApkAnalyseTask : DefaultTask() {
             versionName = (variant as ApplicationVariantImpl).versionName,
             variantName = variant.name,
             aarList = ApkIncrementAnalyse(project).analyse(currentAarList),
-        ).apply {
-            writeToJson("${project.parent?.projectDir}/apkAnalyse.json")
-        }
+        )
         HtmlReporter().generateReport(reporter, "${project.parent?.projectDir}/apkAnalyse.html")
         println(green("Spend time: ${System.currentTimeMillis() - startTime}ms"))
     }
