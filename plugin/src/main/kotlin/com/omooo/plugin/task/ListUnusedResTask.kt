@@ -5,8 +5,10 @@ import com.android.build.gradle.internal.api.ApplicationVariantImpl
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.reporter.AppReporter
+import com.omooo.plugin.reporter.HtmlReporter
 import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.reporter.common.AppFile
+import com.omooo.plugin.util.*
 import com.omooo.plugin.util.getAllChildren
 import com.omooo.plugin.util.getArtifactName
 import com.omooo.plugin.util.getOwnerShip
@@ -71,9 +73,12 @@ internal open class ListUnusedResTask : DefaultTask() {
             )
             val reduceSize = appReporter.aarList.map { it.size }.reduce { acc, l -> acc + l }
             println("Total reduce size: $reduceSize bytes.")
-            Json.encodeToString(AppReporter.serializer(), appReporter).writeToJson(
-                "${project.parent?.projectDir}/unusedRes.json"
-            )
+            if (project.needPrintReporter) {
+                Json.encodeToString(AppReporter.serializer(), appReporter).writeToJson(
+                    "${project.parent?.projectDir}/unusedRes.json"
+                )
+            }
+            HtmlReporter().generateReport(appReporter, "${project.parent?.projectDir}/unusedRes.html")
         } ?: println(
             """
             Unused resource is empty.
