@@ -1,7 +1,6 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.internal.aar.AarAnalyse
 import com.omooo.plugin.reporter.HtmlReporter
@@ -23,9 +22,9 @@ import java.io.File
  * Use: ./gradlew aarAnalyse
  * Output: projectDir/aarAnalyse.html
  */
-internal open class AarAnalyseTask : DefaultTask() {
+internal abstract class AarAnalyseTask : DefaultTask() {
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
 
     @TaskAction
     fun doAction() {
@@ -37,14 +36,10 @@ internal open class AarAnalyseTask : DefaultTask() {
                 *********************************************
             """.trimIndent()
         )
-        if (variant !is ApplicationVariantImpl) {
-            println("${variant.name} is not an application variant.")
-            return
-        }
         val startTime = System.currentTimeMillis()
         val ownerShip = project.getOwnerShip()
         val aarList =
-            (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
+            variant.variantImpl.variantDependencies.getArtifactCollection(
                 AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
                 AndroidArtifacts.ArtifactScope.ALL,
                 AndroidArtifacts.ArtifactType.AAR_OR_JAR
@@ -56,10 +51,10 @@ internal open class AarAnalyseTask : DefaultTask() {
                         artifact.getArtifactName().getArtifactIdFromAarName(), "unknown"
                     ),
                 )
-            }
+            }.toSet()
         val reporter = AarAnalyse(project).analyse(
-            variant.applicationId,
-            Pair((variant as ApplicationVariantImpl).versionName, aarList.sortedByDescending { it.size })
+            variant.variantImpl.applicationId.get(),
+            Pair(variant.versionName, aarList.sortedByDescending { it.size })
         )
         HtmlReporter().generateAarAnalyseReport(reporter, "${project.parent?.projectDir}/aarAnalyse.html")
 

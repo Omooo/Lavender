@@ -1,15 +1,14 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.util.getAllChildren
 import com.omooo.plugin.util.getArtifactName
+import com.omooo.plugin.util.variantImpl
 import com.omooo.plugin.util.writeToJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import java.io.File
 
 /**
  * Author: Omooo
@@ -18,9 +17,9 @@ import java.io.File
  * Use: ./gradlew listAssets
  * Output: projectDir/assets.json
  */
-internal open class ListAssetsTask : DefaultTask() {
+internal abstract class ListAssetsTask : DefaultTask() {
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
 
     @TaskAction
     fun doAction() {
@@ -32,10 +31,6 @@ internal open class ListAssetsTask : DefaultTask() {
                 *********************************************
             """.trimIndent()
         )
-        if (variant !is ApplicationVariantImpl) {
-            println("${variant.name} is not an application variant.")
-            return
-        }
         getTotalAssets().writeToJson("${project.parent?.projectDir}/assets.json")
     }
 
@@ -45,7 +40,7 @@ internal open class ListAssetsTask : DefaultTask() {
      * @return Map<Artifact 名称, [AssetFile]>
      */
     private fun getTotalAssets(): Map<String, List<AssetFile>> {
-        return (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
+        return variant.variantImpl.variantDependencies.getArtifactCollection(
             AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
             AndroidArtifacts.ArtifactScope.ALL,
             AndroidArtifacts.ArtifactType.ASSETS

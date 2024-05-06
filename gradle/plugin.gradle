@@ -23,16 +23,14 @@ sourceSets {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_11
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_17
 }
 
 compileTestKotlin {
-    kotlinOptions.jvmTarget = JavaVersion.VERSION_11
+    kotlinOptions.jvmTarget = JavaVersion.VERSION_17
 }
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${Config.kotlin_version}"
     implementation "org.jetbrains.kotlin:kotlin-reflect:${Config.kotlin_version}"
-    testImplementation "org.jetbrains.kotlin:kotlin-test:${Config.kotlin_version}"
-    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:${Config.kotlin_version}"
 }

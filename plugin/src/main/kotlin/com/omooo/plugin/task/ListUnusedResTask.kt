@@ -1,7 +1,6 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.reporter.AppReporter
@@ -15,6 +14,8 @@ import com.omooo.plugin.util.getOwnerShip
 import com.omooo.plugin.util.writeToJson
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.nio.file.Files
@@ -27,10 +28,12 @@ import kotlin.io.path.readText
  * Use: ./gradlew listUnusedRes
  * Output: projectDir/unusedRes.json
  */
-internal open class ListUnusedResTask : DefaultTask() {
+internal abstract class ListUnusedResTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
+    @get:InputFiles
+    abstract var apkFileCollection: FileCollection
 
     @TaskAction
     fun run() {
@@ -42,11 +45,6 @@ internal open class ListUnusedResTask : DefaultTask() {
                 *********************************************
             """.trimIndent()
         )
-
-        if (variant !is ApplicationVariantImpl) {
-            println("${variant.name} is not an application variant.")
-            return
-        }
 
         val ownerMap = project.getOwnerShip()
         val resNameMap = getResMap()
@@ -67,7 +65,7 @@ internal open class ListUnusedResTask : DefaultTask() {
             val appReporter = AppReporter(
                 desc = "${LAVENDER.capitalize()} - List Unused Res",
                 documentLink = "",
-                versionName = (variant as ApplicationVariantImpl).versionName,
+                versionName = variant.versionName,
                 variantName = variant.name,
                 aarList = aarFileList.sortedByDescending { it.size }
             )
@@ -115,7 +113,7 @@ internal open class ListUnusedResTask : DefaultTask() {
      */
     private fun getResMap(): Map<String, Pair<String, Long>> {
         val resMap =
-            (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
+            variant.variantImpl.variantDependencies.getArtifactCollection(
                 AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
                 AndroidArtifacts.ArtifactScope.ALL,
                 AndroidArtifacts.ArtifactType.ANDROID_RES

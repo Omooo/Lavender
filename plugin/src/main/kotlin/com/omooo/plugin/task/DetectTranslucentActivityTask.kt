@@ -1,7 +1,6 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.reporter.AppReporter
 import com.omooo.plugin.reporter.Insight
@@ -9,6 +8,10 @@ import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.reporter.common.AppFile
 import com.omooo.plugin.util.*
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.ArtifactCollection
+import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.w3c.dom.Element
@@ -26,10 +29,16 @@ import javax.xml.parsers.DocumentBuilderFactory
  * Use: ./gradlew detectTranslucentActivity
  * Output: projectDir/translucentActivity.json
  */
-internal open class DetectTranslucentActivityTask : DefaultTask() {
+internal abstract class DetectTranslucentActivityTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
+
+    @get:Internal
+    abstract val manifests: Property<ArtifactCollection>
+
+    @get:InputFiles
+    abstract var apkFileCollection: FileCollection
 
     @TaskAction
     fun run() {
@@ -42,19 +51,19 @@ internal open class DetectTranslucentActivityTask : DefaultTask() {
             """.trimIndent()
         )
 
-        if (variant !is ApplicationVariantImpl) {
-            println(red("${variant.name} is not an application variant."))
-            return
-        }
-        val v = variant as ApplicationVariantImpl
-        val translucentStyleList = v.getTranslucentStyleList()
+        val translucentStyleList = variant.getTranslucentStyleList()
         val ownerShip = project.getOwnerShip()
-        val classMap = v.getArtifactClassMap()
-        v.getArtifactFiles(AndroidArtifacts.ArtifactType.MANIFEST).map {
-            it.parseManifest()
+        val classMap = variant.getArtifactClassMap()
+        val list = manifests.get().artifacts.map {
+            it.file.parseManifest()
         }.filter {
             it.isNotEmpty()
-        }.reduce { acc, map ->
+        }
+        if (list.isEmpty()) {
+            println(green("获取带有主题的 Activity 列表为空，跳过检查"))
+            return
+        }
+        list.reduce { acc, map ->
             acc.toMutableMap().apply { putAll(map) }
         }.toMap().filterValues {
             translucentStyleList.contains(it.substringAfter("/"))
@@ -71,7 +80,7 @@ internal open class DetectTranslucentActivityTask : DefaultTask() {
             AppReporter(
                 desc = Insight.Title.DETECT_TRANSLUCENT_ACTIVITY,
                 documentLink = Insight.DocumentLink.DETECT_TRANSLUCENT_ACTIVITY,
-                versionName = (variant as ApplicationVariantImpl).versionName,
+                versionName = variant.versionName,
                 variantName = variant.name,
                 aarList = this,
             ).writeToJson("${project.parent?.projectDir}/translucentActivity.json")
@@ -115,7 +124,7 @@ internal open class DetectTranslucentActivityTask : DefaultTask() {
     /**
      * 获取透明主题列表
      */
-    private fun ApplicationVariantImpl.getTranslucentStyleList(): List<String> {
+    private fun Variant.getTranslucentStyleList(): List<String> {
         return getArtifactFiles(AndroidArtifacts.ArtifactType.AAR).flatMap {
             ZipFile(it).use { zipFile ->
                 zipFile.entries().toList().filterNot(ZipEntry::isDirectory).firstOrNull { entry ->

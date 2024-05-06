@@ -1,15 +1,16 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
+import com.android.build.api.artifact.SingleArtifact
+import com.android.build.api.variant.Variant
+import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.google.auto.service.AutoService
 import com.omooo.plugin.bean.CheckSchemeModifiedExtension
 import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.spi.VariantProcessor
-import com.omooo.plugin.util.getJarTaskProviders
+import com.omooo.plugin.util.getArtifactCollection
 import com.omooo.plugin.util.nameCapitalize
-import com.omooo.plugin.util.processManifestTaskProvider
-import org.gradle.api.Project
+import com.omooo.plugin.util.project
 import org.gradle.api.UnknownTaskException
 
 /**
@@ -21,7 +22,8 @@ import org.gradle.api.UnknownTaskException
 class CheckSchemeModifiedProcessor : VariantProcessor {
 
     @Suppress("SwallowedException")
-    override fun process(project: Project, variant: BaseVariant) {
+    override fun process(variant: Variant) {
+        val project = variant.project
         val task = try {
             project.tasks.named("checkSchemeModified")
         } catch (e: UnknownTaskException) {
@@ -35,6 +37,8 @@ class CheckSchemeModifiedProcessor : VariantProcessor {
             CheckSchemeModifiedTask::class.java
         ) {
             it.variant = variant
+            it.manifests.set(variant.getArtifactCollection(AndroidArtifacts.ArtifactType.MANIFEST))
+            it.mergedManifest.set(variant.artifacts.get(SingleArtifact.MERGED_MANIFEST))
             it.config = project.extensions.findByType(CheckSchemeModifiedExtension::class.java)
                 ?: project.extensions.create(
                     "checkSchemeModifiedConfig",
@@ -45,10 +49,6 @@ class CheckSchemeModifiedProcessor : VariantProcessor {
                 "Check the schemes modified might trigger compile failure for ${variant.name}."
             it.outputs.upToDateWhen { false }
         }.also {
-            // 因为要归属是谁修改了 scheme，所以需要依赖 JarTask
-            it.dependsOn(project.getJarTaskProviders(variant).toMutableList().apply {
-                variant.processManifestTaskProvider?.let { it1 -> add(it1) }
-            })
             task.dependsOn(it)
         }
     }

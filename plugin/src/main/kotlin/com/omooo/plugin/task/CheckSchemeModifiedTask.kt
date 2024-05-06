@@ -1,23 +1,20 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
-import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import com.android.build.api.variant.Variant
 import com.omooo.plugin.bean.CheckSchemeModifiedExtension
 import com.omooo.plugin.reporter.Insight
-import com.omooo.plugin.util.getOwner
-import com.omooo.plugin.util.getOwnerShip
-import com.omooo.plugin.util.getArtifactFiles
-import com.omooo.plugin.util.getArtifactClassMap
 import com.omooo.plugin.util.green
 import com.omooo.plugin.util.parseSchemesFromManifest
 import com.omooo.plugin.util.red
-import com.omooo.plugin.util.writeToJson
 import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.builtins.PairSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.ArtifactCollection
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
@@ -28,10 +25,16 @@ import org.gradle.api.tasks.TaskExecutionException
  * Desc: 检查 Manifest 里定义的 scheme 集合，如果发生变更（修改和删除）则会触发编译失败
  * Use: ./gradlew checkSchemesModified
  */
-internal open class CheckSchemeModifiedTask : DefaultTask() {
+internal abstract class CheckSchemeModifiedTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
+
+    @get:Internal
+    abstract val manifests: Property<ArtifactCollection>
+
+    @get:InputFile
+    abstract val mergedManifest: RegularFileProperty
 
     @get:Internal
     lateinit var config: CheckSchemeModifiedExtension
@@ -47,11 +50,6 @@ internal open class CheckSchemeModifiedTask : DefaultTask() {
             """.trimIndent()
         )
 
-        if (variant !is ApplicationVariantImpl) {
-            println(red("${variant.name} is not an application variant."))
-            return
-        }
-
         if (!config.enable || config.baselineSchemeFile == null || !config.baselineSchemeFile!!.exists()) {
             println(red("Skip execute CheckSchemeModifiedTask, config: $config"))
             return
@@ -65,40 +63,45 @@ internal open class CheckSchemeModifiedTask : DefaultTask() {
 
         // 基线 scheme 列表
         val baselineSchemeMap: Map<String, Pair<String, List<String>>> = Json.decodeFromString(
-            MapSerializer(String.serializer(), PairSerializer(String.serializer(), String.serializer())),
+            MapSerializer(
+                String.serializer(),
+                PairSerializer(String.serializer(), String.serializer())
+            ),
             config.baselineSchemeFile!!.readText()
         ).mapValues {
             Pair(it.value.first, it.value.second.split(", "))
         }
 
+        // todo 使用 mergedManifest 来解析
         // 当前 scheme 列表
         val currentSchemeMap: Map<String, List<String>> =
-            (variant as ApplicationVariantImpl).getArtifactFiles(AndroidArtifacts.ArtifactType.MANIFEST)
-                .map {
-                    it.parseSchemesFromManifest()
-                }.filter {
-                    it.isNotEmpty()
-                }.flatMap {
-                    it.entries
-                }.associate {
-                    it.toPair()
-                }.mapValues {
-                    it.value.split(", ")
-                }
+            manifests.get().artifacts.map {
+                it.file.parseSchemesFromManifest()
+            }.filter {
+                it.isNotEmpty()
+            }.flatMap {
+                it.entries
+            }.associate {
+                it.toPair()
+            }.mapValues {
+                it.value.split(", ")
+            }
 
         val diffMap = baselineSchemeMap.separateDiff(currentSchemeMap)
         if (diffMap.isEmpty()) {
             println(green("CheckSchemeModifiedTask execute success."))
             return
         }
-        // 发现异常，输出日志，触发编译失败
-        val ownerShip = project.getOwnerShip()
-        val classOwnerMap = (variant as ApplicationVariantImpl).getArtifactClassMap().mapValues {
-            ownerShip.getOwner(it.value.first)
-        }
-        currentSchemeMap.mapValues {
-            Pair(classOwnerMap.getOrDefault(it.key, "unknown"), it.value.joinToString())
-        }.writeToJson("${project.parent?.projectDir}/schemes.json")
+//        // 发现异常，输出日志，触发编译失败
+//        val ownerShip = project.getOwnerShip()
+//        val classOwnerMap = variant.getDependencies().flatMap { (key1, list) ->
+//            list.map { (key2, _) -> key2 to key1 }
+//        }.toMap().mapValues {
+//            ownerShip.getOwner(it.value)
+//        }
+//        currentSchemeMap.mapValues {
+//            Pair(classOwnerMap.getOrDefault(it.key, "unknown"), it.value.joinToString())
+//        }.writeToJson("${project.parent?.projectDir}/schemes.json")
 
         throw TaskExecutionException(this, IllegalStateException(green(diffMap.formatOutput())))
     }

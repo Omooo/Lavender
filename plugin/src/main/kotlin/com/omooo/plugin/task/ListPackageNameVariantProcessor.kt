@@ -1,13 +1,13 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
+import com.android.build.api.artifact.SingleArtifact
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.google.auto.service.AutoService
 import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.spi.VariantProcessor
-import com.omooo.plugin.util.getJarTaskProviders
 import com.omooo.plugin.util.nameCapitalize
-import org.gradle.api.Project
+import com.omooo.plugin.util.project
 import org.gradle.api.UnknownTaskException
 
 /**
@@ -19,22 +19,22 @@ import org.gradle.api.UnknownTaskException
 @AutoService(VariantProcessor::class)
 class ListPackageNameVariantProcessor : VariantProcessor {
 
-    override fun process(project: Project, variant: BaseVariant) {
+    override fun process(variant: Variant) {
         val listPackageNameTask = try {
-            project.tasks.named("listPackageName")
+            variant.project.tasks.named("listPackageName")
         } catch (e: UnknownTaskException) {
-            project.tasks.register("listPackageName") {
+            variant.project.tasks.register("listPackageName") {
                 it.group = LAVENDER
                 it.description = "List package name in app project."
             }
         }
-        project.tasks.register("listPackageNameFor${variant.nameCapitalize()}", ListPackageNameTask::class.java) {
+        variant.project.tasks.register("listPackageNameFor${variant.nameCapitalize()}", ListPackageNameTask::class.java) {
             it.variant = variant
+            it.apkFileCollection = variant.project.files(variant.artifacts.get(SingleArtifact.APK))
             it.group = LAVENDER
             it.description = "List package name for ${variant.name}."
             it.outputs.upToDateWhen { false }
         }.also {
-            it.dependsOn(project.getJarTaskProviders(variant))
             listPackageNameTask.dependsOn(it)
         }
     }

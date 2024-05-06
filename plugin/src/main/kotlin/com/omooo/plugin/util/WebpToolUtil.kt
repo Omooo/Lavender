@@ -40,7 +40,7 @@ class WebpToolUtil {
         }
 
         private fun isWindows(): Boolean {
-            return System.getProperty("os.name").toLowerCase().contains("win")
+            return System.getProperty("os.name").contains("win", true)
         }
 
     }

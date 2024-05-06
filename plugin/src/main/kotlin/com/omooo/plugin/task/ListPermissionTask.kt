@@ -1,9 +1,9 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.util.getArtifactName
+import com.omooo.plugin.util.variantImpl
 import com.omooo.plugin.util.writeToJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
@@ -18,10 +18,10 @@ import java.util.regex.Pattern
  * Use: ./gradlew listPermissions
  * Output: projectDir/permissions.json
  */
-internal open class ListPermissionTask : DefaultTask() {
+internal abstract class ListPermissionTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
 
     @TaskAction
     fun doAction() {
@@ -34,15 +34,11 @@ internal open class ListPermissionTask : DefaultTask() {
             """.trimIndent()
         )
 
-        if (variant !is ApplicationVariantImpl) {
-            println("${variant.name} is not an application variant.")
-            return
-        }
         val resultMap = HashMap<String, List<String>>()
         // 获取 app 模块的权限
         getAppModulePermission(resultMap)
         // 获取 app 依赖的 aar 权限
-        (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
+        variant.variantImpl.variantDependencies.getArtifactCollection(
             AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
             AndroidArtifacts.ArtifactScope.ALL,
             AndroidArtifacts.ArtifactType.MANIFEST

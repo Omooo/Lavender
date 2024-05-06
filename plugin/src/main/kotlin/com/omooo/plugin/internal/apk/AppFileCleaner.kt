@@ -1,8 +1,10 @@
 package com.omooo.plugin.internal.apk
 
-import com.android.build.gradle.api.BaseVariant
+import com.android.build.api.artifact.SingleArtifact
+import com.android.build.api.variant.Variant
 import com.omooo.plugin.reporter.common.AppFile
 import com.omooo.plugin.util.project
+import com.omooo.plugin.util.variantImpl
 
 /**
  * Author: Omooo
@@ -10,10 +12,11 @@ import com.omooo.plugin.util.project
  * Desc: [AppFile] 清洗
  */
 
-internal fun List<AppFile>.clear(variant: BaseVariant): List<AppFile> {
+internal fun List<AppFile>.clear(variant: Variant): List<AppFile> {
 
+    val mappingFile = variant.variantImpl.artifacts.get(SingleArtifact.OBFUSCATION_MAPPING_FILE)
     val clearList: List<ICleaner> = listOf(
-        ClassCleaner(variant.mappingFileProvider.get().singleFile),
+        ClassCleaner(mappingFile.get().asFile),
         ResourceCleaner(variant.project.buildDir, variant),
         TypeAssigningCleaner()
     )

@@ -3,11 +3,11 @@ package com.omooo.plugin
 import com.android.build.api.instrumentation.FramesComputationMode
 import com.android.build.api.instrumentation.InstrumentationScope
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.omooo.plugin.bean.CheckSchemeModifiedExtension
-import com.omooo.plugin.bean.CwebpCompressExtension
 import com.omooo.plugin.bean.InvokeCheckExtension
 import com.omooo.plugin.spi.VariantProcessor
 import com.omooo.plugin.transform.invoke.InvokeCheckCvFactory
@@ -28,13 +28,13 @@ class Lavender : Plugin<Project> {
 
     override fun apply(project: Project) {
         println(green("apply plugin: 'Lavender'"))
+//        BuildScan().scan(project)
         project.extensions.findByName("android")
             ?: throw GradleException("$project is not an Android project.")
 
         val invokeExtension =
             project.extensions.create("invokeCheckConfig", InvokeCheckExtension::class.java)
 
-        project.extensions.create("compressWebpConfig", CwebpCompressExtension::class.java)
         project.extensions.create("checkSchemeModifiedConfig", CheckSchemeModifiedExtension::class.java)
 
         TransformReporter.deleteTransformReporterDir()
@@ -70,11 +70,17 @@ class Lavender : Plugin<Project> {
 
         val variantProcessorList =
             ServiceLoader.load(VariantProcessor::class.java, javaClass.classLoader).toList()
-        if (project.state.executed) {
-            project.registerTask(variantProcessorList)
-        } else {
-            project.afterEvaluate {
-                project.registerTask(variantProcessorList)
+
+        project.plugins.withId("com.android.application") {
+            project.setup(variantProcessorList)
+        }
+    }
+
+    private fun Project.setup(processors: List<VariantProcessor>) {
+        val androidComponents = project.extensions.getByType(ApplicationAndroidComponentsExtension::class.java)
+        androidComponents.onVariants { variant ->
+            processors.forEach { processor ->
+                processor.process(variant)
             }
         }
     }
