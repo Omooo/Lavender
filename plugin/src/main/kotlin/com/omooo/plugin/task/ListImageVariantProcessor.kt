@@ -1,12 +1,12 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.google.auto.service.AutoService
 import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.spi.VariantProcessor
 import com.omooo.plugin.util.nameCapitalize
-import org.gradle.api.Project
+import com.omooo.plugin.util.project
 import org.gradle.api.UnknownTaskException
 
 /**
@@ -14,11 +14,12 @@ import org.gradle.api.UnknownTaskException
  * Date: 2023/5/25
  * Desc: 注册 [ListImageTask]
  */
-@Suppress("SwallowedException", "DEPRECATION")
+@Suppress("SwallowedException")
 @AutoService(VariantProcessor::class)
 class ListImageVariantProcessor : VariantProcessor {
 
-    override fun process(project: Project, variant: BaseVariant) {
+    override fun process(variant: Variant) {
+        val project = variant.project
         val listImageTask = try {
             project.tasks.named("listImage")
         } catch (e: UnknownTaskException) {
@@ -33,7 +34,6 @@ class ListImageVariantProcessor : VariantProcessor {
             it.description = "List image for ${variant.name}."
             it.outputs.upToDateWhen { false }
         }.also {
-            it.dependsOn(variant.mergeResourcesProvider)
             listImageTask.dependsOn(it)
         }
     }

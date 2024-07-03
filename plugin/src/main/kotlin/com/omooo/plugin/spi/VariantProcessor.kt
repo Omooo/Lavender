@@ -1,5 +1,6 @@
 package com.omooo.plugin.spi
 
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.api.BaseVariant
 import org.gradle.api.Project
 
@@ -11,6 +12,13 @@ import org.gradle.api.Project
  */
 interface VariantProcessor {
 
-    fun process(project: Project, variant: BaseVariant)
+    @Deprecated(
+        message = "BaseVariant is deprecated,  please use process(variant: Variant) method instead",
+        replaceWith = ReplaceWith(
+            expression = "process(variant: Variant)"
+        )
+    )
+    fun process(project: Project, variant: BaseVariant) = Unit
 
+    fun process(variant: Variant) = Unit
 }

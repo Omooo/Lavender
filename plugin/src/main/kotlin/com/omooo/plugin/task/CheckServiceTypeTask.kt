@@ -1,8 +1,6 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
-import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import com.android.build.api.variant.Variant
 import com.omooo.plugin.reporter.AppReporter
 import com.omooo.plugin.reporter.HtmlReporter
 import com.omooo.plugin.reporter.Insight
@@ -12,8 +10,14 @@ import com.omooo.plugin.util.getOwner
 import com.omooo.plugin.util.getOwnerShip
 import com.omooo.plugin.util.attributeMap
 import com.omooo.plugin.util.getArtifactName
+import com.omooo.plugin.util.project
 import com.omooo.plugin.util.toList
+import com.omooo.plugin.util.versionName
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.ArtifactCollection
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.w3c.dom.Element
@@ -27,10 +31,19 @@ import javax.xml.parsers.DocumentBuilderFactory
  * Use: ./gradlew checkServiceType
  * Output: projectDir/checkServiceType.json
  */
-internal open class CheckServiceTypeTask : DefaultTask() {
+internal abstract class CheckServiceTypeTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
+
+    @get:Internal
+    abstract val manifests: Property<ArtifactCollection>
+
+    @get:InputFile
+    abstract val mainManifest: Property<File>
+
+    @get:InputFile
+    abstract val mergedManifest: RegularFileProperty
 
     @TaskAction
     fun run() {
@@ -42,19 +55,10 @@ internal open class CheckServiceTypeTask : DefaultTask() {
                 *********************************************
             """.trimIndent()
         )
-        if (variant !is ApplicationVariantImpl) {
-            println("${variant.name} is not an application variant.")
-            return
-        }
+
         val ownerShipMap = project.getOwnerShip()
-        val appProjectResult =
-            project.name to project.projectDir.resolve("src/main/AndroidManifest.xml")
-                .getComponentList()
-        (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
-            AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
-            AndroidArtifacts.ArtifactScope.ALL,
-            AndroidArtifacts.ArtifactType.MANIFEST
-        ).artifacts.associate { artifact ->
+        val appProjectResult = project.name to mainManifest.get().getComponentList()
+        manifests.get().artifacts.associate { artifact ->
             artifact.getArtifactName() to artifact.file.getComponentList()
         }.plus(appProjectResult).filter {
             it.value.isNotEmpty()
@@ -62,7 +66,7 @@ internal open class CheckServiceTypeTask : DefaultTask() {
             val reporter = AppReporter(
                 desc = Insight.Title.CHECK_SERVICE_TYPE,
                 documentLink = Insight.DocumentLink.CHECK_SERVICE_TYPE,
-                versionName = (variant as ApplicationVariantImpl).versionName,
+                versionName = variant.versionName,
                 variantName = variant.name,
                 aarList = it.toList().map {(aarName, serviceNameList)->
                     AarFile(

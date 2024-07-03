@@ -1,11 +1,10 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.android.build.api.variant.Variant
 import com.omooo.plugin.spi.VariantProcessor
 import com.google.auto.service.AutoService
 import com.omooo.plugin.bean.LAVENDER
-import org.gradle.api.Project
+import com.omooo.plugin.util.project
 
 /**
  * Author: Omooo
@@ -16,7 +15,8 @@ import org.gradle.api.Project
 @AutoService(VariantProcessor::class)
 class ListAssetsVariantProcessor : VariantProcessor {
 
-    override fun process(project: Project, variant: BaseVariant) {
+    override fun process(variant: Variant) {
+        val project = variant.project
         if (project.tasks.findByName("listAssets") != null) {
             return
         }
@@ -24,8 +24,6 @@ class ListAssetsVariantProcessor : VariantProcessor {
             it.variant = variant
             it.group = LAVENDER
             it.description = "List all asset files in app project"
-        }.also {
-            it.dependsOn(variant.mergeAssetsProvider)
         }
     }
 

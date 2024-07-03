@@ -1,13 +1,12 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.tasks.factory.dependsOn
+import com.android.build.api.artifact.SingleArtifact
+import com.android.build.api.variant.Variant
 import com.google.auto.service.AutoService
 import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.spi.VariantProcessor
 import com.omooo.plugin.util.nameCapitalize
-import org.gradle.api.Project
-import org.gradle.api.UnknownTaskException
+import com.omooo.plugin.util.project
 
 /**
  * Author: Omooo
@@ -17,29 +16,19 @@ import org.gradle.api.UnknownTaskException
 @AutoService(VariantProcessor::class)
 class ApkAnalyseVariantProcessor : VariantProcessor {
 
-    override fun process(project: Project, variant: BaseVariant) {
+    override fun process(variant: Variant) {
         if (variant.name.contains("debug", true)) {
             return
         }
-        val analyseTask = try {
-            project.tasks.named("apkAnalyse")
-        } catch (e: UnknownTaskException) {
-            project.tasks.register("apkAnalyse") {
-                it.group = LAVENDER
-                it.description = "Analyse the apk output from app project"
-            }
-        }
-        project.tasks.register(
+        variant.project.tasks.register(
             "apkAnalyseFor${variant.nameCapitalize()}",
             ApkAnalyseTask::class.java
         ) {
             it.variant = variant
+            it.apkFileDir.set(variant.artifacts.get(SingleArtifact.APK))
             it.group = LAVENDER
             it.description = "Analyse the apk output from app project for ${variant.name}."
             it.outputs.upToDateWhen { false }
-        }.also {
-            it.dependsOn(project.tasks.named("assemble${variant.nameCapitalize()}"))
-            analyseTask.dependsOn(it)
         }
     }
 

@@ -8,7 +8,6 @@ import java.util.jar.JarFile
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.io.path.isRegularFile
-import kotlin.streams.toList
 
 /**
  * Author: Omooo
@@ -96,9 +95,7 @@ internal fun File.parseJar(): List<Pair<String, Long>> {
 }
 
 /**
- * 解析 AAR 生成文件列表（文件名 -> 文件大小，单位字节）
- *
- * @return ag: { "kotlin/collections/jdk8/CollectionsJDK8Kt.class" to 937, }
+ * 解析 AAR 生成文件列表
  */
 internal fun File.parseAar(): List<Pair<String, Long>> {
     val result: MutableList<Pair<String, Long>> = mutableListOf()
@@ -115,6 +112,21 @@ internal fun File.parseAar(): List<Pair<String, Long>> {
         }
     }
     return result
+}
+
+/**
+ * 解析产物生成文件列表（文件名 -> 文件大小，单位字节）
+ *
+ * @return ag: { "kotlin/collections/jdk8/CollectionsJDK8Kt.class" to 937, }
+ */
+internal fun File.parseArtifact(absoluteFilePath: String, prefix: String = ""): List<Pair<String, Long>> {
+    return this.walkTopDown().filter(File::isFile).map {
+        when (it.extension.lowercase()) {
+            "jar" -> it.parseJar()
+            "aar" -> it.parseAar()
+            else -> listOf(Pair("$prefix${it.absolutePath.removePrefix(absoluteFilePath)}", it.length()))
+        }
+    }.toList().flatten()
 }
 
 /**

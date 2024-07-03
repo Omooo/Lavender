@@ -1,7 +1,6 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.reporter.AppReporter
@@ -14,10 +13,13 @@ import com.omooo.plugin.util.getArtifactName
 import com.omooo.plugin.util.writeToJson
 import kotlinx.serialization.json.Json
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 import java.nio.file.Files
+import java.util.Locale
 import javax.xml.parsers.DocumentBuilderFactory
 
 /**
@@ -27,10 +29,12 @@ import javax.xml.parsers.DocumentBuilderFactory
  * Use: ./gradlew listUnusedAssets
  * Output: projectDir/unusedAssets.json
  */
-internal open class ListUnusedAssetsTask : DefaultTask() {
+internal abstract class ListUnusedAssetsTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
+    @get:InputFiles
+    abstract var apkFileCollection: FileCollection
 
     @TaskAction
     fun run() {
@@ -43,10 +47,6 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
             """.trimIndent()
         )
 
-        if (variant !is ApplicationVariantImpl) {
-            println("${variant.name} is not an application variant.")
-            return
-        }
         val lottieFileNameList = getAssetFileNameFromLayout()
         val referencedStrings = getReferencedStrings().toMutableList().apply {
             if (this.isEmpty()) {
@@ -93,7 +93,7 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
             val appReporter = AppReporter(
                 desc = "${LAVENDER.capitalize()} - List Unused Assets",
                 documentLink = "",
-                versionName = (variant as ApplicationVariantImpl).versionName,
+                versionName = variant.versionName,
                 variantName = variant.name,
                 aarList = aarFileList,
             )
@@ -109,7 +109,7 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
      * @return Map<Artifact 名称, [AssetFile]>
      */
     private fun getTotalAssets(): Map<String, List<AssetFile>> {
-        return (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
+        return variant.variantImpl.variantDependencies.getArtifactCollection(
             AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
             AndroidArtifacts.ArtifactScope.ALL,
             AndroidArtifacts.ArtifactType.ASSETS
@@ -168,7 +168,7 @@ internal open class ListUnusedAssetsTask : DefaultTask() {
      * （目前主要是 LottieAnimationView 引用的 lottie.json 文件）
      */
     private fun getAssetFileNameFromLayout(): List<String> {
-        return (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
+        return variant.variantImpl.variantDependencies.getArtifactCollection(
             AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
             AndroidArtifacts.ArtifactScope.ALL,
             AndroidArtifacts.ArtifactType.ANDROID_RES

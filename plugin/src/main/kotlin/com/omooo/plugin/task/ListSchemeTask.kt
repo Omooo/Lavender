@@ -1,11 +1,12 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.util.*
 import com.omooo.plugin.util.writeToJson
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 
@@ -16,10 +17,12 @@ import org.gradle.api.tasks.TaskAction
  * Use: ./gradlew listSchemes
  * Output: projectDir/schemes.json
  */
-internal open class ListSchemeTask : DefaultTask() {
+internal abstract class ListSchemeTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
+    @get:InputFiles
+    abstract var apkFileCollection: FileCollection
 
     @TaskAction
     fun run() {
@@ -32,17 +35,12 @@ internal open class ListSchemeTask : DefaultTask() {
             """.trimIndent()
         )
 
-        if (variant !is ApplicationVariantImpl) {
-            println(red("${variant.name} is not an application variant."))
-            return
-        }
-
         val startTime = System.currentTimeMillis()
         val ownerShip = project.getOwnerShip()
-        val classOwnerMap = (variant as ApplicationVariantImpl).getArtifactClassMap().mapValues {
+        val classOwnerMap = variant.getArtifactClassMap().mapValues {
             ownerShip.getOwner(it.value.first)
         }
-        (variant as ApplicationVariantImpl).getArtifactFiles(AndroidArtifacts.ArtifactType.MANIFEST)
+        variant.getArtifactFiles(AndroidArtifacts.ArtifactType.MANIFEST)
             .map {
                 it.parseSchemesFromManifest()
             }.filter {

@@ -1,12 +1,8 @@
 package com.omooo.plugin.util
 
-import com.android.build.gradle.AppExtension
-import com.android.build.gradle.BaseExtension
-import com.android.build.gradle.LibraryExtension
-import com.android.build.gradle.api.BaseVariant
+import com.android.build.api.variant.Variant
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.tasks.TaskProvider
 import org.yaml.snakeyaml.Yaml
 
@@ -64,32 +60,8 @@ internal fun Project.isInternalComponent(aarName: String): Boolean {
     } != null
 }
 
-internal fun Project.getJarTaskProviders(variant: BaseVariant? = null): Collection<TaskProvider<out Task>> = when {
-    isAndroid -> when (getAndroid<BaseExtension>()) {
-        is LibraryExtension -> filterByVariant(variant).mapNotNull(BaseVariant::createFullJarTaskProvider)
-        is AppExtension -> filterByVariant(variant).mapNotNull(BaseVariant::bundleClassesTaskProvider)
-        else -> emptyList()
-    }
-    isJavaLibrary -> listOf(tasks.named(JavaPlugin.JAR_TASK_NAME))
-    else -> emptyList()
-}
-
-private fun Project.filterByVariant(variant: BaseVariant? = null): Collection<BaseVariant> {
-    val variants = when (val android = getAndroid<BaseExtension>()) {
-        is AppExtension -> android.applicationVariants
-        is LibraryExtension -> android.libraryVariants
-        else -> emptyList<BaseVariant>()
-    }
-
-    if (null == variant) return variants
-
-    return variants.filter {
-        it.name == variant.name
-    }.takeIf {
-        it.isNotEmpty()
-    } ?: variants.filter {
-        it.buildType.name == variant.buildType.name
-    }
+internal fun Project.getJarTaskProviders(variant: Variant): List<TaskProvider<out Task>>  {
+    return emptyList()
 }
 
 internal val Project.isAndroid: Boolean

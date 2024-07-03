@@ -1,7 +1,7 @@
 package com.omooo.plugin.internal.apk
 
 import com.android.SdkConstants
-import com.android.build.gradle.api.BaseVariant
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.SdkLocator
 import com.android.builder.errors.DefaultIssueReporter
 import com.android.prefs.AndroidLocationsSingleton
@@ -27,7 +27,7 @@ import kotlin.io.path.extension
  */
 internal class ResourceCleaner(
     private val buildDir: File,
-    private val variant: BaseVariant,
+    private val variant: Variant,
 ) : ICleaner {
 
     // 资源名映射，ag: "res/eU.xml" -> "res/anim/abc_popup_exit.xml"

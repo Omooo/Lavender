@@ -1,7 +1,6 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts.ArtifactType.ANDROID_RES
 import com.omooo.plugin.util.encode
 import com.omooo.plugin.util.getArtifactFiles
@@ -19,10 +18,10 @@ import java.io.File
  * Use: ./gradlew detectRepeatRes
  * Output: projectDir/repeatRes.json
  */
-internal open class RepeatResDetectorTask : DefaultTask() {
+internal abstract class RepeatResDetectorTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
 
     @TaskAction
     fun run() {
@@ -38,7 +37,7 @@ internal open class RepeatResDetectorTask : DefaultTask() {
         val resultMap = HashMap<String, ArrayList<String>>()
         val prefix = if (project.properties["all"] != "true") "drawable-" else "drawable"
 
-        getResAndAssetDirList().plus(project.projectDir.resolve("src/main/res")).forEach { resDir ->
+        variant.getArtifactFiles(ANDROID_RES).plus(project.projectDir.resolve("src/main/res")).forEach { resDir ->
             resDir.listFiles()?.filter {
                 it.isDirectory && it.name.startsWith(prefix)
             }?.forEach { drawableDir ->
@@ -67,15 +66,4 @@ internal open class RepeatResDetectorTask : DefaultTask() {
         }
     }
 
-    /**
-     * 获取 res 文件夹列表
-     */
-    private fun getResAndAssetDirList(): List<File> {
-        val v = variant
-        if (v !is ApplicationVariantImpl) {
-            println("${v.name} is not an application variant.")
-            return emptyList()
-        }
-        return v.getArtifactFiles(ANDROID_RES)
-    }
 }

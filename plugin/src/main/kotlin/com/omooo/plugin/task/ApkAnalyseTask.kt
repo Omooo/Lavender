@@ -1,10 +1,7 @@
 package com.omooo.plugin.task
 
 import com.android.SdkConstants
-import com.android.build.api.artifact.SingleArtifact
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
-import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import com.android.build.api.variant.Variant
 import com.omooo.plugin.internal.apk.ApkIncrementAnalyse
 import com.omooo.plugin.internal.apk.ApkParser
 import com.omooo.plugin.internal.apk.clear
@@ -17,10 +14,10 @@ import com.omooo.plugin.reporter.common.FileType
 import com.omooo.plugin.reporter.common.totalSize
 import com.omooo.plugin.util.*
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import java.nio.file.Files
-import kotlin.io.path.extension
 
 /**
  * Author: Omooo
@@ -29,10 +26,13 @@ import kotlin.io.path.extension
  * Use: ./gradlew apkAnalyse
  * Output: projectDir/apkAnalyse.json
  */
-internal open class ApkAnalyseTask : DefaultTask() {
+internal abstract class ApkAnalyseTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    abstract var variant: Variant
+
+    @get:InputDirectory
+    abstract val apkFileDir: DirectoryProperty
 
     private val ownerShip: Map<String, String> by lazy {
         project.getOwnerShip()
@@ -49,17 +49,11 @@ internal open class ApkAnalyseTask : DefaultTask() {
             """.trimIndent()
         )
 
-        if (variant !is ApplicationVariantImpl) {
-            println(red("${variant.name} is not an application variant."))
-            return
-        }
         val startTime = System.currentTimeMillis()
         // 获取 APK 文件
-        val apkFile =
-            Files.walk(variant.component.artifacts.get(SingleArtifact.APK).get().asFile.toPath())
-                .filter {
-                    it.extension == SdkConstants.EXT_ANDROID_PACKAGE
-                }.findFirst().get().toFile()
+        val apkFile = apkFileDir.get().asFileTree.first {
+            it.extension == SdkConstants.EXT_ANDROID_PACKAGE
+        }
 
         val appFileList = ApkParser().parse(apkFile).clear(variant)
         val currentAarList = getCurrentAarListFromApk(appFileList, getDependencies().filterNot {
@@ -68,7 +62,7 @@ internal open class ApkAnalyseTask : DefaultTask() {
         val reporter = AppReporter(
             desc = Insight.Title.APK_ANALYSE,
             documentLink = Insight.DocumentLink.APK_ANALYSE,
-            versionName = (variant as ApplicationVariantImpl).versionName,
+            versionName = variant.versionName,
             variantName = variant.name,
             aarList = ApkIncrementAnalyse(project).analyse(currentAarList),
         )
@@ -112,14 +106,9 @@ internal open class ApkAnalyseTask : DefaultTask() {
      * ag: "res/drawable/notification_tile_bg.xml" to "androidx.core:core:1.7.0"
      */
     private fun getDependencies(): Map<String, String> {
-        return (variant as ApplicationVariantImpl).variantData.variantDependencies.getArtifactCollection(
-            AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
-            AndroidArtifacts.ArtifactScope.ALL,
-            AndroidArtifacts.ArtifactType.AAR_OR_JAR
-        ).artifacts.map { artifact ->
-            artifact.getArtifactName() to artifact.file.parseAar().map { it.first }
-        }.flatMap { pair ->
-            pair.second.map { it to pair.first }
-        }.associateBy({ it.first }, { it.second })
+        variant.getDependencies().writeToJson("${project.parent?.projectDir}/getDependencies.json")
+        return variant.getDependencies().flatMap { (key1, list) ->
+            list.map { (key2, _) -> key2 to key1 }
+        }.toMap()
     }
 }

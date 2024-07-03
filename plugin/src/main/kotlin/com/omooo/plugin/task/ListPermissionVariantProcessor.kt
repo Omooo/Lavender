@@ -1,13 +1,13 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.tasks.factory.dependsOn
 import com.omooo.plugin.spi.VariantProcessor
 import com.google.auto.service.AutoService
 import com.omooo.plugin.bean.LAVENDER
 import com.omooo.plugin.util.nameCapitalize
 import com.omooo.plugin.util.processManifestTaskProvider
-import org.gradle.api.Project
+import com.omooo.plugin.util.project
 import org.gradle.api.UnknownTaskException
 
 /**
@@ -20,7 +20,8 @@ import org.gradle.api.UnknownTaskException
 @AutoService(VariantProcessor::class)
 class ListPermissionVariantProcessor : VariantProcessor {
 
-    override fun process(project: Project, variant: BaseVariant) {
+    override fun process(variant: Variant) {
+        val project = variant.project
         val listPermissionsTask = try {
             project.tasks.named("listPermissions")
         } catch (e: UnknownTaskException) {

@@ -46,11 +46,15 @@ private val App = FC<AppProps> { props ->
                     if ((list.firstOrNull()?.size ?: 0) > 0) {
                         "A total of ${list.size} components belong to $owner, including ${
                             list.map { it.size }.reduce { acc, l -> acc + l }.formatSize()
-                        } of unused resources."
+                        } of resources."
                     } else {
                         "A total of ${list.size} components belong to $owner, including ${
-                            list.map { it.fileList.size }.reduce { acc, l -> acc + l }
-                        } classes need to check."
+                            if (list.isEmpty()) {
+                                0
+                            } else {
+                                list.map { it.fileList.size }.reduce { acc, l -> acc + l }
+                            }
+                        } items need to check."
                     }
                 }
                 subtitle = props.appReporter.let {

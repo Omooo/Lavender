@@ -13,22 +13,27 @@ apply plugin: 'com.omooo.lavender'
 //            "com.omooo.library",
 //    ]
 //}
-//compressWebpConfig {
-//    enable true
-//}
 
 //checkSchemeModifiedConfig {
 //    enable = true
 //    baselineSchemeFile = file("runtime/devRelease/runtimeSchemes.json")
 //}
 
+apply plugin: 'com.spotify.ruler'
+ruler {
+    abi.set("arm64-v8a")
+    locale.set("zh")
+    screenDensity.set(480)
+    sdkVersion.set(33)
+}
+
 android {
-    compileSdkVersion 33
-    buildToolsVersion "29.0.2"
+    compileSdkVersion 34
+    namespace 'com.omooo.plugin'
     defaultConfig {
         applicationId "com.omooo.plugin"
         minSdkVersion 23
-        targetSdkVersion 33
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -44,10 +49,14 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.6.10"
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.core:core-ktx:1.3.1'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.10"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     implementation(project(":library"))
+}
+
+kotlin {
+    jvmToolchain(17)
 }

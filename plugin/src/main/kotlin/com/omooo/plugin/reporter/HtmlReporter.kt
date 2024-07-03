@@ -19,12 +19,7 @@ internal class HtmlReporter {
             file.delete()
         }
         file.createNewFile()
-        var html = readResourceFile("index.html")
-        val javascript = readResourceFile("frontend.js")
-        html = html.replaceFirst(
-            "<script src=\"frontend.js\"></script>",
-            "<script>$javascript</script>"
-        )
+        var html = readResourceFile("apkAnalyse-Template.html")
         html = html.replaceFirst("{key:\"REPLACE_ME\"}", "`${JsonOutput.toJson(data)}`")
         return file.apply {
             writeText(html)

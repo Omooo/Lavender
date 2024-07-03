@@ -1,7 +1,6 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.reporter.AppReporter
 import com.omooo.plugin.reporter.HtmlReporter
@@ -14,7 +13,9 @@ import com.omooo.plugin.util.getArtifactIdFromAarName
 import com.omooo.plugin.util.isImageFile
 import com.omooo.plugin.util.getAllChildren
 import com.omooo.plugin.util.getOwnerShip
-import com.omooo.plugin.util.red
+import com.omooo.plugin.util.project
+import com.omooo.plugin.util.variantImpl
+import com.omooo.plugin.util.versionName
 import com.omooo.plugin.util.writeToJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Internal
@@ -27,10 +28,9 @@ import org.gradle.api.tasks.TaskAction
  * Use: ./gradlew listImage
  * Output: projectDir/imageList.json
  */
-@Suppress("DEPRECATION")
 internal open class ListImageTask : DefaultTask() {
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
 
     @TaskAction
     fun doAction() {
@@ -42,16 +42,12 @@ internal open class ListImageTask : DefaultTask() {
                 *********************************************
             """.trimIndent()
         )
-        if (variant !is ApplicationVariantImpl) {
-            println(red("${variant.name} is not an application variant."))
-            return
-        }
         AppReporter(
             desc = Insight.Title.LIST_IMAGE,
             documentLink = Insight.DocumentLink.LIST_IMAGE,
-            versionName = (variant as ApplicationVariantImpl).versionName,
+            versionName = variant.versionName,
             variantName = variant.name,
-            aarList = (variant as ApplicationVariantImpl).getTotalImage(),
+            aarList = getTotalImage(),
         ).apply {
             writeToJson("${project.parent?.projectDir}/imageList.json")
             HtmlReporter().generateReport(this, "${project.parent?.projectDir}/imageList.html")
@@ -61,9 +57,9 @@ internal open class ListImageTask : DefaultTask() {
     /**
      * 获取所有的图片
      */
-    private fun ApplicationVariantImpl.getTotalImage(): List<AarFile> {
+    private fun getTotalImage(): List<AarFile> {
         val ownership = project.getOwnerShip()
-        return variantData.variantDependencies.getArtifactCollection(
+        return variant.variantImpl.variantDependencies.getArtifactCollection(
             AndroidArtifacts.ConsumedConfigType.RUNTIME_CLASSPATH,
             AndroidArtifacts.ArtifactScope.ALL,
             AndroidArtifacts.ArtifactType.ANDROID_RES

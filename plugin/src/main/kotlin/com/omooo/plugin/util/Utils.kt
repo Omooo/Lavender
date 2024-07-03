@@ -1,12 +1,8 @@
 package com.omooo.plugin.util
 
 import groovy.json.JsonOutput
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
-import java.io.FileWriter
-import java.io.PrintWriter
-import java.nio.charset.Charset
 import java.security.MessageDigest
 
 /**

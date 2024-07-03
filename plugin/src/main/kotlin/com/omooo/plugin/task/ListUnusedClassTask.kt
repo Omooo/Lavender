@@ -1,7 +1,6 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import com.omooo.plugin.internal.cha.ComponentHandler
 import com.omooo.plugin.internal.cha.LayoutHandler
@@ -9,10 +8,10 @@ import com.omooo.plugin.util.*
 import com.omooo.plugin.util.getOwnerShip
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.objectweb.asm.tree.FieldInsnNode
-import org.objectweb.asm.tree.MethodInsnNode
 
 /**
  * Author: Omooo
@@ -21,10 +20,12 @@ import org.objectweb.asm.tree.MethodInsnNode
  * Use: ./gradlew listUnusedClass
  * Output: projectDir/listUnusedClass.json
  */
-internal open class ListUnusedClassTask : DefaultTask() {
+internal abstract class ListUnusedClassTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
+    @get:InputFiles
+    abstract var apkFileCollection: FileCollection
 
     @TaskAction
     fun run() {
@@ -36,12 +37,6 @@ internal open class ListUnusedClassTask : DefaultTask() {
                 *********************************************
             """.trimIndent()
         )
-
-        if (variant !is ApplicationVariantImpl) {
-            println("${variant.name} is not an application variant.")
-            return
-        }
-        val v = variant as ApplicationVariantImpl
 
         val unusedClassList = project.getUnusedClass()
         if (unusedClassList.isEmpty()) {
@@ -56,10 +51,10 @@ internal open class ListUnusedClassTask : DefaultTask() {
 
         val printUnusedClass = project.hasProperty("printUnusedClass")
         val ownerShip = project.getOwnerShip()
-        val classMap = v.getArtifactClassMap()
+        val classMap = variant.getArtifactClassMap()
 
-        val classNodeCache = v.getAllClasses()
-        val entryPoint = v.getEntryPoint()
+        val classNodeCache = variant.getAllClasses()
+        val entryPoint = variant.getEntryPoint()
         val tempAllClasses = if (printUnusedClass) mutableListOf(classMap.keys) else mutableListOf()
 
     }
@@ -67,7 +62,7 @@ internal open class ListUnusedClassTask : DefaultTask() {
     /**
      * 获取入口类
      */
-    private fun ApplicationVariantImpl.getEntryPoint(): Set<String> {
+    private fun Variant.getEntryPoint(): Set<String> {
         // 自定义 View 入口
         val viewEntryPoint = getArtifactFiles(AndroidArtifacts.ArtifactType.ANDROID_RES)
             .plus(project.projectDir.resolve("src/main/res"))

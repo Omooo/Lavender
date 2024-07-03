@@ -1,9 +1,10 @@
 package com.omooo.plugin.task
 
-import com.android.build.gradle.api.BaseVariant
-import com.android.build.gradle.internal.api.ApplicationVariantImpl
+import com.android.build.api.variant.Variant
 import com.omooo.plugin.util.getArtifactClassMap
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.FileCollection
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import java.io.File
@@ -15,11 +16,12 @@ import java.io.File
  * Use: ./gradlew listPackageName
  * Output: projectDir/packageNameList.xml
  */
-@Suppress("DEPRECATION")
-internal open class ListPackageNameTask : DefaultTask() {
+internal abstract class ListPackageNameTask : DefaultTask() {
 
     @get:Internal
-    lateinit var variant: BaseVariant
+    lateinit var variant: Variant
+    @get:InputFiles
+    abstract var apkFileCollection: FileCollection
 
     @TaskAction
     fun run() {
@@ -31,11 +33,7 @@ internal open class ListPackageNameTask : DefaultTask() {
                 *********************************************
             """.trimIndent()
         )
-        if (variant !is ApplicationVariantImpl) {
-            println("${variant.name} is not an application variant.")
-            return
-        }
-        (variant as ApplicationVariantImpl).getArtifactClassMap().keys.map {
+        variant.getArtifactClassMap().keys.map {
             it.getPackageNameFromClassName()
         }.toSet().writeXml("${project.parent?.projectDir}/packageNameList.xml")
     }
