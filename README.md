@@ -12,7 +12,16 @@ Lavender 直译为薰衣草。薰衣草的香味能够帮助我们缓解压力�
 
 希望这个 Gradle Plugin 也能够帮助我们减少重复的劳动工作，使我们的工作更加轻松顺畅。
 
-## 三、功能列表
+## 三、架构设计
+  Lavender 插件抽象了 Task 和 Transform 的注册过程，以 SPI (Service Provider Interface) 为基础，通过 Google Auto Service 简化了 SPI 的配置，在 Lavender 中提供了两大类 SPI：
+  - Task SPI
+    Task SPI 用于在 Gradle 的 Task Graph 中插入自定义的 Task。
+  - Transform SPI
+    Transform SPI 用于在 Transform 的过程中插入自定义的 Transform 对字节码进行操作。
+    
+  ![](https://s2.loli.net/2025/07/03/NuEs6Kow9lcZYWd.png)  
+
+## 四、功能列表
 
 目前包含包体积瘦身和安全合规检查相关功能。
 
