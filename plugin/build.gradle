@@ -11,8 +11,8 @@ dependencies {
     implementation localGroovy()
     implementation gradleApi()
 
-    implementation "com.android.tools.build:gradle-api:8.2.0"
-    compileOnly "com.android.tools.build:gradle:8.2.0"
+    implementation "com.android.tools.build:gradle-api:7.4.2"
+    compileOnly "com.android.tools.build:gradle:7.4.2"
     implementation 'org.json:json:20220924'
     implementation "com.google.auto.service:auto-service:1.0.1"
     kapt "com.google.auto.service:auto-service:1.0.1"
@@ -37,12 +37,12 @@ dependencies {
 //}
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(11)
 }
 
 publishing {

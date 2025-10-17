@@ -19,13 +19,13 @@ apply plugin: 'com.omooo.lavender'
 //    baselineSchemeFile = file("runtime/devRelease/runtimeSchemes.json")
 //}
 
-apply plugin: 'com.spotify.ruler'
-ruler {
-    abi.set("arm64-v8a")
-    locale.set("zh")
-    screenDensity.set(480)
-    sdkVersion.set(33)
-}
+//apply plugin: 'com.spotify.ruler'
+//ruler {
+//    abi.set("arm64-v8a")
+//    locale.set("zh")
+//    screenDensity.set(480)
+//    sdkVersion.set(33)
+//}
 
 android {
     compileSdkVersion 34

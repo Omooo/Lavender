@@ -8,6 +8,7 @@ import java.util.jar.JarFile
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import kotlin.io.path.isRegularFile
+import kotlin.streams.toList
 
 /**
  * Author: Omooo
@@ -26,7 +27,7 @@ internal fun File.getAllChildren(): List<File> {
             it.isRegularFile()
         }.map {
             it.toFile()
-        }.toList()
+        }?.toList()
     } ?: emptyList()
 }
 

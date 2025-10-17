@@ -36,7 +36,7 @@ class CheckServiceTypeVariantProcessor : VariantProcessor {
             it.variant = variant
             it.manifests.set(variant.getArtifactCollection(AndroidArtifacts.ArtifactType.MANIFEST))
             it.mergedManifest.set(variant.artifacts.get(SingleArtifact.MERGED_MANIFEST))
-            it.mainManifest.set(variant.variantImpl.sources.manifestFile)
+//            it.mainManifest.set(variant.variantImpl.sources.manifestFile)
             it.group = LAVENDER
             it.description = "Check set foreground service type attribute in Manifest for ${variant.nameCapitalize()}"
             it.outputs.upToDateWhen { false }

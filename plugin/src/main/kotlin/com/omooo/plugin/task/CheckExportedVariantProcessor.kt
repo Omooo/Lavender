@@ -29,7 +29,7 @@ class CheckExportedVariantProcessor : VariantProcessor {
             it.variant = variant
             it.manifests.set(variant.getArtifactCollection(AndroidArtifacts.ArtifactType.MANIFEST))
 //            it.mergedManifest.set(variant.artifacts.get(SingleArtifact.MERGED_MANIFEST))
-            it.mainManifest.set(variant.variantImpl.sources.manifestFile)
+//            it.mainManifest.set(variant.variantImpl.sources.manifestFile)
             it.group = LAVENDER
             it.description = "Check exported attribute in Manifest."
             it.outputs.upToDateWhen { false }
