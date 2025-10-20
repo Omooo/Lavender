@@ -48,3 +48,17 @@ internal val EXCLUDES = Regex("^(((android[x]?)|(com/(((google/)?android)|(googl
 internal fun String.formatDollar(): String {
     return replace("$", "${'$'}")
 }
+
+/**
+ * 是否所属商详模块
+ */
+internal fun String.isGoodsDetailComponent(): Boolean {
+    return arrayOf("app_goods_bridge",
+        "app_goods_common",
+        "app_goods_detail",
+        "app_goods_service",
+        "app_goods_video",
+        "app_review",
+        "api_review",
+    ).contains(this)
+}

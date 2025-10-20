@@ -1,5 +1,8 @@
 package com.omooo.plugin.util
 
+import com.omooo.plugin.bean.ASM_VERSION
+import org.objectweb.asm.ClassReader
+import org.objectweb.asm.tree.ClassNode
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.file.Files
@@ -136,3 +139,36 @@ internal fun File.parseArtifact(absoluteFilePath: String, prefix: String = ""): 
  * @usage: parentFile.file("data", "widgets.txt") -> "${parentFile.path}/data/widgets.txt"
  */
 internal fun File.file(vararg path: String) = File(this, path.joinToString(File.separator))
+
+
+/**
+ * 解析成 [ClassNode]
+ */
+@Suppress("NestedBlockDepth")
+internal fun File.parseClassNode(): List<ClassNode> {
+    val result: MutableList<ClassNode> = mutableListOf()
+    if (isDirectory) {
+        getAllChildren().filter {
+            it.extension == "class"
+        }.forEach {
+            val classNode = ClassNode(ASM_VERSION)
+            ClassReader(it.readBytes()).accept(
+                classNode, ClassReader.SKIP_DEBUG
+            )
+            result.add(classNode)
+        }
+    } else {
+        ZipFile(this).use { zipFile ->
+            zipFile.entries().toList().filterNot(ZipEntry::isDirectory).forEach { entry ->
+                if (entry.name.endsWith(".class")) {
+                    val classNode = ClassNode(ASM_VERSION)
+                    ClassReader(zipFile.getInputStream(entry)).accept(
+                        classNode, ClassReader.SKIP_DEBUG
+                    )
+                    result.add(classNode)
+                }
+            }
+        }
+    }
+    return result
+}

@@ -2,20 +2,18 @@ package com.omooo.plugin.task
 
 import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
-import com.omooo.plugin.bean.ASM_VERSION
 import com.omooo.plugin.reporter.AppReporter
 import com.omooo.plugin.reporter.HtmlReporter
 import com.omooo.plugin.reporter.Insight
 import com.omooo.plugin.reporter.common.AarFile
 import com.omooo.plugin.reporter.common.AppFile
 import com.omooo.plugin.util.green
-import com.omooo.plugin.util.getAllChildren
 import com.omooo.plugin.util.getArtifactClassMap
 import com.omooo.plugin.util.getArtifactName
 import com.omooo.plugin.util.getOwner
 import com.omooo.plugin.util.getOwnerShip
 import com.omooo.plugin.util.isInternalComponent
-import com.omooo.plugin.util.project
+import com.omooo.plugin.util.parseClassNode
 import com.omooo.plugin.util.red
 import com.omooo.plugin.util.variantImpl
 import com.omooo.plugin.util.versionName
@@ -24,11 +22,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.objectweb.asm.ClassReader
 import org.objectweb.asm.tree.ClassNode
-import java.io.File
-import java.util.zip.ZipEntry
-import java.util.zip.ZipFile
 
 /**
  * Author: Omooo
@@ -134,35 +128,4 @@ internal abstract class FragmentNonConstructCheckTask : DefaultTask() {
         return classNodeMap[superName]?.extendFragment(classNodeMap) ?: false
     }
 
-    /**
-     * 解析成 [ClassNode]
-     */
-    @Suppress("NestedBlockDepth")
-    private fun File.parseClassNode(): List<ClassNode> {
-        val result: MutableList<ClassNode> = mutableListOf()
-        if (isDirectory) {
-            getAllChildren().filter {
-                it.extension == "class"
-            }.forEach {
-                val classNode = ClassNode(ASM_VERSION)
-                ClassReader(it.readBytes()).accept(
-                    classNode, ClassReader.SKIP_DEBUG
-                )
-                result.add(classNode)
-            }
-        } else {
-            ZipFile(this).use { zipFile ->
-                zipFile.entries().toList().filterNot(ZipEntry::isDirectory).forEach { entry ->
-                    if (entry.name.endsWith(".class")) {
-                        val classNode = ClassNode(ASM_VERSION)
-                        ClassReader(zipFile.getInputStream(entry)).accept(
-                            classNode, ClassReader.SKIP_DEBUG
-                        )
-                        result.add(classNode)
-                    }
-                }
-            }
-        }
-        return result
-    }
 }
